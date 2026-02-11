@@ -58,6 +58,18 @@ get_header();
 						?>
 					</div>
 
+					<div class="mb-3">
+						<label class="form-label small fw-bold"><?php _e( 'Products Offered', 'org-ecosystem' ); ?></label>
+						<?php
+						wp_dropdown_categories( array(
+							'show_option_all' => __( 'All Products', 'org-ecosystem' ),
+							'taxonomy'        => 'product_cat',
+							'name'            => 'product_cat',
+							'class'           => 'form-select',
+						) );
+						?>
+					</div>
+
 					<div class="mb-4">
 						<label class="form-label small fw-bold"><?php _e( 'Search Name', 'org-ecosystem' ); ?></label>
 						<input type="text" name="search" class="form-control" placeholder="<?php _e( 'Enter name...', 'org-ecosystem' ); ?>">
@@ -88,8 +100,18 @@ get_header();
 											</div>
 										<?php endif; ?>
 									</div>
-									<h5 class="card-title mb-1"><?php the_title(); ?></h5>
-									<p class="text-muted small mb-3"><?php echo esc_html( get_post_meta( get_the_ID(), '_member_business_name', true ) ); ?></p>
+									<h5 class="card-title mb-1">
+										<?php the_title(); ?>
+										<?php if ( get_post_meta( get_the_ID(), '_member_is_verified', true ) ) : ?>
+											<i class="bi bi-patch-check-fill text-primary ms-1" title="Verified Member"></i>
+										<?php endif; ?>
+									</h5>
+									<p class="text-muted small mb-2">
+										<?php echo esc_html( get_post_meta( get_the_ID(), '_member_business_name', true ) ); ?>
+										<?php if ( get_post_meta( get_the_ID(), '_member_is_featured', true ) ) : ?>
+											<span class="badge bg-warning text-dark ms-1 small" style="font-size: 0.65rem;"><?php _e( 'FEATURED', 'org-ecosystem' ); ?></span>
+										<?php endif; ?>
+									</p>
 									<div class="mb-3">
 										<?php the_terms( get_the_ID(), 'industry', '<span class="badge bg-light text-dark border me-1">', '</span> <span class="badge bg-light text-dark border me-1">', '</span>' ); ?>
 									</div>

@@ -9,6 +9,7 @@ function org_ecosystem_directory_filter() {
 	$industry = isset( $_POST['industry'] ) ? sanitize_text_field( $_POST['industry'] ) : '';
 	$location = isset( $_POST['location'] ) ? sanitize_text_field( $_POST['location'] ) : '';
 	$level = isset( $_POST['membership_level'] ) ? sanitize_text_field( $_POST['membership_level'] ) : '';
+	$prod_cat = isset( $_POST['product_cat'] ) ? sanitize_text_field( $_POST['product_cat'] ) : '';
 	$search = isset( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
 
 	$args = array(
@@ -43,6 +44,38 @@ function org_ecosystem_directory_filter() {
 		);
 	}
 
+	if ( $prod_cat && $prod_cat !== '0' ) {
+		// To filter members by products they offer, we need a meta query or a specialized taxonomy.
+		// Since we have a 'product' CPT linked to 'member' via '_product_business_id',
+		// we first find all products in that category, get their business IDs, and then filter members.
+		$product_query = new WP_Query( array(
+			'post_type' => 'product',
+			'posts_per_page' => -1,
+			'tax_query' => array(
+				array(
+					'taxonomy' => 'product_cat',
+					'field' => 'term_id',
+					'terms' => $prod_cat,
+				)
+			),
+			'fields' => 'ids',
+		) );
+
+		$business_ids = array();
+		if ( $product_query->have_posts() ) {
+			foreach ( $product_query->posts as $prod_id ) {
+				$bid = get_post_meta( $prod_id, '_product_business_id', true );
+				if ( $bid ) $business_ids[] = $bid;
+			}
+		}
+
+		if ( ! empty( $business_ids ) ) {
+			$args['post__in'] = array_unique( $business_ids );
+		} else {
+			$args['post__in'] = array( 0 ); // Return no results
+		}
+	}
+
 	$query = new WP_Query( $args );
 
 	if ( $query->have_posts() ) :
@@ -61,8 +94,18 @@ function org_ecosystem_directory_filter() {
 								</div>
 							<?php endif; ?>
 						</div>
-						<h5 class="card-title mb-1"><?php the_title(); ?></h5>
-						<p class="text-muted small mb-3"><?php echo esc_html( get_post_meta( get_the_ID(), '_member_business_name', true ) ); ?></p>
+						<h5 class="card-title mb-1">
+							<?php the_title(); ?>
+							<?php if ( get_post_meta( get_the_ID(), '_member_is_verified', true ) ) : ?>
+								<i class="bi bi-patch-check-fill text-primary ms-1" title="Verified Member"></i>
+							<?php endif; ?>
+						</h5>
+						<p class="text-muted small mb-2">
+							<?php echo esc_html( get_post_meta( get_the_ID(), '_member_business_name', true ) ); ?>
+							<?php if ( get_post_meta( get_the_ID(), '_member_is_featured', true ) ) : ?>
+								<span class="badge bg-warning text-dark ms-1 small" style="font-size: 0.65rem;"><?php _e( 'FEATURED', 'org-ecosystem' ); ?></span>
+							<?php endif; ?>
+						</p>
 						<div class="mb-3">
 							<?php the_terms( get_the_ID(), 'industry', '<span class="badge bg-light text-dark border me-1">', '</span> <span class="badge bg-light text-dark border me-1">', '</span>' ); ?>
 						</div>

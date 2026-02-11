@@ -201,14 +201,31 @@ function org_ecosystem_membership_page() {
 	?>
 	<div class="wrap">
 		<h1><?php _e( 'Membership Management', 'org-ecosystem' ); ?></h1>
-		<div class="card p-3" style="background: #fff; border: 1px solid #ccd0d4; margin-bottom: 20px;">
-			<h3><?php _e( 'Onboarding Guide', 'org-ecosystem' ); ?></h3>
-			<ol>
-				<li><?php _e( 'Define your membership levels in the table below.', 'org-ecosystem' ); ?></li>
-				<li><?php _e( 'Configure Stripe or PayPal in the Payments tab.', 'org-ecosystem' ); ?></li>
-				<li><?php _e( 'Pending members will appear in the "Pending" status list for approval.', 'org-ecosystem' ); ?></li>
-			</ol>
-			<p><strong><?php _e( 'Example:', 'org-ecosystem' ); ?></strong> <?php _e( 'Enter ₱1,500 for Annual Membership Fee.', 'org-ecosystem' ); ?></p>
+		<div class="card p-4" style="background: #fff; border: 1px solid #ccd0d4; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+			<h3 style="margin-top: 0;"><i class="dashicons dashicons-welcome-learn-more" style="vertical-align: middle; margin-right: 10px;"></i> <?php _e( 'Organization Onboarding Guide', 'org-ecosystem' ); ?></h3>
+			<p class="description mb-4"><?php _e( 'Follow these steps to set up your digital ecosystem correctly.', 'org-ecosystem' ); ?></p>
+
+			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+				<div>
+					<h4 style="margin-bottom: 10px;"><?php _e( '1. Core Configuration', 'org-ecosystem' ); ?></h4>
+					<ul class="ul-disc">
+						<li><strong><?php _e( 'Member Profiles:', 'org-ecosystem' ); ?></strong> <?php _e( 'Go to "Members" to manually add or approve professional profiles.', 'org-ecosystem' ); ?></li>
+						<li><strong><?php _e( 'Taxonomies:', 'org-ecosystem' ); ?></strong> <?php _e( 'Define Industries and Locations to enable powerful directory filtering.', 'org-ecosystem' ); ?></li>
+						<li><strong><?php _e( 'Branding:', 'org-ecosystem' ); ?></strong> <?php _e( 'Use the Customizer to upload your logo and set brand colors.', 'org-ecosystem' ); ?></li>
+					</ul>
+				</div>
+				<div>
+					<h4 style="margin-bottom: 10px;"><?php _e( '2. Revenue & Growth', 'org-ecosystem' ); ?></h4>
+					<ul class="ul-disc">
+						<li><strong><?php _e( 'Membership Levels:', 'org-ecosystem' ); ?></strong> <?php _e( 'Review your plans below. Each level grants different dashboard permissions.', 'org-ecosystem' ); ?></li>
+						<li><strong><?php _e( 'Products/Services:', 'org-ecosystem' ); ?></strong> <?php _e( 'Encourage members to list their offerings to increase ecosystem value.', 'org-ecosystem' ); ?></li>
+						<li><strong><?php _e( 'Donations:', 'org-ecosystem' ); ?></strong> <?php _e( 'Configure your donation page to accept community contributions.', 'org-ecosystem' ); ?></li>
+					</ul>
+				</div>
+			</div>
+
+			<hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+			<p><strong><?php _e( 'Expert Tip:', 'org-ecosystem' ); ?></strong> <?php _e( 'Use the "Import Sample Data" button in General Settings to see a live example of how members and businesses are structured.', 'org-ecosystem' ); ?></p>
 		</div>
 		<p><?php _e( 'Manage plans, approval workflows, and automated reminders.', 'org-ecosystem' ); ?>
 			<span class="dashicons dashicons-editor-help" title="<?php esc_attr_e( 'These plans define the access levels for your members.', 'org-ecosystem' ); ?>"></span>

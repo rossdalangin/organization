@@ -62,8 +62,25 @@ function org_ecosystem_setup() {
 		'footer'  => esc_html__( 'Footer Menu', 'org-ecosystem' ),
 		'member'  => esc_html__( 'Member Dashboard Menu', 'org-ecosystem' ),
 	) );
+
+	// Add Elementor Support
+	add_theme_support( 'elementor-full-width' );
 }
 add_action( 'after_setup_theme', 'org_ecosystem_setup' );
+
+/**
+ * Register Elementor Custom Category
+ */
+function org_ecosystem_elementor_category( $elements_manager ) {
+	$elements_manager->add_category(
+		'org-ecosystem',
+		[
+			'title' => esc_html__( 'Organization Ecosystem', 'org-ecosystem' ),
+			'icon'  => 'fa fa-plug',
+		]
+	);
+}
+add_action( 'elementor/elements/categories_registered', 'org_ecosystem_elementor_category' );
 
 /**
  * Enqueue scripts and styles.
@@ -81,7 +98,7 @@ function org_ecosystem_scripts() {
 	wp_enqueue_style( 'org-ecosystem-style', get_stylesheet_uri(), array( 'bootstrap' ), ORG_ECOSYSTEM_VERSION );
 	wp_enqueue_style( 'org-ecosystem-main', ORG_ECOSYSTEM_URI . '/assets/css/main.css', array( 'org-ecosystem-style' ), ORG_ECOSYSTEM_VERSION );
 
-	wp_enqueue_script( 'org-ecosystem-navigation', ORG_ECOSYSTEM_URI . '/assets/js/navigation.js', array(), ORG_ECOSYSTEM_VERSION, true );
+	wp_enqueue_script( 'org-ecosystem-navigation', ORG_ECOSYSTEM_URI . '/assets/js/navigation.js', array( 'jquery', 'bootstrap-bundle' ), ORG_ECOSYSTEM_VERSION, true );
 	wp_enqueue_script( 'org-ecosystem-main', ORG_ECOSYSTEM_URI . '/assets/js/main.js', array( 'jquery' ), ORG_ECOSYSTEM_VERSION, true );
 	wp_localize_script( 'org-ecosystem-main', 'org_ajax', array(
 		'ajaxurl' => admin_url( 'admin-ajax.php' ),
