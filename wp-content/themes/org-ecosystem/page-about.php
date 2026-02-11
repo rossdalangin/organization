@@ -8,21 +8,50 @@
 get_header();
 ?>
 
-<main id="primary" class="site-main container py-5">
-	<header class="page-header text-center mb-5">
-		<h1 class="display-4 fw-bold"><?php the_title(); ?></h1>
-		<hr class="mx-auto" style="width: 50px; height: 3px; background-color: var(--bs-primary);">
-	</header>
+<main id="primary" class="site-main py-5">
+	<div class="container">
+		<header class="page-header text-center mb-5">
+			<h1 class="display-4 fw-bold"><?php the_title(); ?></h1>
+			<hr class="mx-auto" style="width: 50px; height: 3px; background-color: var(--bs-primary);">
+		</header>
 
-	<div class="row">
-		<div class="col-lg-10 mx-auto">
-			<div class="page-content bg-white p-5 shadow-sm border rounded">
-				<?php
-				while ( have_posts() ) :
-					the_post();
-					the_content();
-				endwhile;
-				?>
+		<div class="row g-5 align-items-center mb-5">
+			<div class="col-lg-6">
+				<div class="page-content lead">
+					<?php
+					while ( have_posts() ) :
+						the_post();
+						the_content();
+					endwhile;
+					?>
+				</div>
+			</div>
+			<div class="col-lg-6">
+				<img src="<?php echo ORG_ECOSYSTEM_URI . '/assets/images/about-placeholder.png'; ?>" class="img-fluid rounded shadow" alt="About Us">
+			</div>
+		</div>
+
+		<div class="row g-4 mt-5">
+			<div class="col-md-4">
+				<div class="card border-0 shadow-sm p-4 text-center">
+					<div class="h1 text-primary mb-3"><i class="bi bi-people"></i></div>
+					<h4 class="fw-bold">Who We Are</h4>
+					<p class="text-muted">A dedicated group of professionals working together to create a thriving community ecosystem.</p>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card border-0 shadow-sm p-4 text-center">
+					<div class="h1 text-primary mb-3"><i class="bi bi-shield-check"></i></div>
+					<h4 class="fw-bold">Our Values</h4>
+					<p class="text-muted">Integrity, collaboration, and innovation are at the heart of everything we do for our members.</p>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card border-0 shadow-sm p-4 text-center">
+					<div class="h1 text-primary mb-3"><i class="bi bi-graph-up-arrow"></i></div>
+					<h4 class="fw-bold">Our Impact</h4>
+					<p class="text-muted">Supporting hundreds of businesses and thousands of professionals in reaching their full potential.</p>
+				</div>
 			</div>
 		</div>
 	</div>

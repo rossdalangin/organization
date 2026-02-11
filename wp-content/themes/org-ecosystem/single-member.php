@@ -159,6 +159,35 @@ while ( have_posts() ) :
 						<?php endif; ?>
 
 						<hr>
+						<div class="member-products mt-4">
+							<h5 class="fw-bold mb-4"><?php _e( 'Products & Services', 'org-ecosystem' ); ?></h5>
+							<?php
+							$products = new WP_Query( array(
+								'post_type' => 'product',
+								'author'    => get_the_author_meta('ID'),
+								'posts_per_page' => 6
+							) );
+
+							if ( $products->have_posts() ) : ?>
+								<div class="row g-3">
+									<?php while ( $products->have_posts() ) : $products->the_post(); ?>
+										<div class="col-md-6">
+											<div class="card h-100 shadow-sm border">
+												<div class="card-body p-3">
+													<h6 class="fw-bold mb-1"><?php the_title(); ?></h6>
+													<p class="text-muted small mb-2"><?php echo wp_trim_words( get_the_excerpt(), 10 ); ?></p>
+													<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-primary"><?php _e( 'View Details', 'org-ecosystem' ); ?></a>
+												</div>
+											</div>
+										</div>
+									<?php endwhile; wp_reset_postdata(); ?>
+								</div>
+							<?php else : ?>
+								<p class="text-muted small"><?php _e( 'No products listed yet.', 'org-ecosystem' ); ?></p>
+							<?php endif; ?>
+						</div>
+
+						<hr>
 						<div class="member-contact-form mt-4">
 							<h5 class="fw-bold mb-3"><?php _e( 'Send a Message', 'org-ecosystem' ); ?></h5>
 							<?php org_ecosystem_inquiry_form( get_the_ID() ); ?>
