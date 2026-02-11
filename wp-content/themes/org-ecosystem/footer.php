@@ -5,10 +5,21 @@
 					<div class="footer-widget">
 						<h5 class="widget-title mb-3"><?php bloginfo( 'name' ); ?></h5>
 						<p><?php bloginfo( 'description' ); ?></p>
-						<div class="social-links mt-3">
+						<div class="social-links mt-3 d-flex gap-3">
 							<?php
-							// Social links would be pulled from Customizer
-							?>
+							$socials = array(
+								'facebook'  => 'facebook',
+								'twitter'   => 'twitter',
+								'linkedin'  => 'linkedin',
+								'instagram' => 'instagram',
+								'youtube'   => 'youtube',
+							);
+							foreach ( $socials as $key => $icon ) :
+								$url = get_theme_mod( 'org_social_' . $key );
+								if ( $url ) : ?>
+									<a href="<?php echo esc_url( $url ); ?>" class="text-white h5" target="_blank"><i class="bi bi-<?php echo $icon; ?>"></i></a>
+								<?php endif;
+							endforeach; ?>
 						</div>
 					</div>
 				</div>

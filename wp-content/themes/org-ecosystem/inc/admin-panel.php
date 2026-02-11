@@ -342,6 +342,11 @@ function org_ecosystem_roles_page() {
 function org_ecosystem_reports_page() {
 	$active_members = count( get_posts( array( 'post_type' => 'member', 'post_status' => 'publish', 'posts_per_page' => -1 ) ) );
 	$pending_members = count( get_posts( array( 'post_type' => 'member', 'post_status' => 'pending', 'posts_per_page' => -1 ) ) );
+	$expired_members = count( get_posts( array(
+		'post_type' => 'member',
+		'posts_per_page' => -1,
+		'meta_query' => array( array( 'key' => '_member_status', 'value' => 'expired' ) )
+	) ) );
 	$total_businesses = count( get_posts( array( 'post_type' => 'business', 'posts_per_page' => -1 ) ) );
 	$total_products = count( get_posts( array( 'post_type' => 'product', 'posts_per_page' => -1 ) ) );
 	?>
@@ -353,7 +358,10 @@ function org_ecosystem_reports_page() {
 			<div class="card" style="flex: 1; min-width: 200px; background: #fff; padding: 20px; border-left: 4px solid #0d6efd; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
 				<h3 style="margin-top: 0;"><?php _e( 'Active Members', 'org-ecosystem' ); ?></h3>
 				<p style="font-size: 32px; font-weight: bold; margin: 10px 0;"><?php echo esc_html( $active_members ); ?></p>
-				<span class="small text-muted"><?php echo esc_html( $pending_members ); ?> <?php _e( 'pending approval', 'org-ecosystem' ); ?></span>
+				<div class="d-flex justify-content-between">
+					<span class="small text-warning"><?php echo esc_html( $pending_members ); ?> <?php _e( 'pending', 'org-ecosystem' ); ?></span>
+					<span class="small text-danger"><?php echo esc_html( $expired_members ); ?> <?php _e( 'expired', 'org-ecosystem' ); ?></span>
+				</div>
 			</div>
 			<div class="card" style="flex: 1; min-width: 200px; background: #fff; padding: 20px; border-left: 4px solid #198754; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
 				<h3 style="margin-top: 0;"><?php _e( 'Businesses', 'org-ecosystem' ); ?></h3>

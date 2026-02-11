@@ -69,6 +69,32 @@ function org_ecosystem_customize_register( $wp_customize ) {
 		'label' => __( 'Email', 'org-ecosystem' ),
 		'section' => 'org_contact_info',
 	) );
+
+	// Social Links Section
+	$wp_customize->add_section( 'org_social_links', array(
+		'title' => __( 'Social Media Links', 'org-ecosystem' ),
+		'priority' => 60,
+	) );
+
+	$socials = array(
+		'facebook'  => 'Facebook',
+		'twitter'   => 'Twitter/X',
+		'linkedin'  => 'LinkedIn',
+		'instagram' => 'Instagram',
+		'youtube'   => 'YouTube',
+	);
+
+	foreach ( $socials as $key => $label ) {
+		$wp_customize->add_setting( 'org_social_' . $key, array(
+			'default' => '',
+			'sanitize_callback' => 'esc_url_raw',
+		) );
+		$wp_customize->add_control( 'org_social_' . $key, array(
+			'label' => $label . ' URL',
+			'section' => 'org_social_links',
+			'type' => 'url',
+		) );
+	}
 }
 add_action( 'customize_register', 'org_ecosystem_customize_register' );
 
