@@ -71,6 +71,20 @@ add_action( 'admin_post_org_submit_contact', 'org_ecosystem_handle_contact_form'
 add_action( 'admin_post_nopriv_org_submit_contact', 'org_ecosystem_handle_contact_form' );
 
 /**
+ * Handle Newsletter Signup
+ */
+function org_ecosystem_handle_newsletter() {
+	if ( isset( $_POST['newsletter_email'] ) ) {
+		$email = sanitize_email( $_POST['newsletter_email'] );
+		// Mock signup logic
+		wp_redirect( add_query_arg( 'subscribed', 'true', home_url( '/' ) ) );
+		exit;
+	}
+}
+add_action( 'admin_post_org_newsletter', 'org_ecosystem_handle_newsletter' );
+add_action( 'admin_post_nopriv_org_newsletter', 'org_ecosystem_handle_newsletter' );
+
+/**
  * Handle Archive Filtering
  */
 function org_ecosystem_archive_filters( $query ) {

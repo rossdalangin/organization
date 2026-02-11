@@ -99,9 +99,61 @@ add_action( 'admin_menu', 'org_ecosystem_admin_menu' );
 function org_ecosystem_settings_page() {
 	?>
 	<div class="wrap">
-		<h1><?php _e( 'Organization Settings', 'org-ecosystem' ); ?></h1>
-		<div class="notice notice-info">
-			<p><?php _e( 'Configure your organization profile and global preferences here.', 'org-ecosystem' ); ?></p>
+		<h1 class="wp-heading-inline"><?php _e( 'Organization Settings', 'org-ecosystem' ); ?></h1>
+		<hr class="wp-header-end">
+
+		<div class="welcome-panel" style="padding: 20px; margin-top: 20px;">
+			<div class="welcome-panel-content">
+				<h2><?php _e( 'Welcome to Your Digital Ecosystem', 'org-ecosystem' ); ?></h2>
+				<p class="about-description"><?php _e( 'This theme is designed to empower your organization. Follow the steps below to get started.', 'org-ecosystem' ); ?></p>
+				<div class="welcome-panel-column-container">
+					<div class="welcome-panel-column">
+						<h3><?php _e( '1. Brand Your Site', 'org-ecosystem' ); ?></h3>
+						<p><?php _e( 'Upload your logo and set your brand colors in the Customizer.', 'org-ecosystem' ); ?></p>
+						<a class="button button-primary button-hero" href="<?php echo admin_url( 'customize.php' ); ?>"><?php _e( 'Open Customizer', 'org-ecosystem' ); ?></a>
+					</div>
+					<div class="welcome-panel-column">
+						<h3><?php _e( '2. Setup Membership', 'org-ecosystem' ); ?></h3>
+						<p><?php _e( 'Configure your plans, prices, and approval workflows.', 'org-ecosystem' ); ?></p>
+						<a class="button button-secondary" href="<?php echo admin_url( 'admin.php?page=org-membership' ); ?>"><?php _e( 'Manage Plans', 'org-ecosystem' ); ?></a>
+					</div>
+					<div class="welcome-panel-column welcome-panel-last-column">
+						<h3><?php _e( '3. Populate Content', 'org-ecosystem' ); ?></h3>
+						<p><?php _e( 'Add members, businesses, and products to your directory.', 'org-ecosystem' ); ?></p>
+						<a class="button button-secondary" href="<?php echo admin_url( 'edit.php?post_type=member' ); ?>"><?php _e( 'Add Members', 'org-ecosystem' ); ?></a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card p-4" style="background: #fff; margin-top: 20px; border: 1px solid #ccd0d4;">
+			<h2><span class="dashicons dashicons-editor-help"></span> <?php _e( 'Admin Field Explanations', 'org-ecosystem' ); ?></h2>
+			<table class="widefat striped">
+				<thead>
+					<tr>
+						<th><?php _e( 'Section', 'org-ecosystem' ); ?></th>
+						<th><?php _e( 'Explanation', 'org-ecosystem' ); ?></th>
+						<th><?php _e( 'Usage Tip', 'org-ecosystem' ); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>Membership Levels</strong></td>
+						<td>Defines the tiers of membership (Free, Basic, Premium).</td>
+						<td><em>Tip: Use Premium for your most loyal members to grant exclusive resource access.</em></td>
+					</tr>
+					<tr>
+						<td><strong>Stripe API Key</strong></td>
+						<td>The secret key from your Stripe dashboard used to process credit cards.</td>
+						<td><em>Example: Enter ₱1,500 for Annual Membership Fee in Stripe dashboard.</em></td>
+					</tr>
+					<tr>
+						<td><strong>Industry Taxonomy</strong></td>
+						<td>Categories used to group businesses and members (e.g., Tech, Health).</td>
+						<td><em>Tip: Be descriptive to help visitors find the right businesses in the directory.</em></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 
 		<?php if ( isset( $_GET['import'] ) ) : ?>
@@ -445,38 +497,43 @@ function org_ecosystem_payments_page() {
 	?>
 	<div class="wrap">
 		<h1><?php _e( 'Payment Settings', 'org-ecosystem' ); ?></h1>
+		<p class="description"><?php _e( 'Configure how your organization collects membership fees and donations.', 'org-ecosystem' ); ?></p>
+
 		<form method="post" action="">
 			<?php wp_nonce_field( 'org_save_payments_action' ); ?>
 			<div class="card p-4 bg-white border mb-4 shadow-sm">
 				<h3>Stripe Gateway</h3>
+				<p class="description mb-3"><?php _e( 'Connect your site to Stripe for secure credit card processing.', 'org-ecosystem' ); ?></p>
 				<div class="mb-3">
-					<label><input type="checkbox" name="stripe_enabled" value="1" <?php checked( get_option( 'org_stripe_enabled' ), '1' ); ?>> Enable Stripe</label>
+					<label><input type="checkbox" name="stripe_enabled" value="1" <?php checked( get_option( 'org_stripe_enabled' ), '1' ); ?>> <strong>Enable Stripe</strong></label>
 				</div>
 				<div class="mb-3">
-					<label class="form-label d-block">API Secret Key</label>
-					<input type="password" name="stripe_api_key" class="widefat" value="<?php echo esc_attr( get_option( 'org_stripe_api_key' ) ); ?>">
-					<p class="description">Example: sk_test_...</p>
+					<label class="form-label d-block fw-bold">API Secret Key <span class="dashicons dashicons-editor-help" title="Enter your live or test secret key from your Stripe Dashboard (Developers > API Keys)."></span></label>
+					<input type="password" name="stripe_api_key" class="widefat" value="<?php echo esc_attr( get_option( 'org_stripe_api_key' ) ); ?>" placeholder="Example: sk_test_51Mz...">
+					<p class="description">Example: Enter your 32-character secret key.</p>
 				</div>
 			</div>
 
 			<div class="card p-4 bg-white border mb-4 shadow-sm">
 				<h3>PayPal</h3>
+				<p class="description mb-3"><?php _e( 'Accept payments via PayPal accounts and major credit cards.', 'org-ecosystem' ); ?></p>
 				<div class="mb-3">
-					<label class="form-label d-block">PayPal Email</label>
-					<input type="email" name="paypal_email" class="widefat" value="<?php echo esc_attr( get_option( 'org_paypal_email' ) ); ?>">
+					<label class="form-label d-block fw-bold">PayPal Email Address <span class="dashicons dashicons-editor-help" title="The email address associated with your PayPal Business account."></span></label>
+					<input type="email" name="paypal_email" class="widefat" value="<?php echo esc_attr( get_option( 'org_paypal_email' ) ); ?>" placeholder="Example: payments@your-org.com">
 				</div>
 			</div>
 
 			<div class="card p-4 bg-white border mb-4 shadow-sm">
 				<h3>Offline / Manual Payment</h3>
+				<p class="description mb-3"><?php _e( 'Provide instructions for bank transfers, checks, or cash payments.', 'org-ecosystem' ); ?></p>
 				<div class="mb-3">
-					<label class="form-label d-block">Payment Instructions</label>
-					<textarea name="offline_instructions" rows="4" class="widefat"><?php echo esc_textarea( get_option( 'org_offline_instructions', 'Please transfer ₱1,500 to our Bank Account: XYZ-123-456' ) ); ?></textarea>
+					<label class="form-label d-block fw-bold">Payment Instructions <span class="dashicons dashicons-editor-help" title="These instructions will be shown to members who choose the offline payment method."></span></label>
+					<textarea name="offline_instructions" rows="4" class="widefat" placeholder="Example: Please transfer ₱1,500 for Annual Membership Fee to Bank Name, Account: 123-456-789."><?php echo esc_textarea( get_option( 'org_offline_instructions', 'Please transfer ₱1,500 to our Bank Account: XYZ-123-456' ) ); ?></textarea>
 				</div>
 			</div>
 
 			<p class="submit">
-				<input type="submit" name="org_save_payments" class="button button-primary" value="Save Payment Settings">
+				<input type="submit" name="org_save_payments" class="button button-primary button-large" value="Save All Payment Settings">
 			</p>
 		</form>
 	</div>
@@ -561,6 +618,20 @@ function org_ecosystem_reports_page() {
 	) ) );
 	$total_businesses = count( get_posts( array( 'post_type' => 'business', 'posts_per_page' => -1 ) ) );
 	$total_products = count( get_posts( array( 'post_type' => 'product', 'posts_per_page' => -1 ) ) );
+	$total_events = count( get_posts( array( 'post_type' => 'event', 'posts_per_page' => -1 ) ) );
+
+	// Calculate Total Revenue
+	$total_revenue = 0;
+	$all_users = get_users( array( 'fields' => 'ID' ) );
+	foreach ( $all_users as $uid ) {
+		$history = get_user_meta( $uid, '_payment_history', true );
+		if ( is_array( $history ) ) {
+			foreach ( $history as $item ) {
+				$total_revenue += floatval( $item['amount'] );
+			}
+		}
+	}
+
 	?>
 	<div class="wrap">
 		<h1><?php _e( 'Reports & Analytics', 'org-ecosystem' ); ?></h1>
@@ -582,25 +653,76 @@ function org_ecosystem_reports_page() {
 			</div>
 			<div class="card" style="flex: 1; min-width: 200px; background: #fff; padding: 20px; border-left: 4px solid #ffc107; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
 				<h3 style="margin-top: 0;"><?php _e( 'Total Revenue', 'org-ecosystem' ); ?></h3>
-				<p style="font-size: 32px; font-weight: bold; margin: 10px 0;">₱ 0.00</p>
+				<p style="font-size: 32px; font-weight: bold; margin: 10px 0;">₱ <?php echo number_format( $total_revenue, 2 ); ?></p>
 				<span class="small text-muted"><?php _e( 'Lifetime subscription revenue', 'org-ecosystem' ); ?></span>
 			</div>
 		</div>
 
 		<div class="mt-5" style="margin-top: 40px; background: #fff; padding: 20px; border: 1px solid #ccd0d4;">
-			<h3><?php _e( 'Recent Activity', 'org-ecosystem' ); ?></h3>
+			<h3><?php _e( 'Event Registrations', 'org-ecosystem' ); ?></h3>
 			<table class="wp-list-table widefat fixed striped">
 				<thead>
 					<tr>
-						<th><?php _e( 'User', 'org-ecosystem' ); ?></th>
-						<th><?php _e( 'Action', 'org-ecosystem' ); ?></th>
-						<th><?php _e( 'Date', 'org-ecosystem' ); ?></th>
+						<th>Event Name</th>
+						<th>Date</th>
+						<th>Registrations</th>
+						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
+					<?php
+					$events_query = new WP_Query( array( 'post_type' => 'event', 'posts_per_page' => 5 ) );
+					if ( $events_query->have_posts() ) :
+						while ( $events_query->have_posts() ) : $events_query->the_post();
+							$attendees = get_post_meta( get_the_ID(), '_event_attendees', true ) ?: array();
+							?>
+							<tr>
+								<td><strong><?php the_title(); ?></strong></td>
+								<td><?php echo esc_html( get_post_meta( get_the_ID(), '_event_date', true ) ); ?></td>
+								<td><?php echo count( $attendees ); ?></td>
+								<td><a href="<?php echo admin_url( 'post.php?post=' . get_the_ID() . '&action=edit' ); ?>" class="button">View Details</a></td>
+							</tr>
+						<?php endwhile; wp_reset_postdata();
+					else : ?>
+						<tr><td colspan="4"><?php _e( 'No events found.', 'org-ecosystem' ); ?></td></tr>
+					<?php endif; ?>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="mt-5" style="margin-top: 40px; background: #fff; padding: 20px; border: 1px solid #ccd0d4;">
+			<h3><?php _e( 'Top Performing Members', 'org-ecosystem' ); ?></h3>
+			<table class="wp-list-table widefat fixed striped">
+				<thead>
 					<tr>
-						<td colspan="3" class="text-center"><?php _e( 'No recent activity recorded.', 'org-ecosystem' ); ?></td>
+						<th>Member</th>
+						<th>Profile Views</th>
+						<th>Inquiries</th>
+						<th>Product Clicks</th>
 					</tr>
+				</thead>
+				<tbody>
+					<?php
+					$top_members = new WP_Query( array(
+						'post_type' => 'member',
+						'posts_per_page' => 5,
+						'meta_key' => '_member_view_count',
+						'orderby' => 'meta_value_num',
+						'order' => 'DESC'
+					) );
+					if ( $top_members->have_posts() ) :
+						while ( $top_members->have_posts() ) : $top_members->the_post();
+							?>
+							<tr>
+								<td><strong><?php the_title(); ?></strong></td>
+								<td><?php echo get_post_meta( get_the_ID(), '_member_view_count', true ) ?: 0; ?></td>
+								<td><?php echo get_post_meta( get_the_ID(), '_member_inquiry_count', true ) ?: 0; ?></td>
+								<td><?php echo get_post_meta( get_the_ID(), '_member_product_clicks', true ) ?: 0; ?></td>
+							</tr>
+						<?php endwhile; wp_reset_postdata();
+					else : ?>
+						<tr><td colspan="4"><?php _e( 'No data available.', 'org-ecosystem' ); ?></td></tr>
+					<?php endif; ?>
 				</tbody>
 			</table>
 		</div>

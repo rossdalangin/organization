@@ -89,15 +89,20 @@ get_header();
 			<div class="row justify-content-center">
 				<div class="col-md-8">
 					<h2 class="fw-bold mb-3"><?php _e( 'Stay in the Loop', 'org-ecosystem' ); ?></h2>
-					<p class="text-muted mb-4"><?php _e( 'Subscribe to our newsletter for the latest updates, event news, and member spotlights.', 'org-ecosystem' ); ?></p>
-					<form class="row g-2 justify-content-center">
-						<div class="col-md-8">
-							<input type="email" class="form-control form-control-lg" placeholder="<?php _e( 'Enter your email address', 'org-ecosystem' ); ?>" required>
-						</div>
-						<div class="col-md-auto">
-							<button type="submit" class="btn btn-primary btn-lg px-4 fw-bold"><?php _e( 'Subscribe', 'org-ecosystem' ); ?></button>
-						</div>
-					</form>
+					<?php if ( isset( $_GET['subscribed'] ) ) : ?>
+						<div class="alert alert-success"><?php _e( 'Thank you for subscribing!', 'org-ecosystem' ); ?></div>
+					<?php else : ?>
+						<p class="text-muted mb-4"><?php _e( 'Subscribe to our newsletter for the latest updates, event news, and member spotlights.', 'org-ecosystem' ); ?></p>
+						<form class="row g-2 justify-content-center" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+							<input type="hidden" name="action" value="org_newsletter">
+							<div class="col-md-8">
+								<input type="email" name="newsletter_email" class="form-control form-control-lg" placeholder="<?php _e( 'Enter your email address', 'org-ecosystem' ); ?>" required>
+							</div>
+							<div class="col-md-auto">
+								<button type="submit" class="btn btn-primary btn-lg px-4 fw-bold"><?php _e( 'Subscribe', 'org-ecosystem' ); ?></button>
+							</div>
+						</form>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

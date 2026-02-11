@@ -346,12 +346,12 @@ function org_ecosystem_get_membership_levels() {
 		),
 		'basic' => array(
 			'name' => 'Basic',
-			'price' => 1500,
+			'price' => get_theme_mod( 'basic_plan_price', '1500' ),
 			'duration' => 'annual',
 		),
 		'premium' => array(
 			'name' => 'Premium',
-			'price' => 5000,
+			'price' => get_theme_mod( 'premium_plan_price', '5000' ),
 			'duration' => 'annual',
 		),
 		'corporate' => array(

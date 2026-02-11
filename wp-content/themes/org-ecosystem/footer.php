@@ -44,9 +44,10 @@
 				<div class="col-md-3 mb-4">
 					<h5 class="widget-title mb-3"><?php esc_html_e( 'Newsletter', 'org-ecosystem' ); ?></h5>
 					<p><?php esc_html_e( 'Stay updated with our latest news and events.', 'org-ecosystem' ); ?></p>
-					<form class="newsletter-form mt-2">
+					<form class="newsletter-form mt-2" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+						<input type="hidden" name="action" value="org_newsletter">
 						<div class="input-group">
-							<input type="email" class="form-control" placeholder="<?php esc_attr_e( 'Your email', 'org-ecosystem' ); ?>" required>
+							<input type="email" name="newsletter_email" class="form-control" placeholder="<?php esc_attr_e( 'Your email', 'org-ecosystem' ); ?>" required>
 							<button class="btn btn-primary" type="submit"><?php esc_html_e( 'Join', 'org-ecosystem' ); ?></button>
 						</div>
 					</form>
