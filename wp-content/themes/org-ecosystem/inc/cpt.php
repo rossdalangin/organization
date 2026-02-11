@@ -144,5 +144,18 @@ function org_ecosystem_register_cpts() {
 		'menu_icon' => 'dashicons-heart',
 		'show_in_rest' => true,
 	) );
+
+	// Support Ticket CPT
+	register_post_type( 'support_ticket', array(
+		'labels' => array(
+			'name' => __( 'Support Tickets', 'org-ecosystem' ),
+			'singular_name' => __( 'Support Ticket', 'org-ecosystem' ),
+		),
+		'public' => false,
+		'show_ui' => true,
+		'supports' => array( 'title', 'editor', 'comments' ),
+		'menu_icon' => 'dashicons-sos',
+		'show_in_rest' => true,
+	) );
 }
 add_action( 'init', 'org_ecosystem_register_cpts' );

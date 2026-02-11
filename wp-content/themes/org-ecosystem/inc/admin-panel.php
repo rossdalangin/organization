@@ -49,10 +49,24 @@ function org_ecosystem_settings_page() {
 		<div class="notice notice-info">
 			<p><?php _e( 'Configure your organization profile and global preferences here.', 'org-ecosystem' ); ?></p>
 		</div>
+
+		<?php if ( isset( $_GET['import'] ) ) : ?>
+			<div class="updated"><p>Demo data imported successfully!</p></div>
+		<?php endif; ?>
+
+		<div class="card p-4" style="background: #fff; margin-top: 20px; border: 1px solid #ccd0d4;">
+			<h3>Demo Data Importer</h3>
+			<p>Click below to populate your theme with sample members, businesses, and events.</p>
+			<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
+				<input type="hidden" name="action" value="org_import_demo">
+				<button type="submit" class="button button-primary">Import Sample Data</button>
+			</form>
+		</div>
+
 		<form method="post" action="options.php">
 			<?php
 			// We would use settings API here
-			_e( 'Placeholder for general settings...', 'org-ecosystem' );
+			// _e( 'Placeholder for general settings...', 'org-ecosystem' );
 			?>
 		</form>
 	</div>
@@ -110,6 +124,42 @@ function org_ecosystem_membership_page() {
 /**
  * Reports Page Callback
  */
+/**
+ * Handle Demo Data Import
+ */
+function org_ecosystem_handle_demo_import() {
+	if ( ! current_user_can( 'manage_options' ) ) return;
+
+	// Create Sample Member
+	$member_id = wp_insert_post( array(
+		'post_title' => 'John Doe (Sample)',
+		'post_type'  => 'member',
+		'post_status'=> 'publish',
+	) );
+	update_post_meta( $member_id, '_member_business_name', 'Doe Enterprises' );
+	update_post_meta( $member_id, '_member_status', 'active' );
+	update_post_meta( $member_id, '_member_is_featured', '1' );
+
+	// Create Sample Business
+	$business_id = wp_insert_post( array(
+		'post_title' => 'Tech Innovations Inc.',
+		'post_type'  => 'business',
+		'post_status'=> 'publish',
+		'post_content' => 'Leading the way in sample data creation.'
+	) );
+
+	// Create Sample Event
+	wp_insert_post( array(
+		'post_title' => 'Annual Gala 2024',
+		'post_type'  => 'event',
+		'post_status'=> 'publish',
+	) );
+
+	wp_redirect( add_query_arg( array( 'import' => 'success' ), admin_url( 'admin.php?page=org-settings' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_import_demo', 'org_ecosystem_handle_demo_import' );
+
 function org_ecosystem_reports_page() {
 	?>
 	<div class="wrap">

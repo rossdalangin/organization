@@ -1,0 +1,8 @@
+/* Editor styles to match frontend */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #212529;
+}
+.wp-block-post-title {
+    font-weight: 700;
+}

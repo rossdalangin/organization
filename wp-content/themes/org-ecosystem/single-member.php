@@ -11,6 +11,7 @@ while ( have_posts() ) :
 	the_post();
 
 	$bio = get_post_meta( get_the_ID(), '_member_bio', true );
+	$cover_photo = get_post_meta( get_the_ID(), '_member_cover_photo', true );
 	$phone = get_post_meta( get_the_ID(), '_member_phone', true );
 	$email = get_post_meta( get_the_ID(), '_member_email', true );
 	$website = get_post_meta( get_the_ID(), '_member_website', true );
@@ -22,8 +23,11 @@ while ( have_posts() ) :
 	$is_verified = get_post_meta( get_the_ID(), '_member_is_verified', true );
 	?>
 
-	<article id="post-<?php the_ID(); ?>" <?php post_class( 'member-profile-single py-5' ); ?>>
-		<div class="container">
+	<article id="post-<?php the_ID(); ?>" <?php post_class( 'member-profile-single pb-5' ); ?>>
+		<?php if ( $cover_photo ) : ?>
+			<div class="member-cover-photo" style="height: 300px; background: url('<?php echo esc_url( $cover_photo ); ?>') no-repeat center center; background-size: cover;"></div>
+		<?php endif; ?>
+		<div class="container <?php echo $cover_photo ? 'mt-n5' : 'py-5'; ?>">
 			<div class="row">
 				<div class="col-md-4">
 					<div class="member-card shadow-sm border rounded p-4 text-center bg-white mb-4">
@@ -91,6 +95,46 @@ while ( have_posts() ) :
 								<?php the_terms( get_the_ID(), 'skill', '<div class="d-flex flex-wrap gap-2">', '', '</div>' ); ?>
 							</div>
 						</div>
+
+						<?php
+						$certs = get_post_meta( get_the_ID(), '_member_certifications', true );
+						if ( $certs ) : ?>
+							<hr>
+							<div class="member-certifications mt-4">
+								<h5 class="fw-bold"><?php _e( 'Certifications', 'org-ecosystem' ); ?></h5>
+								<p><?php echo nl2br( esc_html( $certs ) ); ?></p>
+							</div>
+						<?php endif; ?>
+
+						<?php
+						$gallery = get_post_meta( get_the_ID(), '_member_gallery', true );
+						if ( $gallery ) :
+							$images = explode( ',', $gallery );
+							?>
+							<hr>
+							<div class="member-gallery mt-4">
+								<h5 class="fw-bold mb-3"><?php _e( 'Gallery', 'org-ecosystem' ); ?></h5>
+								<div class="row g-2">
+									<?php foreach ( $images as $img_url ) : ?>
+										<div class="col-4">
+											<img src="<?php echo esc_url( trim( $img_url ) ); ?>" class="img-fluid rounded shadow-sm">
+										</div>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						<?php endif; ?>
+
+						<?php
+						$map = get_post_meta( get_the_ID(), '_member_map_location', true );
+						if ( $map ) : ?>
+							<hr>
+							<div class="member-map mt-4">
+								<h5 class="fw-bold mb-3"><?php _e( 'Location', 'org-ecosystem' ); ?></h5>
+								<div class="ratio ratio-16x9">
+									<iframe src="<?php echo esc_url( $map ); ?>" allowfullscreen="" loading="lazy"></iframe>
+								</div>
+							</div>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>

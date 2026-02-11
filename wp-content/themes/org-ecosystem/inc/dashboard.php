@@ -32,6 +32,35 @@ function org_ecosystem_handle_profile_update() {
 add_action( 'admin_post_org_update_profile', 'org_ecosystem_handle_profile_update' );
 
 /**
+ * Handle Ticket Submission
+ */
+function org_ecosystem_handle_ticket_submission() {
+	if ( ! isset( $_POST['org_ticket_nonce'] ) || ! wp_verify_nonce( $_POST['org_ticket_nonce'], 'org_submit_ticket' ) ) {
+		return;
+	}
+
+	$user_id = get_current_user_id();
+	$subject = sanitize_text_field( $_POST['ticket_subject'] );
+	$message = sanitize_textarea_field( $_POST['ticket_message'] );
+
+	$ticket_id = wp_insert_post( array(
+		'post_title'   => $subject,
+		'post_content' => $message,
+		'post_type'    => 'support_ticket',
+		'post_status'  => 'publish',
+		'post_author'  => $user_id,
+	) );
+
+	if ( $ticket_id ) {
+		update_post_meta( $ticket_id, '_ticket_status', 'open' );
+	}
+
+	wp_redirect( add_query_arg( array( 'action' => 'support', 'submitted' => 'true' ), home_url( '/dashboard' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_submit_ticket', 'org_ecosystem_handle_ticket_submission' );
+
+/**
  * Get Member Stats
  */
 function org_ecosystem_get_member_stats( $member_id ) {

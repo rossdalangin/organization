@@ -72,6 +72,14 @@ function org_ecosystem_member_profile_callback( $post ) {
 			<td><input type="url" id="member_map_location" name="member_map_location" value="<?php echo esc_attr( get_post_meta( $post->ID, '_member_map_location', true ) ); ?>" style="width:100%"></td>
 		</tr>
 		<tr>
+			<th><label for="member_certifications"><?php _e( 'Certifications', 'org-ecosystem' ); ?></label></th>
+			<td><textarea id="member_certifications" name="member_certifications" rows="3" style="width:100%"><?php echo esc_textarea( get_post_meta( $post->ID, '_member_certifications', true ) ); ?></textarea></td>
+		</tr>
+		<tr>
+			<th><label for="member_gallery"><?php _e( 'Gallery Images (Comma separated URLs)', 'org-ecosystem' ); ?></label></th>
+			<td><textarea id="member_gallery" name="member_gallery" rows="3" style="width:100%"><?php echo esc_textarea( get_post_meta( $post->ID, '_member_gallery', true ) ); ?></textarea></td>
+		</tr>
+		<tr>
 			<th><label><?php _e( 'Social Media', 'org-ecosystem' ); ?></label></th>
 			<td>
 				<input type="url" name="member_facebook" placeholder="Facebook URL" value="<?php echo esc_attr( $facebook ); ?>" style="width:100%; margin-bottom: 5px;">
@@ -132,6 +140,9 @@ function org_ecosystem_save_member_meta( $post_id ) {
 		'member_website' => '_member_website',
 		'member_business_name' => '_member_business_name',
 		'member_map_location' => '_member_map_location',
+		'member_certifications' => '_member_certifications',
+		'member_gallery' => '_member_gallery',
+		'member_files' => '_member_files',
 		'member_facebook' => '_member_facebook',
 		'member_linkedin' => '_member_linkedin',
 		'member_twitter' => '_member_twitter',
@@ -330,3 +341,78 @@ function org_ecosystem_process_payment( $user_id, $level, $gateway ) {
 
 	return false;
 }
+
+/**
+ * Membership Automation - Daily Expiration Check
+ */
+function org_ecosystem_membership_automation_init() {
+	if ( ! wp_next_scheduled( 'org_ecosystem_daily_expiration_check' ) ) {
+		wp_schedule_event( time(), 'daily', 'org_ecosystem_daily_expiration_check' );
+	}
+}
+add_action( 'wp', 'org_ecosystem_membership_automation_init' );
+
+/**
+ * Generate Invoice Data
+ */
+function org_ecosystem_generate_invoice( $user_id, $txn_id ) {
+	$user = get_userdata( $user_id );
+	$level = get_user_meta( $user_id, '_membership_level', true );
+	$levels = org_ecosystem_get_membership_levels();
+
+	if ( ! isset( $levels[$level] ) ) return false;
+
+	return array(
+		'invoice_no' => 'INV-' . strtoupper( substr( md5( $txn_id ), 0, 8 ) ),
+		'date'       => date( 'M d, Y' ),
+		'user'       => $user->display_name,
+		'email'      => $user->user_email,
+		'plan'       => $levels[$level]['name'],
+		'amount'     => $levels[$level]['price'],
+		'currency'   => 'PHP',
+	);
+}
+
+function org_ecosystem_check_expirations() {
+	$today = date( 'Y-m-d' );
+	$reminder_date = date( 'Y-m-d', strtotime( '+7 days' ) );
+
+	$members = new WP_Query( array(
+		'post_type' => 'member',
+		'posts_per_page' => -1,
+		'meta_query' => array(
+			'relation' => 'OR',
+			array(
+				'key' => '_member_renewal_date',
+				'value' => $today,
+				'compare' => '<=',
+			),
+			array(
+				'key' => '_member_renewal_date',
+				'value' => $reminder_date,
+				'compare' => '=',
+			),
+		),
+	) );
+
+	if ( $members->have_posts() ) {
+		while ( $members->have_posts() ) {
+			$members->the_post();
+			$member_id = get_the_ID();
+			$renewal_date = get_post_meta( $member_id, '_member_renewal_date', true );
+			$user_id = get_post_field( 'post_author', $member_id );
+			$user_email = get_the_author_meta( 'user_email', $user_id );
+
+			if ( $renewal_date <= $today && $renewal_date !== '0000-00-00' ) {
+				// Expired
+				update_post_meta( $member_id, '_member_status', 'expired' );
+				// wp_mail( $user_email, 'Membership Expired', 'Your membership has expired. Please renew.' );
+			} elseif ( $renewal_date === $reminder_date ) {
+				// Reminder
+				// wp_mail( $user_email, 'Membership Renewal Reminder', 'Your membership will expire in 7 days.' );
+			}
+		}
+		wp_reset_postdata();
+	}
+}
+add_action( 'org_ecosystem_daily_expiration_check', 'org_ecosystem_check_expirations' );

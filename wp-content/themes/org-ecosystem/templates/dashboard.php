@@ -36,6 +36,7 @@ $status = get_post_meta( $member_id, '_member_status', true );
 							<a href="?action=my-products" class="list-group-item list-group-item-action"><i class="bi bi-box-seam me-2"></i> My Products</a>
 							<a href="?action=billing" class="list-group-item list-group-item-action"><i class="bi bi-credit-card me-2"></i> Billing & Renewal</a>
 							<a href="?action=resources" class="list-group-item list-group-item-action"><i class="bi bi-download me-2"></i> Exclusive Resources</a>
+							<a href="?action=support" class="list-group-item list-group-item-action"><i class="bi bi-sos me-2"></i> Support & Messaging</a>
 							<a href="<?php echo wp_logout_url( home_url() ); ?>" class="list-group-item list-group-item-action text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
 						</div>
 					</div>
@@ -60,6 +61,9 @@ $status = get_post_meta( $member_id, '_member_status', true );
 							break;
 						case 'resources':
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/resources.php';
+							break;
+						case 'support':
+							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/support.php';
 							break;
 						default:
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/overview.php';
