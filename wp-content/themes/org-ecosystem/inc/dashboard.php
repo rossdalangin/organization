@@ -142,6 +142,73 @@ add_action( 'admin_post_org_job_apply', 'org_ecosystem_handle_job_application' )
 add_action( 'admin_post_nopriv_org_job_apply', 'org_ecosystem_handle_job_application' );
 
 /**
+ * Handle Product Save
+ */
+function org_ecosystem_handle_product_save() {
+	if ( ! isset( $_POST['org_product_nonce'] ) || ! wp_verify_nonce( $_POST['org_product_nonce'], 'org_save_product_action' ) ) {
+		return;
+	}
+
+	$user_id = get_current_user_id();
+	$product_id = isset( $_POST['product_id'] ) ? intval( $_POST['product_id'] ) : 0;
+	$name = sanitize_text_field( $_POST['product_name'] );
+	$description = sanitize_textarea_field( $_POST['product_description'] );
+	$price = sanitize_text_field( $_POST['product_price'] );
+
+	if ( $product_id ) {
+		// Update existing
+		if ( (int) get_post_field( 'post_author', $product_id ) === (int) $user_id ) {
+			wp_update_post( array(
+				'ID'           => $product_id,
+				'post_title'   => $name,
+				'post_content' => $description,
+			) );
+		}
+	} else {
+		// Create new
+		$product_id = wp_insert_post( array(
+			'post_title'   => $name,
+			'post_content' => $description,
+			'post_type'    => 'product',
+			'post_status'  => 'publish',
+			'post_author'  => $user_id,
+		) );
+	}
+
+	if ( $product_id ) {
+		update_post_meta( $product_id, '_product_price', $price );
+		// Link to business if user has one
+		$member_id = get_user_meta( $user_id, '_member_profile_id', true );
+		if ( $member_id ) {
+			update_post_meta( $product_id, '_product_business_id', $member_id );
+		}
+	}
+
+	wp_redirect( add_query_arg( array( 'action' => 'my-products', 'saved' => 'true' ), home_url( '/dashboard' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_save_product', 'org_ecosystem_handle_product_save' );
+
+/**
+ * Handle Product Delete
+ */
+function org_ecosystem_handle_product_delete() {
+	$product_id = isset( $_GET['product_id'] ) ? intval( $_GET['product_id'] ) : 0;
+	if ( ! $product_id ) return;
+
+	check_admin_referer( 'org_delete_product_action' );
+
+	$user_id = get_current_user_id();
+	if ( (int) get_post_field( 'post_author', $product_id ) === (int) $user_id ) {
+		wp_delete_post( $product_id );
+	}
+
+	wp_redirect( add_query_arg( array( 'action' => 'my-products', 'deleted' => 'true' ), home_url( '/dashboard' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_delete_product', 'org_ecosystem_handle_product_delete' );
+
+/**
  * Get Member Stats
  */
 function org_ecosystem_get_member_stats( $member_id ) {

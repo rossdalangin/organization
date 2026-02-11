@@ -28,6 +28,7 @@ while ( have_posts() ) :
 			<div class="member-cover-photo" style="height: 300px; background: url('<?php echo esc_url( $cover_photo ); ?>') no-repeat center center; background-size: cover;"></div>
 		<?php endif; ?>
 		<div class="container <?php echo $cover_photo ? 'mt-n5' : 'py-5'; ?>">
+			<?php org_ecosystem_breadcrumbs(); ?>
 			<div class="row">
 				<div class="col-md-4">
 					<div class="member-card shadow-sm border rounded p-4 text-center bg-white mb-4">

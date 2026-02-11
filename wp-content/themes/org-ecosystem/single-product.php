@@ -13,6 +13,7 @@ while ( have_posts() ) :
 
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'product-single py-5' ); ?>>
 		<div class="container">
+			<?php org_ecosystem_breadcrumbs(); ?>
 			<div class="row">
 				<div class="col-md-6 mb-4">
 					<?php if ( has_post_thumbnail() ) : ?>
@@ -24,12 +25,6 @@ while ( have_posts() ) :
 					<?php endif; ?>
 				</div>
 				<div class="col-md-6">
-					<nav aria-label="breadcrumb">
-						<ol class="breadcrumb">
-							<li class="breadcrumb-item"><a href="<?php echo get_post_type_archive_link( 'product' ); ?>"><?php _e( 'Products', 'org-ecosystem' ); ?></a></li>
-							<li class="breadcrumb-item active" aria-current="page"><?php the_title(); ?></li>
-						</ol>
-					</nav>
 					<h1 class="display-5 fw-bold mb-3"><?php the_title(); ?></h1>
 					<?php the_terms( get_the_ID(), 'product_cat', '<div class="mb-4">', ' ', '</div>' ); ?>
 

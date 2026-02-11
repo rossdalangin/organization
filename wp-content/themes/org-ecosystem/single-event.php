@@ -16,6 +16,7 @@ while ( have_posts() ) :
 
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'event-single py-5' ); ?>>
 		<div class="container">
+			<?php org_ecosystem_breadcrumbs(); ?>
 			<div class="row">
 				<div class="col-lg-8">
 					<div class="event-featured-image mb-4">
@@ -24,6 +25,27 @@ while ( have_posts() ) :
 					<h1 class="display-4 fw-bold mb-4"><?php the_title(); ?></h1>
 					<div class="event-content bg-white p-4 shadow-sm border rounded mb-4">
 						<?php the_content(); ?>
+					</div>
+
+					<div class="related-events mt-5">
+						<h3 class="fw-bold mb-4"><?php _e( 'Other Events', 'org-ecosystem' ); ?></h3>
+						<div class="row g-4">
+							<?php
+							$related = new WP_Query( array( 'post_type' => 'event', 'posts_per_page' => 2, 'post__not_in' => array( get_the_ID() ) ) );
+							while ( $related->have_posts() ) : $related->the_post();
+								?>
+								<div class="col-md-6">
+									<div class="card h-100 border-0 shadow-sm">
+										<div class="card-body">
+											<h5 class="fw-bold mb-2"><?php the_title(); ?></h5>
+											<a href="<?php the_permalink(); ?>" class="text-decoration-none small"><?php _e( 'View Event', 'org-ecosystem' ); ?></a>
+										</div>
+									</div>
+								</div>
+								<?php
+							endwhile; wp_reset_postdata();
+							?>
+						</div>
 					</div>
 				</div>
 				<div class="col-lg-4">

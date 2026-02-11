@@ -46,6 +46,7 @@ function org_ecosystem_directory_filter() {
 	$query = new WP_Query( $args );
 
 	if ( $query->have_posts() ) :
+		echo '<div class="row g-4">';
 		while ( $query->have_posts() ) : $query->the_post();
 			?>
 			<div class="col-md-6 col-xl-4">
@@ -71,6 +72,18 @@ function org_ecosystem_directory_filter() {
 			</div>
 			<?php
 		endwhile;
+		echo '</div>';
+
+		// Return Pagination
+		echo '<div class="pagination-area mt-5">';
+		echo paginate_links( array(
+			'total'   => $query->max_num_pages,
+			'current' => max( 1, get_query_var( 'paged' ) ),
+			'format'  => '?paged=%#%',
+			'type'    => 'list',
+		) );
+		echo '</div>';
+
 		wp_reset_postdata();
 	else :
 		echo '<div class="col-12"><p class="text-center py-5">' . __( 'No members found matching your criteria.', 'org-ecosystem' ) . '</p></div>';

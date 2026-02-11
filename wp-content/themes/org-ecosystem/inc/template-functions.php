@@ -113,3 +113,30 @@ function org_ecosystem_filter_nav_menu( $items ) {
 	return $items;
 }
 add_filter( 'wp_nav_menu_objects', 'org_ecosystem_filter_nav_menu' );
+
+/**
+ * Output Breadcrumbs
+ */
+function org_ecosystem_breadcrumbs() {
+	if ( is_front_page() ) return;
+
+	echo '<nav aria-label="breadcrumb" class="mb-4">';
+	echo '<ol class="breadcrumb bg-light p-3 rounded shadow-sm">';
+	echo '<li class="breadcrumb-item"><a href="' . esc_url( home_url( '/' ) ) . '" class="text-decoration-none text-primary"><i class="bi bi-house-door me-1"></i> ' . __( 'Home', 'org-ecosystem' ) . '</a></li>';
+
+	if ( is_archive() ) {
+		echo '<li class="breadcrumb-item active" aria-current="page">' . post_type_archive_title( '', false ) . '</li>';
+	} elseif ( is_singular() ) {
+		$post_type = get_post_type();
+		$obj = get_post_type_object( $post_type );
+		if ( $obj && $obj->has_archive ) {
+			echo '<li class="breadcrumb-item"><a href="' . get_post_type_archive_link( $post_type ) . '" class="text-decoration-none text-primary">' . $obj->labels->name . '</a></li>';
+		}
+		echo '<li class="breadcrumb-item active" aria-current="page">' . get_the_title() . '</li>';
+	} elseif ( is_search() ) {
+		echo '<li class="breadcrumb-item active" aria-current="page">' . __( 'Search Results', 'org-ecosystem' ) . '</li>';
+	}
+
+	echo '</ol>';
+	echo '</nav>';
+}

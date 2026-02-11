@@ -13,6 +13,7 @@ while ( have_posts() ) :
 
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'business-single py-5' ); ?>>
 		<div class="container">
+			<?php org_ecosystem_breadcrumbs(); ?>
 			<header class="business-header mb-5 text-center">
 				<div class="business-logo mb-4">
 					<?php if ( has_post_thumbnail() ) : ?>

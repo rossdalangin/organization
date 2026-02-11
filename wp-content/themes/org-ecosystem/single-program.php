@@ -13,6 +13,7 @@ while ( have_posts() ) :
 
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'program-single py-5' ); ?>>
 		<div class="container">
+			<?php org_ecosystem_breadcrumbs(); ?>
 			<div class="row align-items-center mb-5">
 				<div class="col-lg-6">
 					<h1 class="display-3 fw-bold mb-4"><?php the_title(); ?></h1>

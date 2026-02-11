@@ -13,6 +13,7 @@ while ( have_posts() ) :
 
 	<article id="post-<?php the_ID(); ?>" <?php post_class( 'job-single py-5' ); ?>>
 		<div class="container">
+			<?php org_ecosystem_breadcrumbs(); ?>
 			<div class="row">
 				<div class="col-lg-8 mx-auto">
 					<header class="job-header mb-5 text-center">
@@ -57,6 +58,27 @@ while ( have_posts() ) :
 								</div>
 							</div>
 						</form>
+					</div>
+
+					<div class="related-jobs mt-5">
+						<h4 class="fw-bold mb-4 text-center"><?php _e( 'More Job Opportunities', 'org-ecosystem' ); ?></h4>
+						<div class="row g-3">
+							<?php
+							$related_jobs = new WP_Query( array( 'post_type' => 'job', 'posts_per_page' => 3, 'post__not_in' => array( get_the_ID() ) ) );
+							while ( $related_jobs->have_posts() ) : $related_jobs->the_post();
+								?>
+								<div class="col-12">
+									<div class="card border-0 shadow-sm">
+										<div class="card-body d-flex justify-content-between align-items-center">
+											<h6 class="mb-0 fw-bold"><?php the_title(); ?></h6>
+											<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-outline-info"><?php _e( 'View Job', 'org-ecosystem' ); ?></a>
+										</div>
+									</div>
+								</div>
+								<?php
+							endwhile; wp_reset_postdata();
+							?>
+						</div>
 					</div>
 				</div>
 			</div>

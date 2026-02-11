@@ -69,8 +69,8 @@ get_header();
 		</div>
 
 		<!-- Members Grid -->
-		<div class="col-lg-9">
-			<div id="directory-results" class="row g-4">
+		<div class="col-lg-9" id="directory-results">
+			<div class="row g-4">
 				<?php
 				if ( have_posts() ) :
 					while ( have_posts() ) :

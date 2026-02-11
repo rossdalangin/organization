@@ -153,7 +153,8 @@ function org_ecosystem_save_member_meta( $post_id ) {
 
 	foreach ( $fields as $key => $meta_key ) {
 		if ( isset( $_POST[ $key ] ) ) {
-			update_post_meta( $post_id, $meta_key, sanitize_text_field( $_POST[ $key ] ) );
+			$sanitize_fn = ( $key === 'member_bio' ) ? 'sanitize_textarea_field' : 'sanitize_text_field';
+			update_post_meta( $post_id, $meta_key, $sanitize_fn( $_POST[ $key ] ) );
 		}
 	}
 
@@ -204,7 +205,7 @@ function org_ecosystem_handle_registration() {
 
 		// In a real scenario, send verification email here
 
-		wp_redirect( home_url( '/registration-success' ) );
+		wp_redirect( add_query_arg( 'registered', 'true', home_url( '/dashboard' ) ) );
 		exit;
 	}
 }

@@ -8,11 +8,50 @@ $products = new WP_Query( array(
 	'author' => $user_id,
 	'posts_per_page' => -1,
 ) );
+
+$edit_id = isset( $_GET['edit_product'] ) ? intval( $_GET['edit_product'] ) : 0;
+$product_to_edit = $edit_id ? get_post( $edit_id ) : null;
+
+if ( $product_to_edit && (int) $product_to_edit->post_author !== (int) $user_id ) {
+	$product_to_edit = null;
+}
 ?>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
 	<h2 class="h4 mb-0"><?php _e( 'My Products & Services', 'org-ecosystem' ); ?></h2>
-	<a href="#" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i> <?php _e( 'Add New', 'org-ecosystem' ); ?></a>
+	<?php if ( ! $product_to_edit ) : ?>
+		<a href="?action=my-products&add_new=1" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i> <?php _e( 'Add New', 'org-ecosystem' ); ?></a>
+	<?php else : ?>
+		<a href="?action=my-products" class="btn btn-secondary btn-sm"><?php _e( 'Back to List', 'org-ecosystem' ); ?></a>
+	<?php endif; ?>
 </div>
+
+<?php if ( isset( $_GET['add_new'] ) || $product_to_edit ) : ?>
+	<div class="card bg-white border p-4 shadow-sm mb-5">
+		<h3 class="h5 mb-4"><?php echo $product_to_edit ? __( 'Edit Product', 'org-ecosystem' ) : __( 'Add New Product', 'org-ecosystem' ); ?></h3>
+		<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
+			<input type="hidden" name="action" value="org_save_product">
+			<?php if ( $product_to_edit ) : ?>
+				<input type="hidden" name="product_id" value="<?php echo $product_to_edit->ID; ?>">
+			<?php endif; ?>
+			<?php wp_nonce_field( 'org_save_product_action', 'org_product_nonce' ); ?>
+
+			<div class="mb-3">
+				<label class="form-label fw-bold"><?php _e( 'Product Name', 'org-ecosystem' ); ?></label>
+				<input type="text" name="product_name" class="form-control" value="<?php echo $product_to_edit ? esc_attr( $product_to_edit->post_title ) : ''; ?>" required>
+			</div>
+			<div class="mb-3">
+				<label class="form-label fw-bold"><?php _e( 'Description', 'org-ecosystem' ); ?></label>
+				<textarea name="product_description" class="form-control" rows="5" required><?php echo $product_to_edit ? esc_textarea( $product_to_edit->post_content ) : ''; ?></textarea>
+			</div>
+			<div class="mb-3">
+				<label class="form-label fw-bold"><?php _e( 'Price (e.g. ₱ 100)', 'org-ecosystem' ); ?></label>
+				<input type="text" name="product_price" class="form-control" value="<?php echo $product_to_edit ? esc_attr( get_post_meta( $product_to_edit->ID, '_product_price', true ) ) : ''; ?>">
+			</div>
+			<button type="submit" class="btn btn-primary"><?php echo $product_to_edit ? __( 'Update Product', 'org-ecosystem' ) : __( 'Save Product', 'org-ecosystem' ); ?></button>
+		</form>
+	</div>
+<?php endif; ?>
 
 <div class="row g-4">
 	<?php if ( $products->have_posts() ) : ?>
@@ -34,8 +73,8 @@ $products = new WP_Query( array(
 								<h6 class="card-title mb-1"><?php the_title(); ?></h6>
 								<p class="card-text small text-muted mb-2"><?php echo wp_trim_words( get_the_excerpt(), 10 ); ?></p>
 								<div class="d-flex gap-2">
-									<a href="#" class="btn btn-sm btn-outline-primary"><?php _e( 'Edit', 'org-ecosystem' ); ?></a>
-									<a href="#" class="btn btn-sm btn-outline-danger"><?php _e( 'Delete', 'org-ecosystem' ); ?></a>
+									<a href="?action=my-products&edit_product=<?php the_ID(); ?>" class="btn btn-sm btn-outline-primary"><?php _e( 'Edit', 'org-ecosystem' ); ?></a>
+									<a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_delete_product', 'product_id' => get_the_ID() ), admin_url( 'admin-post.php' ) ), 'org_delete_product_action' ); ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')"><?php _e( 'Delete', 'org-ecosystem' ); ?></a>
 								</div>
 							</div>
 						</div>
