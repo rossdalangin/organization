@@ -48,6 +48,49 @@ add_action( 'admin_post_org_submit_inquiry', 'org_ecosystem_handle_inquiry' );
 add_action( 'admin_post_nopriv_org_submit_inquiry', 'org_ecosystem_handle_inquiry' );
 
 /**
+ * Handle Site Contact Form
+ */
+function org_ecosystem_handle_contact_form() {
+	if ( ! isset( $_POST['org_contact_nonce'] ) || ! wp_verify_nonce( $_POST['org_contact_nonce'], 'org_submit_contact' ) ) {
+		return;
+	}
+
+	$first_name = sanitize_text_field( $_POST['first_name'] );
+	$last_name = sanitize_text_field( $_POST['last_name'] );
+	$email = sanitize_email( $_POST['email'] );
+	$subject = sanitize_text_field( $_POST['subject'] );
+	$message = sanitize_textarea_field( $_POST['message'] );
+
+	// Mock sending email or saving to database
+	// wp_mail( get_option('admin_email'), 'New Contact Form Submission: ' . $subject, $message );
+
+	wp_redirect( add_query_arg( 'contact_sent', 'true', home_url( '/contact' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_submit_contact', 'org_ecosystem_handle_contact_form' );
+add_action( 'admin_post_nopriv_org_submit_contact', 'org_ecosystem_handle_contact_form' );
+
+/**
+ * Handle Archive Filtering
+ */
+function org_ecosystem_archive_filters( $query ) {
+	if ( ! is_admin() && $query->is_main_query() ) {
+		if ( is_post_type_archive( 'business' ) ) {
+			if ( isset( $_GET['industry'] ) && $_GET['industry'] !== '0' ) {
+				$query->set( 'tax_query', array(
+					array(
+						'taxonomy' => 'industry',
+						'field'    => 'term_id',
+						'terms'    => intval( $_GET['industry'] ),
+					),
+				) );
+			}
+		}
+	}
+}
+add_action( 'pre_get_posts', 'org_ecosystem_archive_filters' );
+
+/**
  * Output Inquiry Form
  */
 function org_ecosystem_inquiry_form( $post_id ) {
@@ -139,4 +182,32 @@ function org_ecosystem_breadcrumbs() {
 
 	echo '</ol>';
 	echo '</nav>';
+}
+
+/**
+ * Custom Comment Callback
+ */
+function org_ecosystem_comment_callback( $comment, $args, $depth ) {
+	?>
+	<li <?php comment_class( 'mb-4' ); ?> id="comment-<?php comment_ID(); ?>">
+		<div class="card shadow-sm border-0">
+			<div class="card-body p-3">
+				<div class="d-flex align-items-center mb-3">
+					<div class="me-3">
+						<?php echo get_avatar( $comment, $args['avatar_size'], '', '', array( 'class' => 'rounded-circle' ) ); ?>
+					</div>
+					<div>
+						<h6 class="mb-0 fw-bold"><?php echo get_comment_author_link(); ?></h6>
+						<span class="text-muted small"><?php printf( _x( '%s ago', 'relative time', 'org-ecosystem' ), human_time_diff( get_comment_time( 'U' ), current_time( 'timestamp' ) ) ); ?></span>
+					</div>
+				</div>
+				<div class="comment-text">
+					<?php comment_text(); ?>
+				</div>
+				<?php if ( '0' == $comment->comment_approved ) : ?>
+					<p class="comment-awaiting-moderation text-warning small"><?php _e( 'Your comment is awaiting moderation.', 'org-ecosystem' ); ?></p>
+				<?php endif; ?>
+			</div>
+		</div>
+	<?php
 }

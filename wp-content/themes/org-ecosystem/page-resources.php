@@ -31,8 +31,10 @@ get_header();
 								<i class="bi bi-file-earmark-pdf text-danger h1"></i>
 							</div>
 							<h5 class="card-title fw-bold mb-3"><?php the_title(); ?></h5>
-							<?php if ( is_user_logged_in() ) : ?>
-								<a href="#" class="btn btn-primary btn-sm"><?php _e( 'Download', 'org-ecosystem' ); ?></a>
+							<?php if ( is_user_logged_in() ) :
+								$file_url = get_post_meta( get_the_ID(), '_resource_file_url', true ) ?: '#';
+								?>
+								<a href="<?php echo esc_url( $file_url ); ?>" class="btn btn-primary btn-sm" target="_blank"><?php _e( 'Download', 'org-ecosystem' ); ?></a>
 							<?php else : ?>
 								<span class="badge bg-secondary"><?php _e( 'Members Only', 'org-ecosystem' ); ?></span>
 							<?php endif; ?>

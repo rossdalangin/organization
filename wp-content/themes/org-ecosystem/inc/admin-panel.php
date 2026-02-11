@@ -258,6 +258,47 @@ function org_ecosystem_membership_page() {
 	?>
 	<div class="wrap">
 		<h1><?php _e( 'Membership Management', 'org-ecosystem' ); ?></h1>
+
+		<?php if ( isset( $_GET['approved'] ) ) : ?>
+			<div class="updated"><p><?php _e( 'Member approved successfully!', 'org-ecosystem' ); ?></p></div>
+		<?php endif; ?>
+
+		<div class="card p-4 mb-4 bg-white border">
+			<h3 class="mt-0"><?php _e( 'Pending Approvals', 'org-ecosystem' ); ?></h3>
+			<?php
+			$pending_members = new WP_Query( array(
+				'post_type' => 'member',
+				'post_status' => 'pending',
+				'posts_per_page' => -1,
+			) );
+
+			if ( $pending_members->have_posts() ) : ?>
+				<table class="wp-list-table widefat fixed striped">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Joined</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php while ( $pending_members->have_posts() ) : $pending_members->the_post(); ?>
+							<tr>
+								<td><strong><?php the_title(); ?></strong></td>
+								<td><?php echo get_the_author_meta( 'user_email' ); ?></td>
+								<td><?php echo get_the_date(); ?></td>
+								<td>
+									<a href="<?php echo wp_nonce_url( admin_url( 'admin-post.php?action=org_approve_member&member_id=' . get_the_ID() ), 'org_approve_member_action' ); ?>" class="button button-primary">Approve</a>
+								</td>
+							</tr>
+						<?php endwhile; wp_reset_postdata(); ?>
+					</tbody>
+				</table>
+			<?php else : ?>
+				<p class="text-muted"><?php _e( 'No members awaiting approval.', 'org-ecosystem' ); ?></p>
+			<?php endif; ?>
+		</div>
 		<div class="card p-4" style="background: #fff; border: 1px solid #ccd0d4; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
 			<h3 style="margin-top: 0;"><i class="dashicons dashicons-welcome-learn-more" style="vertical-align: middle; margin-right: 10px;"></i> <?php _e( 'Organization Onboarding Guide', 'org-ecosystem' ); ?></h3>
 			<p class="description mb-4"><?php _e( 'Follow these steps to set up your digital ecosystem correctly.', 'org-ecosystem' ); ?></p>
@@ -566,6 +607,23 @@ function org_ecosystem_reports_page() {
 	</div>
 	<?php
 }
+
+/**
+ * Handle Member Approval from Admin
+ */
+function org_ecosystem_handle_admin_approve_member() {
+	if ( ! current_user_can( 'approve_members' ) ) return;
+	check_admin_referer( 'org_approve_member_action' );
+
+	$member_id = isset( $_GET['member_id'] ) ? intval( $_GET['member_id'] ) : 0;
+	if ( $member_id ) {
+		org_ecosystem_approve_member( $member_id );
+	}
+
+	wp_redirect( add_query_arg( array( 'approved' => 'true' ), admin_url( 'admin.php?page=org-membership' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_approve_member', 'org_ecosystem_handle_admin_approve_member' );
 
 /**
  * Handle Demo Data Import

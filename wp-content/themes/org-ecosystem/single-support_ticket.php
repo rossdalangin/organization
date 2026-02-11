@@ -38,7 +38,10 @@ while ( have_posts() ) :
 
 			<div class="card shadow-sm border-0 mb-4">
 				<div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-					<h1 class="h4 mb-0"><?php the_title(); ?></h1>
+					<div>
+						<a href="<?php echo home_url( '/dashboard?action=support' ); ?>" class="btn btn-outline-secondary btn-sm me-3"><i class="bi bi-arrow-left"></i></a>
+						<h1 class="h4 d-inline-block mb-0"><?php the_title(); ?></h1>
+					</div>
 					<span class="badge <?php echo $status === 'open' ? 'bg-warning text-dark' : 'bg-success'; ?>">
 						<?php echo esc_html( ucfirst( $status ) ); ?>
 					</span>
