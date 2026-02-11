@@ -1,0 +1,65 @@
+/*
+ * Main Theme Styles
+ */
+
+:root {
+    --org-primary: #0d6efd;
+    --org-secondary: #6c757d;
+    --org-light: #f8f9fa;
+    --org-dark: #212529;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--org-dark);
+    line-height: 1.6;
+}
+
+.site-header {
+    z-index: 1030;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, var(--org-primary) 0%, #0046b8 100%);
+}
+
+.member-card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.member-card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.dashboard-content {
+    min-height: 600px;
+}
+
+.stats-section .stat-item h2 {
+    font-size: 3.5rem;
+}
+
+/* Custom Checkboxes and Radios */
+.form-check-input:checked {
+    background-color: var(--org-primary);
+    border-color: var(--org-primary);
+}
+
+/* Footer widget styling */
+.footer-widget h5 {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.footer-menu a {
+    text-decoration: none;
+    color: rgba(255,255,255,0.7);
+    transition: color 0.2s;
+}
+
+.footer-menu a:hover {
+    color: #fff;
+}
