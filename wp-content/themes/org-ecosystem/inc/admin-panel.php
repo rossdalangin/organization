@@ -39,6 +39,15 @@ function org_ecosystem_admin_menu() {
 
 	add_submenu_page(
 		'org-settings',
+		__( 'Payment Settings', 'org-ecosystem' ),
+		__( 'Payments', 'org-ecosystem' ),
+		'manage_payments',
+		'org-payments',
+		'org_ecosystem_payments_page'
+	);
+
+	add_submenu_page(
+		'org-settings',
 		__( 'Reports & Analytics', 'org-ecosystem' ),
 		__( 'Reports', 'org-ecosystem' ),
 		'access_reports',
@@ -380,10 +389,76 @@ function org_ecosystem_emails_page() {
 /**
  * Role Management Page Callback
  */
+/**
+ * Payment Settings Page Callback
+ */
+function org_ecosystem_payments_page() {
+	if ( isset( $_POST['org_save_payments'] ) ) {
+		check_admin_referer( 'org_save_payments_action' );
+		update_option( 'org_stripe_enabled', isset( $_POST['stripe_enabled'] ) ? '1' : '0' );
+		update_option( 'org_stripe_api_key', sanitize_text_field( $_POST['stripe_api_key'] ) );
+		update_option( 'org_paypal_email', sanitize_email( $_POST['paypal_email'] ) );
+		update_option( 'org_offline_instructions', sanitize_textarea_field( $_POST['offline_instructions'] ) );
+		echo '<div class="updated"><p>Payment settings saved.</p></div>';
+	}
+	?>
+	<div class="wrap">
+		<h1><?php _e( 'Payment Settings', 'org-ecosystem' ); ?></h1>
+		<form method="post" action="">
+			<?php wp_nonce_field( 'org_save_payments_action' ); ?>
+			<div class="card p-4 bg-white border mb-4 shadow-sm">
+				<h3>Stripe Gateway</h3>
+				<div class="mb-3">
+					<label><input type="checkbox" name="stripe_enabled" value="1" <?php checked( get_option( 'org_stripe_enabled' ), '1' ); ?>> Enable Stripe</label>
+				</div>
+				<div class="mb-3">
+					<label class="form-label d-block">API Secret Key</label>
+					<input type="password" name="stripe_api_key" class="widefat" value="<?php echo esc_attr( get_option( 'org_stripe_api_key' ) ); ?>">
+					<p class="description">Example: sk_test_...</p>
+				</div>
+			</div>
+
+			<div class="card p-4 bg-white border mb-4 shadow-sm">
+				<h3>PayPal</h3>
+				<div class="mb-3">
+					<label class="form-label d-block">PayPal Email</label>
+					<input type="email" name="paypal_email" class="widefat" value="<?php echo esc_attr( get_option( 'org_paypal_email' ) ); ?>">
+				</div>
+			</div>
+
+			<div class="card p-4 bg-white border mb-4 shadow-sm">
+				<h3>Offline / Manual Payment</h3>
+				<div class="mb-3">
+					<label class="form-label d-block">Payment Instructions</label>
+					<textarea name="offline_instructions" rows="4" class="widefat"><?php echo esc_textarea( get_option( 'org_offline_instructions', 'Please transfer ₱1,500 to our Bank Account: XYZ-123-456' ) ); ?></textarea>
+				</div>
+			</div>
+
+			<p class="submit">
+				<input type="submit" name="org_save_payments" class="button button-primary" value="Save Payment Settings">
+			</p>
+		</form>
+	</div>
+	<?php
+}
+
 function org_ecosystem_roles_page() {
 	if ( isset( $_POST['org_save_roles'] ) ) {
 		check_admin_referer( 'org_save_roles_action' );
-		// Logic to update capabilities would go here
+		// Logic to update capabilities
+		if ( isset( $_POST['role_caps'] ) && is_array( $_POST['role_caps'] ) ) {
+			foreach ( $_POST['role_caps'] as $role_slug => $caps ) {
+				$role = get_role( $role_slug );
+				if ( ! $role ) continue;
+				foreach ( $caps as $cap => $value ) {
+					if ( $value == '1' ) {
+						$role->add_cap( $cap );
+					} else {
+						$role->remove_cap( $cap );
+					}
+				}
+			}
+		}
 		echo '<div class="updated"><p>Role permissions updated.</p></div>';
 	}
 	?>
@@ -401,19 +476,20 @@ function org_ecosystem_roles_page() {
 						<th>Manage Payments</th>
 						<th>Access Reports</th>
 						<th>Manage Tickets</th>
+						<th>Publish Content</th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php
-					$roles = array( 'org_admin', 'regional_admin', 'membership_manager', 'content_manager', 'member' );
-					$caps = array( 'approve_members', 'manage_payments', 'access_reports', 'manage_tickets' );
+					$roles = array( 'org_admin', 'regional_admin', 'membership_manager', 'content_manager', 'member', 'vendor', 'volunteer' );
+					$caps = array( 'approve_members', 'manage_payments', 'access_reports', 'manage_tickets', 'publish_posts' );
 
 					foreach ( $roles as $role_slug ) :
 						$role = get_role( $role_slug );
 						if ( ! $role ) continue;
 						?>
 						<tr>
-							<td><strong><?php echo esc_html( $role_slug ); ?></strong></td>
+							<td><strong><?php echo esc_html( ucfirst( str_replace('_', ' ', $role_slug ) ) ); ?></strong></td>
 							<?php foreach ( $caps as $cap ) : ?>
 								<td>
 									<input type="checkbox" name="role_caps[<?php echo $role_slug; ?>][<?php echo $cap; ?>]" value="1" <?php checked( $role->has_cap( $cap ) ); ?>>

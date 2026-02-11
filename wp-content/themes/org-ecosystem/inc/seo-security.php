@@ -127,6 +127,10 @@ function org_ecosystem_register_rest_fields() {
 				'email'         => get_post_meta( $post_id, '_member_email', true ),
 				'website'       => get_post_meta( $post_id, '_member_website', true ),
 				'status'        => get_post_meta( $post_id, '_member_status', true ),
+				'is_verified'   => get_post_meta( $post_id, '_member_is_verified', true ) === '1',
+				'is_featured'   => get_post_meta( $post_id, '_member_is_featured', true ) === '1',
+				'join_date'     => get_post_meta( $post_id, '_member_join_date', true ),
+				'renewal_date'  => get_post_meta( $post_id, '_member_renewal_date', true ),
 			);
 		},
 		'schema' => null,
