@@ -129,6 +129,7 @@ function org_ecosystem_membership_page() {
  */
 function org_ecosystem_handle_demo_import() {
 	if ( ! current_user_can( 'manage_options' ) ) return;
+	check_admin_referer( 'org_import_demo', 'org_demo_nonce' );
 
 	// Create Sample Member
 	$member_id = wp_insert_post( array(

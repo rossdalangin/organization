@@ -416,3 +416,29 @@ function org_ecosystem_check_expirations() {
 	}
 }
 add_action( 'org_ecosystem_daily_expiration_check', 'org_ecosystem_check_expirations' );
+
+/**
+ * Handle Donation Processing
+ */
+function org_ecosystem_handle_donation() {
+	if ( ! isset( $_POST['org_donation_nonce'] ) || ! wp_verify_nonce( $_POST['org_donation_nonce'], 'org_donation' ) ) {
+		return;
+	}
+
+	$name = sanitize_text_field( $_POST['donor_name'] );
+	$email = sanitize_email( $_POST['donor_email'] );
+	$amount = ! empty( $_POST['custom_amount'] ) ? intval( $_POST['custom_amount'] ) : intval( $_POST['amount'] );
+
+	// Mock donation recording
+	wp_insert_post( array(
+		'post_title'   => 'Donation from ' . $name,
+		'post_type'    => 'donation',
+		'post_status'  => 'publish',
+		'post_content' => sprintf( 'Amount: ₱ %d | Email: %s', $amount, $email ),
+	) );
+
+	wp_redirect( add_query_arg( 'thanks', 'true', home_url( '/donate' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_process_donation', 'org_ecosystem_handle_donation' );
+add_action( 'admin_post_nopriv_org_process_donation', 'org_ecosystem_handle_donation' );

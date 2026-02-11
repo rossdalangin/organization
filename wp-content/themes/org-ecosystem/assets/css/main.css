@@ -63,3 +63,33 @@ body {
 .footer-menu a:hover {
     color: #fff;
 }
+
+/* Breadcrumbs */
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "\F285";
+    font-family: "bootstrap-icons";
+}
+
+/* Responsive Embeds */
+.ratio-16x9 {
+    --bs-aspect-ratio: 56.25%;
+}
+
+/* Transitions */
+.btn, .card {
+    transition: all 0.3s ease;
+}
+
+/* Profile specific styles */
+.mt-n5 {
+    margin-top: -3rem !important;
+}
+
+.letter-spacing-1 {
+    letter-spacing: 1px;
+}
+
+/* Utilities */
+.z-index-1 {
+    z-index: 1;
+}

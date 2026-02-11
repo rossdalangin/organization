@@ -101,3 +101,4 @@ require ORG_ECOSYSTEM_DIR . '/inc/template-functions.php';
 require ORG_ECOSYSTEM_DIR . '/inc/ajax-filters.php';
 require ORG_ECOSYSTEM_DIR . '/inc/admin-panel.php';
 require ORG_ECOSYSTEM_DIR . '/inc/seo-security.php';
+require ORG_ECOSYSTEM_DIR . '/inc/patterns.php';

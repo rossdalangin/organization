@@ -61,6 +61,80 @@ function org_ecosystem_handle_ticket_submission() {
 add_action( 'admin_post_org_submit_ticket', 'org_ecosystem_handle_ticket_submission' );
 
 /**
+ * Handle Event Registration
+ */
+function org_ecosystem_handle_event_registration() {
+	if ( ! isset( $_POST['org_event_nonce'] ) || ! wp_verify_nonce( $_POST['org_event_nonce'], 'org_event_register' ) ) {
+		return;
+	}
+
+	$user_id = get_current_user_id();
+	$event_id = intval( $_POST['event_id'] );
+
+	if ( ! $user_id || ! $event_id ) return;
+
+	$registrations = get_user_meta( $user_id, '_registered_events', true ) ?: array();
+	if ( ! in_array( $event_id, $registrations ) ) {
+		$registrations[] = $event_id;
+		update_user_meta( $user_id, '_registered_events', $registrations );
+
+		// Also add user to event meta
+		$attendees = get_post_meta( $event_id, '_event_attendees', true ) ?: array();
+		$attendees[] = $user_id;
+		update_post_meta( $event_id, '_event_attendees', $attendees );
+	}
+
+	wp_redirect( add_query_arg( array( 'action' => 'my-events', 'registered' => 'true' ), home_url( '/dashboard' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_event_register', 'org_ecosystem_handle_event_registration' );
+
+/**
+ * Handle Job Application
+ */
+function org_ecosystem_handle_job_application() {
+	if ( ! isset( $_POST['org_job_nonce'] ) || ! wp_verify_nonce( $_POST['org_job_nonce'], 'org_job_apply' ) ) {
+		return;
+	}
+
+	$user_id = get_current_user_id();
+	$job_id = intval( $_POST['job_id'] );
+	$name = sanitize_text_field( $_POST['app_name'] );
+	$email = sanitize_email( $_POST['app_email'] );
+	$message = sanitize_textarea_field( $_POST['app_message'] );
+
+	// Handle file upload (simplified)
+	$resume_url = '';
+	if ( ! empty( $_FILES['app_resume']['name'] ) ) {
+		// Real implementation would use wp_handle_upload
+		$resume_url = 'sample-resume-url.pdf';
+	}
+
+	$application_id = wp_insert_post( array(
+		'post_title'   => 'Application: ' . $name . ' for ' . get_the_title( $job_id ),
+		'post_type'    => 'resource', // Using resource as a placeholder or could be a new CPT
+		'post_status'  => 'private',
+		'post_author'  => $user_id,
+		'post_content' => $message,
+	) );
+
+	if ( $application_id ) {
+		update_post_meta( $application_id, '_app_job_id', $job_id );
+		update_post_meta( $application_id, '_app_email', $email );
+		update_post_meta( $application_id, '_app_resume', $resume_url );
+
+		$apps = get_user_meta( $user_id, '_my_applications', true ) ?: array();
+		$apps[] = $application_id;
+		update_user_meta( $user_id, '_my_applications', $apps );
+	}
+
+	wp_redirect( add_query_arg( array( 'action' => 'my-applications', 'submitted' => 'true' ), home_url( '/dashboard' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_job_apply', 'org_ecosystem_handle_job_application' );
+add_action( 'admin_post_nopriv_org_job_apply', 'org_ecosystem_handle_job_application' );
+
+/**
  * Get Member Stats
  */
 function org_ecosystem_get_member_stats( $member_id ) {

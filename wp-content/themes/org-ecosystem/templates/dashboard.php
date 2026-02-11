@@ -34,6 +34,8 @@ $status = get_post_meta( $member_id, '_member_status', true );
 							<a href="?action=overview" class="list-group-item list-group-item-action active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
 							<a href="?action=edit-profile" class="list-group-item list-group-item-action"><i class="bi bi-person-gear me-2"></i> Edit Profile</a>
 							<a href="?action=my-products" class="list-group-item list-group-item-action"><i class="bi bi-box-seam me-2"></i> My Products</a>
+							<a href="?action=my-events" class="list-group-item list-group-item-action"><i class="bi bi-calendar-event me-2"></i> My Events</a>
+							<a href="?action=my-applications" class="list-group-item list-group-item-action"><i class="bi bi-file-earmark-person me-2"></i> Job Applications</a>
 							<a href="?action=billing" class="list-group-item list-group-item-action"><i class="bi bi-credit-card me-2"></i> Billing & Renewal</a>
 							<a href="?action=resources" class="list-group-item list-group-item-action"><i class="bi bi-download me-2"></i> Exclusive Resources</a>
 							<a href="?action=support" class="list-group-item list-group-item-action"><i class="bi bi-sos me-2"></i> Support & Messaging</a>
@@ -64,6 +66,12 @@ $status = get_post_meta( $member_id, '_member_status', true );
 							break;
 						case 'support':
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/support.php';
+							break;
+						case 'my-events':
+							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/my-events.php';
+							break;
+						case 'my-applications':
+							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/my-applications.php';
 							break;
 						default:
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/overview.php';
