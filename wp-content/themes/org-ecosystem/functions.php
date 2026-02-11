@@ -99,6 +99,9 @@ add_action( 'elementor/elements/categories_registered', 'org_ecosystem_elementor
  * @return void
  */
 function org_ecosystem_scripts() {
+	// Google Fonts
+	wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap', array(), null );
+
 	// Bootstrap 5
 	wp_enqueue_style( 'bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css', array(), '5.3.0' );
 	wp_enqueue_script( 'bootstrap-bundle', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', array(), '5.3.0', true );

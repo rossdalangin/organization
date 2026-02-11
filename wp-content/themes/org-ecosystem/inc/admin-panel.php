@@ -30,6 +30,15 @@ function org_ecosystem_admin_menu() {
 
 	add_submenu_page(
 		'org-settings',
+		__( 'Directory Settings', 'org-ecosystem' ),
+		__( 'Directory', 'org-ecosystem' ),
+		'manage_options',
+		'org-directory',
+		'org_ecosystem_directory_settings_page'
+	);
+
+	add_submenu_page(
+		'org-settings',
 		__( 'Reports & Analytics', 'org-ecosystem' ),
 		__( 'Reports', 'org-ecosystem' ),
 		'access_reports',
@@ -144,6 +153,45 @@ function org_ecosystem_content_manager_page() {
 /**
  * Support Tickets Page Callback
  */
+/**
+ * Directory Settings Page Callback
+ */
+function org_ecosystem_directory_settings_page() {
+	if ( isset( $_POST['org_save_directory'] ) ) {
+		check_admin_referer( 'org_save_directory_action' );
+		update_option( 'org_directory_per_page', intval( $_POST['per_page'] ) );
+		update_option( 'org_directory_show_badges', isset( $_POST['show_badges'] ) ? '1' : '0' );
+		echo '<div class="updated"><p>Directory settings saved.</p></div>';
+	}
+	?>
+	<div class="wrap">
+		<h1><?php _e( 'Directory Settings', 'org-ecosystem' ); ?></h1>
+		<p><?php _e( 'Configure how the member and business directories behave.', 'org-ecosystem' ); ?></p>
+
+		<form method="post" action="">
+			<?php wp_nonce_field( 'org_save_directory_action' ); ?>
+			<div class="card p-4 bg-white border mb-4 shadow-sm">
+				<div class="mb-3">
+					<label class="form-label d-block fw-bold"><?php _e( 'Members Per Page', 'org-ecosystem' ); ?></label>
+					<input type="number" name="per_page" class="small-text" value="<?php echo esc_attr( get_option( 'org_directory_per_page', 12 ) ); ?>">
+					<p class="description"><?php _e( 'Number of items to show before pagination.', 'org-ecosystem' ); ?></p>
+				</div>
+				<div class="mb-3">
+					<label class="form-label d-block fw-bold">
+						<input type="checkbox" name="show_badges" value="1" <?php checked( get_option( 'org_directory_show_badges', '1' ), '1' ); ?>>
+						<?php _e( 'Show Verification & Featured Badges', 'org-ecosystem' ); ?>
+					</label>
+				</div>
+			</div>
+
+			<p class="submit">
+				<input type="submit" name="org_save_directory" class="button button-primary" value="Save Settings">
+			</p>
+		</form>
+	</div>
+	<?php
+}
+
 function org_ecosystem_tickets_page() {
 	if ( isset( $_GET['ticket_id'] ) && isset( $_GET['new_status'] ) ) {
 		check_admin_referer( 'org_update_ticket' );

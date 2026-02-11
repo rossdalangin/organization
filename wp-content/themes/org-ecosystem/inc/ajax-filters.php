@@ -11,12 +11,14 @@ function org_ecosystem_directory_filter() {
 	$level = isset( $_POST['membership_level'] ) ? sanitize_text_field( $_POST['membership_level'] ) : '';
 	$prod_cat = isset( $_POST['product_cat'] ) ? sanitize_text_field( $_POST['product_cat'] ) : '';
 	$search = isset( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
+	$paged = isset( $_POST['paged'] ) ? intval( $_POST['paged'] ) : 1;
 
 	$args = array(
 		'post_type' => 'member',
-		'posts_per_page' => 12,
+		'posts_per_page' => get_option( 'org_directory_per_page', 12 ),
 		'post_status' => 'publish',
 		's' => $search,
+		'paged' => $paged,
 		'tax_query' => array( 'relation' => 'AND' ),
 	);
 
@@ -121,7 +123,7 @@ function org_ecosystem_directory_filter() {
 		echo '<div class="pagination-area mt-5">';
 		echo paginate_links( array(
 			'total'   => $query->max_num_pages,
-			'current' => max( 1, get_query_var( 'paged' ) ),
+			'current' => $paged,
 			'format'  => '?paged=%#%',
 			'type'    => 'list',
 		) );

@@ -510,3 +510,21 @@ function org_ecosystem_handle_donation() {
 }
 add_action( 'admin_post_org_process_donation', 'org_ecosystem_handle_donation' );
 add_action( 'admin_post_nopriv_org_process_donation', 'org_ecosystem_handle_donation' );
+
+/**
+ * Handle Membership Renewal
+ */
+function org_ecosystem_handle_renewal() {
+	if ( ! is_user_logged_in() ) return;
+	check_admin_referer( 'org_renew_membership_action' );
+
+	$user_id = get_current_user_id();
+	$level = get_user_meta( $user_id, '_membership_level', true ) ?: 'basic';
+
+	// Mock successful payment and renewal
+	if ( org_ecosystem_process_payment( $user_id, $level, 'mock_gateway' ) ) {
+		wp_redirect( add_query_arg( array( 'action' => 'billing', 'renewed' => 'true' ), home_url( '/dashboard' ) ) );
+		exit;
+	}
+}
+add_action( 'admin_post_org_renew_membership', 'org_ecosystem_handle_renewal' );

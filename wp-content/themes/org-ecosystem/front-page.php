@@ -12,8 +12,11 @@ get_header();
 
 	<?php get_template_part( 'template-parts/homepage/hero' ); ?>
 
-	<?php get_template_part( 'template-parts/homepage/stats' ); ?>
+	<?php if ( get_theme_mod( 'show_stats', true ) ) : ?>
+		<?php get_template_part( 'template-parts/homepage/stats' ); ?>
+	<?php endif; ?>
 
+	<?php if ( get_theme_mod( 'show_about', true ) ) : ?>
 	<section class="about-organization py-5 bg-white">
 		<div class="container">
 			<div class="row align-items-center">
@@ -32,10 +35,15 @@ get_header();
 			</div>
 		</div>
 	</section>
+	<?php endif; ?>
 
-	<?php get_template_part( 'template-parts/homepage/featured-members' ); ?>
+	<?php if ( get_theme_mod( 'show_featured_mem', true ) ) : ?>
+		<?php get_template_part( 'template-parts/homepage/featured-members' ); ?>
+	<?php endif; ?>
 
-	<?php get_template_part( 'template-parts/homepage/featured-products' ); ?>
+	<?php if ( get_theme_mod( 'show_featured_prod', true ) ) : ?>
+		<?php get_template_part( 'template-parts/homepage/featured-products' ); ?>
+	<?php endif; ?>
 
 	<section class="membership-cta py-5 bg-primary text-white text-center">
 		<div class="container py-4">
@@ -45,14 +53,23 @@ get_header();
 		</div>
 	</section>
 
-	<?php get_template_part( 'template-parts/homepage/upcoming-events' ); ?>
+	<?php if ( get_theme_mod( 'show_events', true ) ) : ?>
+		<?php get_template_part( 'template-parts/homepage/upcoming-events' ); ?>
+	<?php endif; ?>
 
-	<?php get_template_part( 'template-parts/homepage/testimonials' ); ?>
+	<?php if ( get_theme_mod( 'show_testimonials', true ) ) : ?>
+		<?php get_template_part( 'template-parts/homepage/testimonials' ); ?>
+	<?php endif; ?>
 
-	<?php get_template_part( 'template-parts/homepage/latest-announcements' ); ?>
+	<?php if ( get_theme_mod( 'show_announcements', true ) ) : ?>
+		<?php get_template_part( 'template-parts/homepage/latest-announcements' ); ?>
+	<?php endif; ?>
 
-	<?php get_template_part( 'template-parts/homepage/latest-news' ); ?>
+	<?php if ( get_theme_mod( 'show_news', true ) ) : ?>
+		<?php get_template_part( 'template-parts/homepage/latest-news' ); ?>
+	<?php endif; ?>
 
+	<?php if ( get_theme_mod( 'show_partners', true ) ) : ?>
 	<section class="partner-logos py-5 bg-light border-top">
 		<div class="container text-center">
 			<h5 class="text-muted text-uppercase mb-5 small fw-bold letter-spacing-1"><?php _e( 'Our Partners & Sponsors', 'org-ecosystem' ); ?></h5>
@@ -65,6 +82,7 @@ get_header();
 			</div>
 		</div>
 	</section>
+	<?php endif; ?>
 
 	<section class="newsletter-cta py-5 bg-white">
 		<div class="container py-4 text-center">

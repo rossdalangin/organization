@@ -37,6 +37,31 @@ function org_ecosystem_customize_register( $wp_customize ) {
 		'type' => 'text',
 	) );
 
+	// Homepage Section Toggles
+	$sections = array(
+		'show_stats'         => __( 'Show Impact Stats', 'org-ecosystem' ),
+		'show_about'         => __( 'Show About Organization', 'org-ecosystem' ),
+		'show_featured_mem'  => __( 'Show Featured Members', 'org-ecosystem' ),
+		'show_featured_prod' => __( 'Show Featured Products', 'org-ecosystem' ),
+		'show_events'        => __( 'Show Upcoming Events', 'org-ecosystem' ),
+		'show_testimonials'  => __( 'Show Testimonials', 'org-ecosystem' ),
+		'show_announcements' => __( 'Show Announcements', 'org-ecosystem' ),
+		'show_news'          => __( 'Show Latest News', 'org-ecosystem' ),
+		'show_partners'      => __( 'Show Partner Logos', 'org-ecosystem' ),
+	);
+
+	foreach ( $sections as $id => $label ) {
+		$wp_customize->add_setting( $id, array(
+			'default' => true,
+			'sanitize_callback' => 'org_ecosystem_sanitize_checkbox',
+		) );
+		$wp_customize->add_control( $id, array(
+			'label'   => $label,
+			'section' => 'org_homepage',
+			'type'    => 'checkbox',
+		) );
+	}
+
 	// Contact Info Section
 	$wp_customize->add_section( 'org_contact_info', array(
 		'title' => __( 'Organization Contact Info', 'org-ecosystem' ),
@@ -120,3 +145,10 @@ function org_ecosystem_customizer_css() {
 	<?php
 }
 add_action( 'wp_head', 'org_ecosystem_customizer_css' );
+
+/**
+ * Sanitize Checkbox
+ */
+function org_ecosystem_sanitize_checkbox( $checked ) {
+	return ( ( isset( $checked ) && true == $checked ) ? true : false );
+}
