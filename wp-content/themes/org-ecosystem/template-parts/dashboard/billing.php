@@ -4,7 +4,7 @@
  */
 $user_id = get_current_user_id();
 $membership_level = get_user_meta( $user_id, '_membership_level', true );
-$last_txn = get_user_meta( $user_id, '_last_transaction_id', true );
+$history = get_user_meta( $user_id, '_payment_history', true ) ?: array();
 ?>
 <h2 class="h4 mb-4"><?php _e( 'Billing & Subscription', 'org-ecosystem' ); ?></h2>
 
@@ -22,7 +22,7 @@ $last_txn = get_user_meta( $user_id, '_last_transaction_id', true );
 				if ( $status === 'expired' ) : ?>
 					<a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_renew_membership' ), admin_url( 'admin-post.php' ) ), 'org_renew_membership_action' ); ?>" class="btn btn-warning fw-bold"><i class="bi bi-arrow-repeat me-1"></i> <?php _e( 'Renew Now', 'org-ecosystem' ); ?></a>
 				<?php else : ?>
-					<a href="#" class="btn btn-primary"><?php _e( 'Change Plan', 'org-ecosystem' ); ?></a>
+					<a href="<?php echo esc_url( home_url( '/membership-plans' ) ); ?>" class="btn btn-primary"><?php _e( 'Change Plan', 'org-ecosystem' ); ?></a>
 				<?php endif; ?>
 			</div>
 		</div>
@@ -42,15 +42,21 @@ $last_txn = get_user_meta( $user_id, '_last_transaction_id', true );
 			</tr>
 		</thead>
 		<tbody>
-			<?php if ( $last_txn ) : ?>
-			<tr>
-				<td><?php echo date( 'M d, Y' ); ?></td>
-				<td><code><?php echo esc_html( $last_txn ); ?></code></td>
-				<td>₱ 1,500.00</td>
-				<td><span class="badge bg-success">Paid</span></td>
-				<td><a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-download"></i></a></td>
-			</tr>
-			<?php else : ?>
+			<?php if ( ! empty( $history ) ) :
+				foreach ( array_reverse( $history ) as $item ) : ?>
+				<tr>
+					<td><?php echo date( 'M d, Y', strtotime( $item['date'] ) ); ?></td>
+					<td><code><?php echo esc_html( $item['txn_id'] ); ?></code></td>
+					<td>₱ <?php echo number_format( $item['amount'] ); ?></td>
+					<td><span class="badge bg-success"><?php echo esc_html( $item['status'] ); ?></span></td>
+					<td>
+						<a href="<?php echo esc_url( add_query_arg( array( 'txn_id' => $item['txn_id'], 'action' => 'download_receipt' ), home_url( '/dashboard' ) ) ); ?>" class="btn btn-sm btn-outline-secondary">
+							<i class="bi bi-download"></i>
+						</a>
+					</td>
+				</tr>
+				<?php endforeach;
+			else : ?>
 			<tr>
 				<td colspan="5" class="text-center py-4"><?php _e( 'No payment history found.', 'org-ecosystem' ); ?></td>
 			</tr>

@@ -74,11 +74,11 @@ get_header();
 		<div class="container text-center">
 			<h5 class="text-muted text-uppercase mb-5 small fw-bold letter-spacing-1"><?php _e( 'Our Partners & Sponsors', 'org-ecosystem' ); ?></h5>
 			<div class="d-flex flex-wrap justify-content-center gap-5 opacity-50 align-items-center">
-				<span class="h3 fw-bold mb-0">PARTNER 1</span>
-				<span class="h3 fw-bold mb-0">PARTNER 2</span>
-				<span class="h3 fw-bold mb-0">PARTNER 3</span>
-				<span class="h3 fw-bold mb-0">PARTNER 4</span>
-				<span class="h3 fw-bold mb-0">PARTNER 5</span>
+				<?php
+				$partners = explode( ',', get_theme_mod( 'org_partner_list', 'PARTNER 1, PARTNER 2, PARTNER 3, PARTNER 4, PARTNER 5' ) );
+				foreach ( $partners as $partner ) : ?>
+					<span class="h3 fw-bold mb-0"><?php echo esc_html( trim( $partner ) ); ?></span>
+				<?php endforeach; ?>
 			</div>
 		</div>
 	</section>

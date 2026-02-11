@@ -17,7 +17,12 @@
 					<div class="card-body p-4 text-center">
 						<i class="bi bi-file-earmark-pdf text-danger display-5 mb-3 d-block"></i>
 						<h6 class="fw-bold mb-3"><?php the_title(); ?></h6>
-						<a href="#" class="btn btn-outline-primary btn-sm w-100"><i class="bi bi-download me-1"></i> <?php _e( 'Download', 'org-ecosystem' ); ?></a>
+						<?php
+						$file_url = get_post_meta( get_the_ID(), '_resource_file_url', true ) ?: '#';
+						?>
+						<a href="<?php echo esc_url( $file_url ); ?>" class="btn btn-outline-primary btn-sm w-100" target="_blank">
+							<i class="bi bi-download me-1"></i> <?php _e( 'Download', 'org-ecosystem' ); ?>
+						</a>
 					</div>
 				</div>
 			</div>

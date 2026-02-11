@@ -4,7 +4,27 @@
  */
 if ( ! isset( $invoice ) ) return;
 ?>
-<div class="receipt-container p-5 border shadow-sm bg-white" style="max-width: 800px; margin: 0 auto;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Receipt - <?php echo esc_html( $invoice['invoice_no'] ); ?></title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+	<style>
+		body { background-color: #f8f9fa; padding: 50px 0; }
+		.receipt-container { background: #fff; border-radius: 8px; }
+		@media print {
+			body { background-color: #fff; padding: 0; }
+			.receipt-container { border: none !important; shadow: none !important; }
+			.no-print { display: none; }
+		}
+	</style>
+</head>
+<body>
+<div class="container no-print mb-4 text-center">
+	<button onclick="window.print()" class="btn btn-primary"><i class="bi bi-printer"></i> Print Receipt</button>
+</div>
+<div class="receipt-container p-5 border shadow-sm mx-auto" style="max-width: 800px;">
 	<div class="row mb-5">
 		<div class="col-6">
 			<h2 class="fw-bold text-primary"><?php bloginfo( 'name' ); ?></h2>
@@ -50,3 +70,5 @@ if ( ! isset( $invoice ) ) return;
 		<p class="text-muted small"><?php _e( 'Thank you for being a part of our organization!', 'org-ecosystem' ); ?></p>
 	</div>
 </div>
+</body>
+</html>

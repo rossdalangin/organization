@@ -29,6 +29,9 @@ get_header();
 
 						<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
 							<input type="hidden" name="action" value="org_register">
+							<?php if ( isset( $_GET['plan'] ) ) : ?>
+								<input type="hidden" name="plan" value="<?php echo esc_attr( $_GET['plan'] ); ?>">
+							<?php endif; ?>
 							<?php wp_nonce_field( 'org_user_registration', 'org_registration_nonce' ); ?>
 
 							<div class="row g-3">

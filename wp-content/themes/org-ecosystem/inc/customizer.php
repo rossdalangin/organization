@@ -95,6 +95,16 @@ function org_ecosystem_customize_register( $wp_customize ) {
 		'section' => 'org_contact_info',
 	) );
 
+	$wp_customize->add_setting( 'org_partner_list', array(
+		'default' => 'PARTNER 1, PARTNER 2, PARTNER 3, PARTNER 4, PARTNER 5',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'org_partner_list', array(
+		'label' => __( 'Partner Names (Comma separated)', 'org-ecosystem' ),
+		'section' => 'org_contact_info',
+		'type' => 'textarea',
+	) );
+
 	// Social Links Section
 	$wp_customize->add_section( 'org_social_links', array(
 		'title' => __( 'Social Media Links', 'org-ecosystem' ),

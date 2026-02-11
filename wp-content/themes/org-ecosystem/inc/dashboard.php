@@ -18,13 +18,26 @@ function org_ecosystem_handle_profile_update() {
 
 	if ( ! $member_id ) return;
 
-	$bio = sanitize_textarea_field( $_POST['member_bio'] );
-	$phone = sanitize_text_field( $_POST['member_phone'] );
-	$website = esc_url_raw( $_POST['member_website'] );
+	$fields = array(
+		'member_bio'            => '_member_bio',
+		'member_phone'          => '_member_phone',
+		'member_website'        => '_member_website',
+		'member_business_name'  => '_member_business_name',
+		'member_cover_photo'    => '_member_cover_photo',
+		'member_facebook'       => '_member_facebook',
+		'member_linkedin'       => '_member_linkedin',
+		'member_twitter'        => '_member_twitter',
+		'member_certifications' => '_member_certifications',
+	);
 
-	update_post_meta( $member_id, '_member_bio', $bio );
-	update_post_meta( $member_id, '_member_phone', $phone );
-	update_post_meta( $member_id, '_member_website', $website );
+	foreach ( $fields as $key => $meta_key ) {
+		if ( isset( $_POST[$key] ) ) {
+			$value = ( strpos( $key, 'url' ) !== false || strpos( $key, 'photo' ) !== false || strpos( $key, 'facebook' ) !== false || strpos( $key, 'linkedin' ) !== false || strpos( $key, 'twitter' ) !== false )
+				? esc_url_raw( $_POST[$key] )
+				: sanitize_textarea_field( $_POST[$key] );
+			update_post_meta( $member_id, $meta_key, $value );
+		}
+	}
 
 	wp_redirect( add_query_arg( array( 'action' => 'edit-profile', 'updated' => 'true' ), home_url( '/dashboard' ) ) );
 	exit;

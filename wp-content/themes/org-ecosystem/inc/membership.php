@@ -176,6 +176,7 @@ function org_ecosystem_handle_registration() {
 	$password = $_POST['password'];
 	$first_name = sanitize_text_field( $_POST['first_name'] );
 	$last_name = sanitize_text_field( $_POST['last_name'] );
+	$plan = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : 'free';
 
 	if ( username_exists( $username ) || email_exists( $email ) ) {
 		wp_redirect( home_url( '/join?error=exists' ) );
@@ -201,6 +202,7 @@ function org_ecosystem_handle_registration() {
 		) );
 
 		update_user_meta( $user_id, '_member_profile_id', $member_id );
+		update_user_meta( $user_id, '_membership_level', $plan );
 		update_post_meta( $member_id, '_member_status', 'pending' );
 
 		// Email Verification Logic
@@ -382,6 +384,17 @@ function org_ecosystem_process_payment( $user_id, $level, $gateway ) {
 	if ( $payment_status === 'completed' ) {
 		// Log transaction
 		$transaction_id = 'TXN_' . time();
+
+		$history = get_user_meta( $user_id, '_payment_history', true ) ?: array();
+		$history[] = array(
+			'date'   => date( 'Y-m-d H:i:s' ),
+			'txn_id' => $transaction_id,
+			'amount' => $amount,
+			'level'  => $level,
+			'status' => 'Paid'
+		);
+		update_user_meta( $user_id, '_payment_history', $history );
+
 		update_user_meta( $user_id, '_last_transaction_id', $transaction_id );
 		update_user_meta( $user_id, '_membership_level', $level );
 
@@ -528,3 +541,25 @@ function org_ecosystem_handle_renewal() {
 	}
 }
 add_action( 'admin_post_org_renew_membership', 'org_ecosystem_handle_renewal' );
+
+/**
+ * Handle Receipt Download
+ */
+function org_ecosystem_handle_receipt_download() {
+	if ( isset( $_GET['action'] ) && $_GET['action'] === 'download_receipt' && isset( $_GET['txn_id'] ) ) {
+		if ( ! is_user_logged_in() ) return;
+
+		$txn_id = sanitize_text_field( $_GET['txn_id'] );
+		$user_id = get_current_user_id();
+
+		$invoice = org_ecosystem_generate_invoice( $user_id, $txn_id );
+
+		if ( $invoice ) {
+			// In a real system, we'd use a PDF library.
+			// For this theme, we'll output a clean HTML receipt that can be printed.
+			include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/receipt-template.php';
+			exit;
+		}
+	}
+}
+add_action( 'template_redirect', 'org_ecosystem_handle_receipt_download' );
