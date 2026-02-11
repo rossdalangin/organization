@@ -8,6 +8,41 @@
 /**
  * Add Schema.org Markup to Header
  */
+function org_ecosystem_seo_meta_tags() {
+	$description = get_bloginfo( 'description' );
+	$title = get_bloginfo( 'name' );
+	$url = home_url( '/' );
+	$image = get_site_icon_url();
+
+	if ( is_singular() ) {
+		global $post;
+		$title = get_the_title() . ' - ' . get_bloginfo( 'name' );
+		$url = get_permalink();
+		$description = wp_trim_words( strip_shortcodes( $post->post_content ), 25 );
+		if ( has_post_thumbnail() ) {
+			$image = get_the_post_thumbnail_url( $post->ID, 'large' );
+		}
+	}
+	?>
+	<meta name="description" content="<?php echo esc_attr( $description ); ?>">
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="<?php echo is_singular() ? 'article' : 'website'; ?>">
+	<meta property="og:url" content="<?php echo esc_url( $url ); ?>">
+	<meta property="og:title" content="<?php echo esc_attr( $title ); ?>">
+	<meta property="og:description" content="<?php echo esc_attr( $description ); ?>">
+	<meta property="og:image" content="<?php echo esc_url( $image ); ?>">
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="<?php echo esc_url( $url ); ?>">
+	<meta property="twitter:title" content="<?php echo esc_attr( $title ); ?>">
+	<meta property="twitter:description" content="<?php echo esc_attr( $description ); ?>">
+	<meta property="twitter:image" content="<?php echo esc_url( $image ); ?>">
+	<?php
+}
+add_action( 'wp_head', 'org_ecosystem_seo_meta_tags', 1 );
+
 function org_ecosystem_schema_markup() {
 	if ( is_front_page() ) {
 		$schema = array(

@@ -88,7 +88,7 @@ get_header();
 					while ( have_posts() ) :
 						the_post();
 						?>
-						<div class="col-md-6 col-xl-4">
+						<div class="col-md-6 col-xl-4 animate-fade-in-up">
 							<div class="card h-100 shadow-sm border-0 member-card-hover">
 								<div class="card-body text-center p-4">
 									<div class="mb-3">
