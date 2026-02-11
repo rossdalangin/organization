@@ -69,6 +69,17 @@ function org_ecosystem_setup() {
 add_action( 'after_setup_theme', 'org_ecosystem_setup' );
 
 /**
+ * Register Roles on Theme Activation
+ */
+function org_ecosystem_activation() {
+	if ( function_exists( 'org_ecosystem_register_roles' ) ) {
+		org_ecosystem_register_roles();
+	}
+	flush_rewrite_rules();
+}
+add_action( 'after_switch_theme', 'org_ecosystem_activation' );
+
+/**
  * Register Elementor Custom Category
  */
 function org_ecosystem_elementor_category( $elements_manager ) {

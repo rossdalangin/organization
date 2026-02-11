@@ -126,6 +126,27 @@ while ( have_posts() ) :
 						<?php endif; ?>
 
 						<?php
+						$files = get_post_meta( get_the_ID(), '_member_files', true );
+						if ( $files ) :
+							$file_list = explode( ',', $files );
+							?>
+							<hr>
+							<div class="member-files mt-4">
+								<h5 class="fw-bold mb-3"><?php _e( 'Downloadable Resources', 'org-ecosystem' ); ?></h5>
+								<div class="list-group shadow-sm">
+									<?php foreach ( $file_list as $file_url ) :
+										$file_name = basename( trim( $file_url ) );
+										?>
+										<a href="<?php echo esc_url( trim( $file_url ) ); ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" target="_blank">
+											<span><i class="bi bi-file-earmark-arrow-down me-2 text-primary"></i> <?php echo esc_html( $file_name ); ?></span>
+											<span class="badge bg-light text-primary border"><?php _e( 'Download', 'org-ecosystem' ); ?></span>
+										</a>
+									<?php endforeach; ?>
+								</div>
+							</div>
+						<?php endif; ?>
+
+						<?php
 						$map = get_post_meta( get_the_ID(), '_member_map_location', true );
 						if ( $map ) : ?>
 							<hr>

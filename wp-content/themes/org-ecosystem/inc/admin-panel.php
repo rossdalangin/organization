@@ -269,6 +269,10 @@ function org_ecosystem_emails_page() {
 		check_admin_referer( 'org_save_emails_action' );
 		update_option( 'org_welcome_email_subject', sanitize_text_field( $_POST['welcome_subject'] ) );
 		update_option( 'org_welcome_email_body', sanitize_textarea_field( $_POST['welcome_body'] ) );
+		update_option( 'org_reminder_email_subject', sanitize_text_field( $_POST['reminder_subject'] ) );
+		update_option( 'org_reminder_email_body', sanitize_textarea_field( $_POST['reminder_body'] ) );
+		update_option( 'org_expiry_email_subject', sanitize_text_field( $_POST['expiry_subject'] ) );
+		update_option( 'org_expiry_email_body', sanitize_textarea_field( $_POST['expiry_body'] ) );
 		echo '<div class="updated"><p>Email templates saved.</p></div>';
 	}
 	?>
@@ -286,7 +290,33 @@ function org_ecosystem_emails_page() {
 				</div>
 				<div class="mb-3">
 					<label class="form-label d-block fw-bold"><?php _e( 'Message Body', 'org-ecosystem' ); ?></label>
-					<textarea name="welcome_body" rows="6" class="widefat"><?php echo esc_textarea( get_option( 'org_welcome_email_body', 'Hi {user_name}, thank you for joining our professional ecosystem!' ) ); ?></textarea>
+					<textarea name="welcome_body" rows="6" class="widefat"><?php echo esc_textarea( get_option( 'org_welcome_email_body', 'Hi {user_name}, thank you for joining our professional ecosystem! Please verify your email here: {verify_url}' ) ); ?></textarea>
+					<p class="description"><?php _e( 'Available tags: {user_name}, {site_name}, {verify_url}', 'org-ecosystem' ); ?></p>
+				</div>
+			</div>
+
+			<div class="card p-4 bg-white border mb-4 shadow-sm">
+				<h3><?php _e( 'Renewal Reminder', 'org-ecosystem' ); ?></h3>
+				<div class="mb-3">
+					<label class="form-label d-block fw-bold"><?php _e( 'Subject', 'org-ecosystem' ); ?></label>
+					<input type="text" name="reminder_subject" class="widefat" value="<?php echo esc_attr( get_option( 'org_reminder_email_subject', 'Membership Renewal Reminder' ) ); ?>">
+				</div>
+				<div class="mb-3">
+					<label class="form-label d-block fw-bold"><?php _e( 'Message Body', 'org-ecosystem' ); ?></label>
+					<textarea name="reminder_body" rows="6" class="widefat"><?php echo esc_textarea( get_option( 'org_reminder_email_body', 'Hi {user_name}, your membership at {site_name} will expire in 7 days. Don\'t forget to renew!' ) ); ?></textarea>
+					<p class="description"><?php _e( 'Available tags: {user_name}, {site_name}', 'org-ecosystem' ); ?></p>
+				</div>
+			</div>
+
+			<div class="card p-4 bg-white border mb-4 shadow-sm">
+				<h3><?php _e( 'Membership Expired', 'org-ecosystem' ); ?></h3>
+				<div class="mb-3">
+					<label class="form-label d-block fw-bold"><?php _e( 'Subject', 'org-ecosystem' ); ?></label>
+					<input type="text" name="expiry_subject" class="widefat" value="<?php echo esc_attr( get_option( 'org_expiry_email_subject', 'Your Membership has Expired' ) ); ?>">
+				</div>
+				<div class="mb-3">
+					<label class="form-label d-block fw-bold"><?php _e( 'Message Body', 'org-ecosystem' ); ?></label>
+					<textarea name="expiry_body" rows="6" class="widefat"><?php echo esc_textarea( get_option( 'org_expiry_email_body', 'Hi {user_name}, your membership at {site_name} has expired. Please renew to keep your benefits.' ) ); ?></textarea>
 					<p class="description"><?php _e( 'Available tags: {user_name}, {site_name}', 'org-ecosystem' ); ?></p>
 				</div>
 			</div>

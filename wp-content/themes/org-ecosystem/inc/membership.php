@@ -203,13 +203,52 @@ function org_ecosystem_handle_registration() {
 		update_user_meta( $user_id, '_member_profile_id', $member_id );
 		update_post_meta( $member_id, '_member_status', 'pending' );
 
-		// In a real scenario, send verification email here
+		// Email Verification Logic
+		$token = wp_generate_password( 20, false );
+		update_user_meta( $user_id, '_email_verification_token', $token );
+		update_user_meta( $user_id, '_email_verified', '0' );
+
+		$verify_url = add_query_arg( array(
+			'org_action' => 'verify_email',
+			'token'      => $token,
+			'user_id'    => $user_id
+		), home_url( '/' ) );
+
+		$subject = get_option( 'org_welcome_email_subject', 'Verify your email' );
+		$message = str_replace( '{verify_url}', $verify_url, get_option( 'org_welcome_email_body', 'Please verify your email: {verify_url}' ) );
+
+		wp_mail( $email, $subject, $message );
 
 		wp_redirect( add_query_arg( 'registered', 'true', home_url( '/dashboard' ) ) );
 		exit;
 	}
 }
 add_action( 'admin_post_nopriv_org_register', 'org_ecosystem_handle_registration' );
+
+/**
+ * Handle Email Verification Link
+ */
+function org_ecosystem_handle_email_verification() {
+	if ( isset( $_GET['org_action'] ) && $_GET['org_action'] === 'verify_email' && isset( $_GET['token'] ) && isset( $_GET['user_id'] ) ) {
+		$user_id = intval( $_GET['user_id'] );
+		$token = sanitize_text_field( $_GET['token'] );
+		$saved_token = get_user_meta( $user_id, '_email_verification_token', true );
+
+		if ( $token === $saved_token ) {
+			update_user_meta( $user_id, '_email_verified', '1' );
+			delete_user_meta( $user_id, '_email_verification_token' );
+
+			// Optional: Auto-approve on email verify if configured
+			// org_ecosystem_approve_member( get_user_meta( $user_id, '_member_profile_id', true ) );
+
+			wp_redirect( add_query_arg( 'verified', 'true', home_url( '/dashboard' ) ) );
+			exit;
+		} else {
+			wp_die( __( 'Invalid or expired verification token.', 'org-ecosystem' ) );
+		}
+	}
+}
+add_action( 'init', 'org_ecosystem_handle_email_verification' );
 
 /**
  * Auto-approve or Manual Approval Logic
@@ -292,7 +331,6 @@ function org_ecosystem_register_roles() {
 		}
 	}
 }
-add_action( 'init', 'org_ecosystem_register_roles' );
 
 /**
  * Define Membership Levels (Static list for logic)
@@ -427,10 +465,19 @@ function org_ecosystem_check_expirations() {
 			if ( $renewal_date <= $today && $renewal_date !== '0000-00-00' ) {
 				// Expired
 				update_post_meta( $member_id, '_member_status', 'expired' );
-				// wp_mail( $user_email, 'Membership Expired', 'Your membership has expired. Please renew.' );
+
+				$subject = get_option( 'org_expiry_email_subject', 'Your Membership has Expired' );
+				$body = get_option( 'org_expiry_email_body', 'Hi {user_name}, your membership at {site_name} has expired. Please renew to keep your benefits.' );
+				$body = str_replace( array('{user_name}', '{site_name}'), array(get_the_author_meta('display_name', $user_id), get_bloginfo('name')), $body );
+
+				wp_mail( $user_email, $subject, $body );
 			} elseif ( $renewal_date === $reminder_date ) {
 				// Reminder
-				// wp_mail( $user_email, 'Membership Renewal Reminder', 'Your membership will expire in 7 days.' );
+				$subject = get_option( 'org_reminder_email_subject', 'Membership Renewal Reminder' );
+				$body = get_option( 'org_reminder_email_body', 'Hi {user_name}, your membership at {site_name} will expire in 7 days. Don\'t forget to renew!' );
+				$body = str_replace( array('{user_name}', '{site_name}'), array(get_the_author_meta('display_name', $user_id), get_bloginfo('name')), $body );
+
+				wp_mail( $user_email, $subject, $body );
 			}
 		}
 		wp_reset_postdata();

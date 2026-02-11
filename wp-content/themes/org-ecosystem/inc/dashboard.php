@@ -110,6 +110,13 @@ function org_ecosystem_handle_job_application() {
 			require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		}
 		$uploadedfile = $_FILES['app_resume'];
+
+		// Mime-type validation
+		$file_type = wp_check_filetype( basename( $uploadedfile['name'] ) );
+		if ( 'application/pdf' !== $file_type['type'] ) {
+			wp_die( __( 'Only PDF files are allowed for resumes.', 'org-ecosystem' ) );
+		}
+
 		$upload_overrides = array( 'test_form' => false );
 		$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
 		if ( $movefile && ! isset( $movefile['error'] ) ) {
