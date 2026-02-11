@@ -57,8 +57,13 @@ while ( have_posts() ) :
 						</div>
 					<?php endif; ?>
 
-					<div class="d-grid">
-						<a href="#inquire" class="btn btn-primary btn-lg"><?php _e( 'Inquire About Product', 'org-ecosystem' ); ?></a>
+					<div class="d-grid mb-5">
+						<a href="#inquiry-form-wrapper" class="btn btn-primary btn-lg"><?php _e( 'Inquire About Product', 'org-ecosystem' ); ?></a>
+					</div>
+
+					<div class="inquiry-section bg-white p-4 border rounded shadow-sm">
+						<h5 class="fw-bold mb-3"><?php _e( 'Send Inquiry', 'org-ecosystem' ); ?></h5>
+						<?php org_ecosystem_inquiry_form( get_the_ID() ); ?>
 					</div>
 				</div>
 			</div>

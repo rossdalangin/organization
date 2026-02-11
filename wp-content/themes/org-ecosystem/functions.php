@@ -19,6 +19,8 @@ define( 'ORG_ECOSYSTEM_URI', get_template_directory_uri() );
  */
 /**
  * Register widget area.
+ *
+ * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
  */
 function org_ecosystem_widgets_init() {
 	register_sidebar( array(
@@ -65,6 +67,8 @@ add_action( 'after_setup_theme', 'org_ecosystem_setup' );
 
 /**
  * Enqueue scripts and styles.
+ *
+ * @return void
  */
 function org_ecosystem_scripts() {
 	// Bootstrap 5

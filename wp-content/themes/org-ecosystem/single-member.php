@@ -135,6 +135,12 @@ while ( have_posts() ) :
 								</div>
 							</div>
 						<?php endif; ?>
+
+						<hr>
+						<div class="member-contact-form mt-4">
+							<h5 class="fw-bold mb-3"><?php _e( 'Send a Message', 'org-ecosystem' ); ?></h5>
+							<?php org_ecosystem_inquiry_form( get_the_ID() ); ?>
+						</div>
 					</div>
 				</div>
 			</div>

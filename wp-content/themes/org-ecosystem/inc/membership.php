@@ -270,6 +270,26 @@ function org_ecosystem_register_roles() {
 	foreach ( $roles as $role_key => $role_data ) {
 		add_role( $role_key, $role_data['name'], $role_data['capabilities'] );
 	}
+
+	// Define Fine-grained capabilities
+	$capabilities = array(
+		'approve_members'   => array( 'org_admin', 'membership_manager' ),
+		'manage_payments'   => array( 'org_admin', 'membership_manager' ),
+		'access_reports'    => array( 'org_admin', 'regional_admin', 'membership_manager' ),
+		'publish_content'   => array( 'org_admin', 'content_manager' ),
+		'manage_listings'   => array( 'org_admin', 'content_manager', 'member', 'vendor' ),
+		'submit_support'    => array( 'member', 'vendor', 'volunteer' ),
+		'manage_tickets'    => array( 'org_admin', 'membership_manager' ),
+	);
+
+	foreach ( $capabilities as $cap => $assigned_roles ) {
+		foreach ( $assigned_roles as $role_slug ) {
+			$role = get_role( $role_slug );
+			if ( $role ) {
+				$role->add_cap( $cap );
+			}
+		}
+	}
 }
 add_action( 'init', 'org_ecosystem_register_roles' );
 

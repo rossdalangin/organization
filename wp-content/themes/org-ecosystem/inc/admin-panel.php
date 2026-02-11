@@ -23,7 +23,7 @@ function org_ecosystem_admin_menu() {
 		'org-settings',
 		__( 'Membership Settings', 'org-ecosystem' ),
 		__( 'Membership', 'org-ecosystem' ),
-		'manage_options',
+		'approve_members',
 		'org-membership',
 		'org_ecosystem_membership_page'
 	);
@@ -32,7 +32,7 @@ function org_ecosystem_admin_menu() {
 		'org-settings',
 		__( 'Reports & Analytics', 'org-ecosystem' ),
 		__( 'Reports', 'org-ecosystem' ),
-		'manage_options',
+		'access_reports',
 		'org-reports',
 		'org_ecosystem_reports_page'
 	);
@@ -59,6 +59,7 @@ function org_ecosystem_settings_page() {
 			<p>Click below to populate your theme with sample members, businesses, and events.</p>
 			<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
 				<input type="hidden" name="action" value="org_import_demo">
+				<?php wp_nonce_field( 'org_import_demo', 'org_demo_nonce' ); ?>
 				<button type="submit" class="button button-primary">Import Sample Data</button>
 			</form>
 		</div>
@@ -89,7 +90,9 @@ function org_ecosystem_membership_page() {
 			</ol>
 			<p><strong><?php _e( 'Example:', 'org-ecosystem' ); ?></strong> <?php _e( 'Enter ₱1,500 for Annual Membership Fee.', 'org-ecosystem' ); ?></p>
 		</div>
-		<p><?php _e( 'Manage plans, approval workflows, and automated reminders.', 'org-ecosystem' ); ?></p>
+		<p><?php _e( 'Manage plans, approval workflows, and automated reminders.', 'org-ecosystem' ); ?>
+			<span class="dashicons dashicons-editor-help" title="<?php esc_attr_e( 'These plans define the access levels for your members.', 'org-ecosystem' ); ?>"></span>
+		</p>
 		<table class="wp-list-table widefat fixed striped">
 			<thead>
 				<tr>
@@ -162,29 +165,49 @@ function org_ecosystem_handle_demo_import() {
 add_action( 'admin_post_org_import_demo', 'org_ecosystem_handle_demo_import' );
 
 function org_ecosystem_reports_page() {
+	$active_members = count( get_posts( array( 'post_type' => 'member', 'post_status' => 'publish', 'posts_per_page' => -1 ) ) );
+	$pending_members = count( get_posts( array( 'post_type' => 'member', 'post_status' => 'pending', 'posts_per_page' => -1 ) ) );
+	$total_businesses = count( get_posts( array( 'post_type' => 'business', 'posts_per_page' => -1 ) ) );
+	$total_products = count( get_posts( array( 'post_type' => 'product', 'posts_per_page' => -1 ) ) );
 	?>
 	<div class="wrap">
 		<h1><?php _e( 'Reports & Analytics', 'org-ecosystem' ); ?></h1>
-		<div class="row" style="display: flex; gap: 20px; margin-top: 20px;">
-			<div class="card" style="flex: 1; background: #fff; padding: 20px; border-left: 4px solid #0d6efd;">
-				<h3><?php _e( 'Total Members', 'org-ecosystem' ); ?></h3>
-				<p style="font-size: 24px; font-weight: bold;">
-					<?php echo count( get_posts( array( 'post_type' => 'member', 'posts_per_page' => -1 ) ) ); ?>
-				</p>
+		<p class="description"><?php _e( 'Overview of organization performance and engagement.', 'org-ecosystem' ); ?></p>
+
+		<div class="row" style="display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap;">
+			<div class="card" style="flex: 1; min-width: 200px; background: #fff; padding: 20px; border-left: 4px solid #0d6efd; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+				<h3 style="margin-top: 0;"><?php _e( 'Active Members', 'org-ecosystem' ); ?></h3>
+				<p style="font-size: 32px; font-weight: bold; margin: 10px 0;"><?php echo esc_html( $active_members ); ?></p>
+				<span class="small text-muted"><?php echo esc_html( $pending_members ); ?> <?php _e( 'pending approval', 'org-ecosystem' ); ?></span>
 			</div>
-			<div class="card" style="flex: 1; background: #fff; padding: 20px; border-left: 4px solid #198754;">
-				<h3><?php _e( 'Total Revenue', 'org-ecosystem' ); ?></h3>
-				<p style="font-size: 24px; font-weight: bold;">
-					<?php
-					// Placeholder calculation
-					_e( '₱ 0.00', 'org-ecosystem' );
-					?>
-				</p>
+			<div class="card" style="flex: 1; min-width: 200px; background: #fff; padding: 20px; border-left: 4px solid #198754; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+				<h3 style="margin-top: 0;"><?php _e( 'Businesses', 'org-ecosystem' ); ?></h3>
+				<p style="font-size: 32px; font-weight: bold; margin: 10px 0;"><?php echo esc_html( $total_businesses ); ?></p>
+				<span class="small text-muted"><?php echo esc_html( $total_products ); ?> <?php _e( 'products listed', 'org-ecosystem' ); ?></span>
 			</div>
-			<div class="card" style="flex: 1; background: #fff; padding: 20px; border-left: 4px solid #ffc107;">
-				<h3><?php _e( 'Event Registrations', 'org-ecosystem' ); ?></h3>
-				<p style="font-size: 24px; font-weight: bold;">0</p>
+			<div class="card" style="flex: 1; min-width: 200px; background: #fff; padding: 20px; border-left: 4px solid #ffc107; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+				<h3 style="margin-top: 0;"><?php _e( 'Total Revenue', 'org-ecosystem' ); ?></h3>
+				<p style="font-size: 32px; font-weight: bold; margin: 10px 0;">₱ 0.00</p>
+				<span class="small text-muted"><?php _e( 'Lifetime subscription revenue', 'org-ecosystem' ); ?></span>
 			</div>
+		</div>
+
+		<div class="mt-5" style="margin-top: 40px; background: #fff; padding: 20px; border: 1px solid #ccd0d4;">
+			<h3><?php _e( 'Recent Activity', 'org-ecosystem' ); ?></h3>
+			<table class="wp-list-table widefat fixed striped">
+				<thead>
+					<tr>
+						<th><?php _e( 'User', 'org-ecosystem' ); ?></th>
+						<th><?php _e( 'Action', 'org-ecosystem' ); ?></th>
+						<th><?php _e( 'Date', 'org-ecosystem' ); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td colspan="3" class="text-center"><?php _e( 'No recent activity recorded.', 'org-ecosystem' ); ?></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 	<?php

@@ -84,8 +84,15 @@ while ( have_posts() ) :
 									<?php endif; ?>
 								</ul>
 								<div class="d-grid mt-4">
-									<a href="#contact" class="btn btn-primary"><?php _e( 'Inquire Now', 'org-ecosystem' ); ?></a>
+									<a href="#inquiry-form-wrapper" class="btn btn-primary"><?php _e( 'Inquire Now', 'org-ecosystem' ); ?></a>
 								</div>
+							</div>
+						</div>
+
+						<div class="card shadow-sm border-0">
+							<div class="card-body p-4">
+								<h5 class="fw-bold mb-3"><?php _e( 'Contact Business', 'org-ecosystem' ); ?></h5>
+								<?php org_ecosystem_inquiry_form( get_the_ID() ); ?>
 							</div>
 						</div>
 					</div>

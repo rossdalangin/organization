@@ -103,11 +103,18 @@ function org_ecosystem_handle_job_application() {
 	$email = sanitize_email( $_POST['app_email'] );
 	$message = sanitize_textarea_field( $_POST['app_message'] );
 
-	// Handle file upload (simplified)
+	// Handle file upload
 	$resume_url = '';
 	if ( ! empty( $_FILES['app_resume']['name'] ) ) {
-		// Real implementation would use wp_handle_upload
-		$resume_url = 'sample-resume-url.pdf';
+		if ( ! function_exists( 'wp_handle_upload' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		}
+		$uploadedfile = $_FILES['app_resume'];
+		$upload_overrides = array( 'test_form' => false );
+		$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
+		if ( $movefile && ! isset( $movefile['error'] ) ) {
+			$resume_url = $movefile['url'];
+		}
 	}
 
 	$application_id = wp_insert_post( array(

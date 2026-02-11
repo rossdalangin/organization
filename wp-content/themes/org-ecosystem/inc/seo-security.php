@@ -39,6 +39,32 @@ function org_ecosystem_schema_markup() {
 		);
 		echo '<script type="application/ld+json">' . json_encode( $schema ) . '</script>';
 	}
+
+	if ( is_singular( 'event' ) ) {
+		$schema = array(
+			'@context'   => 'https://schema.org',
+			'@type'      => 'Event',
+			'name'       => get_the_title(),
+			'startDate'  => get_post_meta( get_the_ID(), '_event_date', true ),
+			'location'   => array(
+				'@type' => 'Place',
+				'name'  => get_post_meta( get_the_ID(), '_event_venue', true ),
+			),
+			'description' => get_the_excerpt(),
+		);
+		echo '<script type="application/ld+json">' . json_encode( $schema ) . '</script>';
+	}
+
+	if ( is_singular( 'job' ) ) {
+		$schema = array(
+			'@context' => 'https://schema.org',
+			'@type'    => 'JobPosting',
+			'title'    => get_the_title(),
+			'description' => get_the_content(),
+			'datePosted'  => get_the_date( 'c' ),
+		);
+		echo '<script type="application/ld+json">' . json_encode( $schema ) . '</script>';
+	}
 }
 add_action( 'wp_head', 'org_ecosystem_schema_markup' );
 
@@ -85,3 +111,38 @@ function org_ecosystem_gdpr_notice() {
 	endif;
 }
 add_action( 'wp_footer', 'org_ecosystem_gdpr_notice' );
+
+/**
+ * Register Custom Fields for REST API
+ */
+function org_ecosystem_register_rest_fields() {
+	// Member Profile Meta
+	register_rest_field( 'member', 'profile_details', array(
+		'get_callback' => function( $post_arr ) {
+			$post_id = $post_arr['id'];
+			return array(
+				'business_name' => get_post_meta( $post_id, '_member_business_name', true ),
+				'bio'           => get_post_meta( $post_id, '_member_bio', true ),
+				'phone'         => get_post_meta( $post_id, '_member_phone', true ),
+				'email'         => get_post_meta( $post_id, '_member_email', true ),
+				'website'       => get_post_meta( $post_id, '_member_website', true ),
+				'status'        => get_post_meta( $post_id, '_member_status', true ),
+			);
+		},
+		'schema' => null,
+	) );
+
+	// Business Profile Meta
+	register_rest_field( 'business', 'business_details', array(
+		'get_callback' => function( $post_arr ) {
+			$post_id = $post_arr['id'];
+			return array(
+				'phone'    => get_post_meta( $post_id, '_business_phone', true ),
+				'location' => get_the_terms( $post_id, 'location' ),
+				'industry' => get_the_terms( $post_id, 'industry' ),
+			);
+		},
+		'schema' => null,
+	) );
+}
+add_action( 'rest_api_init', 'org_ecosystem_register_rest_fields' );
