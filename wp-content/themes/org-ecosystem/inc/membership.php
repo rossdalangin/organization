@@ -204,6 +204,7 @@ function org_ecosystem_handle_registration() {
 		update_user_meta( $user_id, '_member_profile_id', $member_id );
 		update_user_meta( $user_id, '_membership_level', $plan );
 		update_post_meta( $member_id, '_member_status', 'pending' );
+		update_post_meta( $member_id, '_member_join_date', date( 'Y-m-d' ) );
 
 		// Email Verification Logic
 		$token = wp_generate_password( 20, false );
@@ -279,6 +280,10 @@ function org_ecosystem_approve_member( $member_id ) {
  */
 function org_ecosystem_register_roles() {
 	$roles = array(
+		'super_admin' => array(
+			'name' => __( 'Super Admin', 'org-ecosystem' ),
+			'capabilities' => array( 'read' => true, 'edit_posts' => true, 'manage_options' => true, 'delete_users' => true ),
+		),
 		'org_admin' => array(
 			'name' => __( 'Organization Admin', 'org-ecosystem' ),
 			'capabilities' => array( 'read' => true, 'edit_posts' => true, 'manage_options' => true ),

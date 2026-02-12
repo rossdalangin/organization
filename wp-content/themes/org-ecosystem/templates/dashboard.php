@@ -40,6 +40,7 @@ $status = get_post_meta( $member_id, '_member_status', true );
 							<a href="?action=resources" class="list-group-item list-group-item-action"><i class="bi bi-download me-2"></i> Exclusive Resources</a>
 							<a href="?action=analytics" class="list-group-item list-group-item-action"><i class="bi bi-bar-chart me-2"></i> Performance Stats</a>
 							<a href="?action=support" class="list-group-item list-group-item-action"><i class="bi bi-sos me-2"></i> Support & Messaging</a>
+							<a href="?action=gdpr" class="list-group-item list-group-item-action"><i class="bi bi-shield-check me-2"></i> Privacy & GDPR</a>
 							<a href="<?php echo wp_logout_url( home_url() ); ?>" class="list-group-item list-group-item-action text-danger"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
 						</div>
 					</div>
@@ -70,6 +71,9 @@ $status = get_post_meta( $member_id, '_member_status', true );
 							break;
 						case 'support':
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/support.php';
+							break;
+						case 'gdpr':
+							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/gdpr.php';
 							break;
 						case 'my-events':
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/my-events.php';

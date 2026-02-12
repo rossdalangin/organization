@@ -8,8 +8,15 @@
 get_header();
 ?>
 
-<main id="primary" class="site-main container py-5">
-	<div class="row">
+<div class="blog-header bg-dark text-white py-5 mb-5">
+	<div class="container text-center py-4">
+		<h1 class="display-4 fw-bold"><?php echo is_home() ? get_the_title( get_option('page_for_posts', true) ) : __( 'Our News', 'org-ecosystem' ); ?></h1>
+		<p class="lead opacity-75"><?php _e( 'Stay updated with latest news and stories from our organization.', 'org-ecosystem' ); ?></p>
+	</div>
+</div>
+
+<main id="primary" class="site-main container pb-5">
+	<div class="row g-5">
 		<div class="col-lg-8">
 			<?php
 			if ( have_posts() ) :
