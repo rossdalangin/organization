@@ -621,16 +621,25 @@ function org_ecosystem_reports_page() {
 	$total_events = count( get_posts( array( 'post_type' => 'event', 'posts_per_page' => -1 ) ) );
 
 	// Calculate Total Revenue
-	$total_revenue = 0;
+	$membership_revenue = 0;
 	$all_users = get_users( array( 'fields' => 'ID' ) );
 	foreach ( $all_users as $uid ) {
 		$history = get_user_meta( $uid, '_payment_history', true );
 		if ( is_array( $history ) ) {
 			foreach ( $history as $item ) {
-				$total_revenue += floatval( $item['amount'] );
+				$membership_revenue += floatval( $item['amount'] );
 			}
 		}
 	}
+
+	$donation_revenue = 0;
+	$donations_query = new WP_Query( array( 'post_type' => 'donation', 'posts_per_page' => -1 ) );
+	if ( $donations_query->have_posts() ) {
+		foreach ( $donations_query->posts as $d ) {
+			$donation_revenue += floatval( get_post_meta( $d->ID, '_donation_amount', true ) );
+		}
+	}
+	$total_revenue = $membership_revenue + $donation_revenue;
 
 	?>
 	<div class="wrap">
@@ -654,7 +663,10 @@ function org_ecosystem_reports_page() {
 			<div class="card" style="flex: 1; min-width: 200px; background: #fff; padding: 20px; border-left: 4px solid #ffc107; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
 				<h3 style="margin-top: 0;"><?php _e( 'Total Revenue', 'org-ecosystem' ); ?></h3>
 				<p style="font-size: 32px; font-weight: bold; margin: 10px 0;">₱ <?php echo number_format( $total_revenue, 2 ); ?></p>
-				<span class="small text-muted"><?php _e( 'Lifetime subscription revenue', 'org-ecosystem' ); ?></span>
+				<div class="d-flex justify-content-between">
+					<span class="small text-muted">Subs: ₱<?php echo number_format( $membership_revenue ); ?></span>
+					<span class="small text-muted">Donations: ₱<?php echo number_format( $donation_revenue ); ?></span>
+				</div>
 			</div>
 		</div>
 
@@ -777,6 +789,38 @@ function org_ecosystem_handle_demo_import() {
 		'post_title' => 'Annual Gala 2024',
 		'post_type'  => 'event',
 		'post_status'=> 'publish',
+	) );
+
+	// Create Sample Testimonial
+	wp_insert_post( array(
+		'post_title' => 'Jane Smith',
+		'post_type'  => 'testimonial',
+		'post_status'=> 'publish',
+		'post_content' => 'The resources provided by this organization have been a game-changer for my startup.'
+	) );
+
+	// Create Sample Resource
+	$res_id = wp_insert_post( array(
+		'post_title' => 'Member Growth Handbook',
+		'post_type'  => 'resource',
+		'post_status'=> 'publish',
+	) );
+	update_post_meta( $res_id, '_resource_file_url', 'https://example.com/handbook.pdf' );
+
+	// Create Sample Job
+	wp_insert_post( array(
+		'post_title' => 'Senior Community Manager',
+		'post_type'  => 'job',
+		'post_status'=> 'publish',
+		'post_content' => 'Join our team to help grow our digital ecosystem.'
+	) );
+
+	// Create Sample Program
+	wp_insert_post( array(
+		'post_title' => 'Entrepreneurship Mentorship 2024',
+		'post_type'  => 'program',
+		'post_status'=> 'publish',
+		'post_content' => 'Matching seasoned professionals with rising entrepreneurs.'
 	) );
 
 	wp_redirect( add_query_arg( array( 'import' => 'success' ), admin_url( 'admin.php?page=org-settings' ) ) );

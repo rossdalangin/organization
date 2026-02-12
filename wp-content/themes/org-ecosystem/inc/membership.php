@@ -516,12 +516,17 @@ function org_ecosystem_handle_donation() {
 	$amount = ! empty( $_POST['custom_amount'] ) ? intval( $_POST['custom_amount'] ) : intval( $_POST['amount'] );
 
 	// Mock donation recording
-	wp_insert_post( array(
+	$donation_id = wp_insert_post( array(
 		'post_title'   => 'Donation from ' . $name,
 		'post_type'    => 'donation',
 		'post_status'  => 'publish',
 		'post_content' => sprintf( 'Amount: ₱ %d | Email: %s', $amount, $email ),
 	) );
+
+	if ( $donation_id ) {
+		update_post_meta( $donation_id, '_donation_amount', $amount );
+		update_post_meta( $donation_id, '_donation_email', $email );
+	}
 
 	wp_redirect( add_query_arg( 'thanks', 'true', home_url( '/donate' ) ) );
 	exit;
