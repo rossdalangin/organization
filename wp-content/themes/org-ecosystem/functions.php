@@ -10,17 +10,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define Constants
-define( 'ORG_ECOSYSTEM_VERSION', '1.0.0' );
+define( 'ORG_ECOSYSTEM_VERSION', '1.0.1' );
 define( 'ORG_ECOSYSTEM_DIR', get_template_directory() );
 define( 'ORG_ECOSYSTEM_URI', get_template_directory_uri() );
 
 /**
  * Setup Theme
  */
+function org_ecosystem_setup() {
+	load_theme_textdomain( 'org-ecosystem', ORG_ECOSYSTEM_DIR . '/languages' );
+
+	add_theme_support( 'automatic-feed-links' );
+	add_theme_support( 'title-tag' );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption', 'style', 'script' ) );
+	add_theme_support( 'customize-selective-refresh-widgets' );
+	add_theme_support( 'align-wide' );
+	add_theme_support( 'editor-styles' );
+	add_editor_style( 'assets/css/editor-style.css' );
+	add_theme_support( 'wp-block-styles' );
+	add_theme_support( 'responsive-embeds' );
+
+	register_nav_menus( array(
+		'primary' => esc_html__( 'Primary Menu', 'org-ecosystem' ),
+		'footer'  => esc_html__( 'Footer Menu', 'org-ecosystem' ),
+		'member'  => esc_html__( 'Member Dashboard Menu', 'org-ecosystem' ),
+	) );
+
+	add_theme_support( 'elementor-full-width' );
+}
+add_action( 'after_setup_theme', 'org_ecosystem_setup' );
+
 /**
  * Register widget area.
- *
- * @link https://developer.wordpress.org/themes/functionality/sidebars/#registering-a-sidebar
  */
 function org_ecosystem_widgets_init() {
 	register_sidebar( array(
@@ -35,72 +57,36 @@ function org_ecosystem_widgets_init() {
 }
 add_action( 'widgets_init', 'org_ecosystem_widgets_init' );
 
-function org_ecosystem_setup() {
-	load_theme_textdomain( 'org-ecosystem', ORG_ECOSYSTEM_DIR . '/languages' );
-
-	add_theme_support( 'automatic-feed-links' );
-	add_theme_support( 'title-tag' );
-	add_theme_support( 'post-thumbnails' );
-	add_theme_support( 'html5', array(
-		'search-form',
-		'comment-form',
-		'comment-list',
-		'gallery',
-		'caption',
-		'style',
-		'script',
-	) );
-	add_theme_support( 'customize-selective-refresh-widgets' );
-	add_theme_support( 'align-wide' );
-	add_theme_support( 'editor-styles' );
-	add_editor_style( 'assets/css/editor-style.css' );
-	add_theme_support( 'wp-block-styles' );
-	add_theme_support( 'responsive-embeds' );
-
-	register_nav_menus( array(
-		'primary' => esc_html__( 'Primary Menu', 'org-ecosystem' ),
-		'footer'  => esc_html__( 'Footer Menu', 'org-ecosystem' ),
-		'member'  => esc_html__( 'Member Dashboard Menu', 'org-ecosystem' ),
-	) );
-
-	// Add Elementor Support
-	add_theme_support( 'elementor-full-width' );
-}
-add_action( 'after_setup_theme', 'org_ecosystem_setup' );
-
 /**
- * Register Roles on Theme Activation
+ * Get Dynamic Google Fonts URL
  */
-function org_ecosystem_activation() {
-	if ( function_exists( 'org_ecosystem_register_roles' ) ) {
-		org_ecosystem_register_roles();
+function org_ecosystem_fonts_url() {
+	$fonts = array();
+	$body_font = get_theme_mod( 'body_font_family', 'Inter' );
+	$heading_font = get_theme_mod( 'heading_font_family', 'Plus Jakarta Sans' );
+
+	$fonts[] = $body_font . ':wght@300;400;500;600;700';
+	if ( $body_font !== $heading_font ) {
+		$fonts[] = $heading_font . ':wght@400;500;600;700;800;900';
 	}
-	flush_rewrite_rules();
-}
-add_action( 'after_switch_theme', 'org_ecosystem_activation' );
 
-/**
- * Register Elementor Custom Category
- */
-function org_ecosystem_elementor_category( $elements_manager ) {
-	$elements_manager->add_category(
-		'org-ecosystem',
-		[
-			'title' => esc_html__( 'Organization Ecosystem', 'org-ecosystem' ),
-			'icon'  => 'fa fa-plug',
-		]
-	);
+	$fonts_url = add_query_arg( array(
+		'family' => implode( '&family=', array_map( 'urlencode', $fonts ) ),
+		'display' => 'swap',
+	), 'https://fonts.googleapis.com/css2' );
+
+	// Fix standard implode adding &family= wrongly for multiple fonts in some cases
+	$fonts_url = str_replace( '%3A', ':', $fonts_url );
+
+	return $fonts_url;
 }
-add_action( 'elementor/elements/categories_registered', 'org_ecosystem_elementor_category' );
 
 /**
  * Enqueue scripts and styles.
- *
- * @return void
  */
 function org_ecosystem_scripts() {
-	// Google Fonts
-	wp_enqueue_style( 'google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap', array(), null );
+	// Dynamic Google Fonts
+	wp_enqueue_style( 'org-ecosystem-fonts', org_ecosystem_fonts_url(), array(), null );
 
 	// Bootstrap 5
 	wp_enqueue_style( 'bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css', array(), '5.3.0' );
@@ -123,6 +109,17 @@ function org_ecosystem_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'org_ecosystem_scripts' );
+
+/**
+ * Register Roles on Theme Activation
+ */
+function org_ecosystem_activation() {
+	if ( function_exists( 'org_ecosystem_register_roles' ) ) {
+		org_ecosystem_register_roles();
+	}
+	flush_rewrite_rules();
+}
+add_action( 'after_switch_theme', 'org_ecosystem_activation' );
 
 /**
  * Include required files
