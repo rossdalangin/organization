@@ -222,6 +222,76 @@ function org_ecosystem_customize_register( $wp_customize ) {
 		'label' => __( 'Premium Plan Price', 'org-ecosystem' ),
 		'section' => 'org_membership_controls',
 	) );
+
+	// Promotion Settings
+	$wp_customize->add_section( 'org_promotion_controls', array(
+		'title' => __( 'Promotion Settings', 'org-ecosystem' ),
+		'priority' => 90,
+	) );
+
+	$wp_customize->add_setting( 'promotion_price', array(
+		'default' => '500',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'promotion_price', array(
+		'label' => __( 'Featured Listing Price (One-time)', 'org-ecosystem' ),
+		'section' => 'org_promotion_controls',
+	) );
+
+	$wp_customize->add_setting( 'protect_leads', array(
+		'default' => false,
+		'sanitize_callback' => 'org_ecosystem_sanitize_checkbox',
+	) );
+	$wp_customize->add_control( 'protect_leads', array(
+		'label' => __( 'Hide Contact Info from Guests/Basic Members', 'org-ecosystem' ),
+		'description' => __( 'Only Premium, Corporate, and Lifetime members will see direct contact details.', 'org-ecosystem' ),
+		'section' => 'org_promotion_controls',
+		'type' => 'checkbox',
+	) );
+
+	$wp_customize->add_setting( 'job_listing_price', array(
+		'default' => '1000',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'job_listing_price', array(
+		'label' => __( 'Job Listing Fee (For Vendors)', 'org-ecosystem' ),
+		'section' => 'org_promotion_controls',
+	) );
+
+	// Sponsor Ads Section
+	$wp_customize->add_section( 'org_sponsor_ads', array(
+		'title' => __( 'Sponsor Ads', 'org-ecosystem' ),
+		'priority' => 100,
+	) );
+
+	$wp_customize->add_setting( 'sponsor_banner_image', array(
+		'default' => '',
+		'sanitize_callback' => 'esc_url_raw',
+	) );
+	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'sponsor_banner_image', array(
+		'label' => __( 'Sponsor Banner (Sidebar)', 'org-ecosystem' ),
+		'section' => 'org_sponsor_ads',
+	) ) );
+
+	$wp_customize->add_setting( 'sponsor_banner_link', array(
+		'default' => '#',
+		'sanitize_callback' => 'esc_url_raw',
+	) );
+	$wp_customize->add_control( 'sponsor_banner_link', array(
+		'label' => __( 'Sponsor Link', 'org-ecosystem' ),
+		'section' => 'org_sponsor_ads',
+		'type' => 'url',
+	) );
+
+	$wp_customize->add_setting( 'show_sponsor_in_sidebar', array(
+		'default' => true,
+		'sanitize_callback' => 'org_ecosystem_sanitize_checkbox',
+	) );
+	$wp_customize->add_control( 'show_sponsor_in_sidebar', array(
+		'label' => __( 'Show Sponsor in Sidebar', 'org-ecosystem' ),
+		'section' => 'org_sponsor_ads',
+		'type' => 'checkbox',
+	) );
 }
 add_action( 'customize_register', 'org_ecosystem_customize_register' );
 

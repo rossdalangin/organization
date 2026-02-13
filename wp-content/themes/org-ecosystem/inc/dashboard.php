@@ -86,8 +86,25 @@ function org_ecosystem_handle_event_registration() {
 
 	if ( ! $user_id || ! $event_id ) return;
 
+	$price = get_post_meta( $event_id, '_event_price', true );
+	$is_paid = ! empty( $price ) && floatval( $price ) > 0;
+
 	$registrations = get_user_meta( $user_id, '_registered_events', true ) ?: array();
 	if ( ! in_array( $event_id, $registrations ) ) {
+
+		// Mock payment for paid events
+		if ( $is_paid ) {
+			$history = get_user_meta( $user_id, '_payment_history', true ) ?: array();
+			$history[] = array(
+				'date'   => date( 'Y-m-d H:i:s' ),
+				'txn_id' => 'EVT_' . time(),
+				'amount' => $price,
+				'level'  => 'Event Ticket: ' . get_the_title( $event_id ),
+				'status' => 'Paid'
+			);
+			update_user_meta( $user_id, '_payment_history', $history );
+		}
+
 		$registrations[] = $event_id;
 		update_user_meta( $user_id, '_registered_events', $registrations );
 
@@ -227,6 +244,143 @@ function org_ecosystem_handle_product_delete() {
 	exit;
 }
 add_action( 'admin_post_org_delete_product', 'org_ecosystem_handle_product_delete' );
+
+/**
+ * Handle Listing Promotion (Paid)
+ */
+function org_ecosystem_handle_promote_listing() {
+	if ( ! is_user_logged_in() ) return;
+	check_admin_referer( 'org_promote_listing_action' );
+
+	$user_id = get_current_user_id();
+	$item_id = isset( $_GET['item_id'] ) ? intval( $_GET['item_id'] ) : 0;
+	$item_type = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : 'member';
+
+	if ( ! $item_id ) return;
+
+	// Verify ownership
+	if ( $item_type === 'member' ) {
+		if ( (int) get_user_meta( $user_id, '_member_profile_id', true ) !== $item_id ) return;
+	} else {
+		if ( (int) get_post_field( 'post_author', $item_id ) !== $user_id ) return;
+	}
+
+	$amount = get_theme_mod( 'promotion_price', '500' );
+
+	// Mock successful payment
+	$payment_status = 'completed';
+
+	if ( $payment_status === 'completed' ) {
+		$transaction_id = 'PROM_' . time();
+
+		// Log transaction in history
+		$history = get_user_meta( $user_id, '_payment_history', true ) ?: array();
+		$history[] = array(
+			'date'   => date( 'Y-m-d H:i:s' ),
+			'txn_id' => $transaction_id,
+			'amount' => $amount,
+			'level'  => 'Promotion (' . ucfirst($item_type) . ')',
+			'status' => 'Paid'
+		);
+		update_user_meta( $user_id, '_payment_history', $history );
+
+		// Update featured status
+		if ( $item_type === 'member' ) {
+			update_post_meta( $item_id, '_member_is_featured', '1' );
+		} else {
+			update_post_meta( $item_id, '_product_is_featured', '1' );
+		}
+
+		wp_redirect( add_query_arg( array( 'action' => 'overview', 'promoted' => 'true' ), home_url( '/dashboard' ) ) );
+		exit;
+	}
+}
+add_action( 'admin_post_org_promote_listing', 'org_ecosystem_handle_promote_listing' );
+
+/**
+ * Handle Job Save (Paid for Vendors)
+ */
+function org_ecosystem_handle_job_save() {
+	if ( ! is_user_logged_in() ) return;
+	check_admin_referer( 'org_save_job_action', 'org_job_nonce' );
+
+	$user_id = get_current_user_id();
+	$job_id = isset( $_POST['job_id'] ) ? intval( $_POST['job_id'] ) : 0;
+	$title = sanitize_text_field( $_POST['job_title'] );
+	$description = sanitize_textarea_field( $_POST['job_description'] );
+	$location = isset( $_POST['job_location'] ) ? intval( $_POST['job_location'] ) : 0;
+	$promote = isset( $_POST['job_promote'] ) ? '1' : '0';
+
+	$is_vendor = current_user_can( 'vendor' );
+	$listing_fee = get_theme_mod( 'job_listing_price', '1000' );
+	$promotion_fee = get_theme_mod( 'promotion_price', '500' );
+
+	if ( $job_id ) {
+		if ( (int) get_post_field( 'post_author', $job_id ) !== $user_id ) return;
+		wp_update_post( array(
+			'ID'           => $job_id,
+			'post_title'   => $title,
+			'post_content' => $description,
+		) );
+	} else {
+		$job_id = wp_insert_post( array(
+			'post_title'   => $title,
+			'post_content' => $description,
+			'post_type'    => 'job',
+			'post_status'  => 'publish',
+			'post_author'  => $user_id,
+		) );
+
+		// Handle payment for Vendors or Promotions
+		if ( $is_vendor || $promote === '1' ) {
+			$total = 0;
+			if ( $is_vendor ) $total += (int) $listing_fee;
+			if ( $promote === '1' ) $total += (int) $promotion_fee;
+
+			if ( $total > 0 ) {
+				$history = get_user_meta( $user_id, '_payment_history', true ) ?: array();
+				$history[] = array(
+					'date'   => date( 'Y-m-d H:i:s' ),
+					'txn_id' => 'JOB_' . time(),
+					'amount' => $total,
+					'level'  => 'Job Posting' . ( $promote === '1' ? ' (Featured)' : '' ),
+					'status' => 'Paid'
+				);
+				update_user_meta( $user_id, '_payment_history', $history );
+			}
+		}
+	}
+
+	if ( $job_id ) {
+		update_post_meta( $job_id, '_job_is_featured', $promote );
+		if ( $location ) {
+			wp_set_object_terms( $job_id, array( $location ), 'location' );
+		}
+	}
+
+	wp_redirect( add_query_arg( array( 'action' => 'my-jobs', 'saved' => 'true' ), home_url( '/dashboard' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_save_job', 'org_ecosystem_handle_job_save' );
+
+/**
+ * Handle Job Delete
+ */
+function org_ecosystem_handle_job_delete() {
+	$job_id = isset( $_GET['job_id'] ) ? intval( $_GET['job_id'] ) : 0;
+	if ( ! $job_id ) return;
+
+	check_admin_referer( 'org_delete_job_action' );
+
+	$user_id = get_current_user_id();
+	if ( (int) get_post_field( 'post_author', $job_id ) === $user_id ) {
+		wp_delete_post( $job_id );
+	}
+
+	wp_redirect( add_query_arg( array( 'action' => 'my-jobs', 'deleted' => 'true' ), home_url( '/dashboard' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_delete_job', 'org_ecosystem_handle_job_delete' );
 
 /**
  * Get Member Stats

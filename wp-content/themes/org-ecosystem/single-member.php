@@ -54,21 +54,41 @@ while ( have_posts() ) :
 						</div>
 
 						<div class="member-contact list-group list-group-flush text-start mb-4">
-							<?php if ( $phone ) : ?>
-								<div class="list-group-item px-0"><i class="bi bi-telephone me-2 text-primary"></i> <?php echo esc_html( $phone ); ?></div>
-							<?php endif; ?>
-							<?php if ( $email ) : ?>
-								<div class="list-group-item px-0"><i class="bi bi-envelope me-2 text-primary"></i> <?php echo esc_html( $email ); ?></div>
-							<?php endif; ?>
-							<?php if ( $website ) : ?>
-								<div class="list-group-item px-0"><i class="bi bi-globe me-2 text-primary"></i> <a href="<?php echo esc_url( $website ); ?>" target="_blank">Website</a></div>
+							<?php
+							$can_view = true;
+							if ( get_theme_mod( 'protect_leads', false ) ) {
+								$curr_user_id = get_current_user_id();
+								$level = get_user_meta( $curr_user_id, '_membership_level', true );
+								if ( ! is_user_logged_in() || ! in_array( $level, array( 'premium', 'corporate', 'lifetime' ) ) ) {
+									$can_view = false;
+								}
+							}
+
+							if ( $can_view ) : ?>
+								<?php if ( $phone ) : ?>
+									<div class="list-group-item px-0"><i class="bi bi-telephone me-2 text-primary"></i> <?php echo esc_html( $phone ); ?></div>
+								<?php endif; ?>
+								<?php if ( $email ) : ?>
+									<div class="list-group-item px-0"><i class="bi bi-envelope me-2 text-primary"></i> <?php echo esc_html( $email ); ?></div>
+								<?php endif; ?>
+								<?php if ( $website ) : ?>
+									<div class="list-group-item px-0"><i class="bi bi-globe me-2 text-primary"></i> <a href="<?php echo esc_url( $website ); ?>" target="_blank">Website</a></div>
+								<?php endif; ?>
+							<?php else : ?>
+								<div class="list-group-item px-0 py-3 text-center bg-light border rounded">
+									<i class="bi bi-lock-fill text-muted d-block mb-2 h4"></i>
+									<p class="small text-muted mb-2"><?php _e( 'Contact details are restricted to Premium members.', 'org-ecosystem' ); ?></p>
+									<a href="<?php echo home_url( '/membership-plans' ); ?>" class="btn btn-primary btn-sm fw-bold"><?php _e( 'Upgrade to View', 'org-ecosystem' ); ?></a>
+								</div>
 							<?php endif; ?>
 						</div>
 
 						<div class="member-social d-flex justify-content-center gap-3">
-							<?php if ( $facebook ) : ?><a href="<?php echo esc_url( $facebook ); ?>" class="text-primary h4"><i class="bi bi-facebook"></i></a><?php endif; ?>
-							<?php if ( $linkedin ) : ?><a href="<?php echo esc_url( $linkedin ); ?>" class="text-primary h4"><i class="bi bi-linkedin"></i></a><?php endif; ?>
-							<?php if ( $twitter ) : ?><a href="<?php echo esc_url( $twitter ); ?>" class="text-primary h4"><i class="bi bi-twitter"></i></a><?php endif; ?>
+							<?php if ( $can_view ) : ?>
+								<?php if ( $facebook ) : ?><a href="<?php echo esc_url( $facebook ); ?>" class="text-primary h4"><i class="bi bi-facebook"></i></a><?php endif; ?>
+								<?php if ( $linkedin ) : ?><a href="<?php echo esc_url( $linkedin ); ?>" class="text-primary h4"><i class="bi bi-linkedin"></i></a><?php endif; ?>
+								<?php if ( $twitter ) : ?><a href="<?php echo esc_url( $twitter ); ?>" class="text-primary h4"><i class="bi bi-twitter"></i></a><?php endif; ?>
+							<?php endif; ?>
 						</div>
 					</div>
 				</div>

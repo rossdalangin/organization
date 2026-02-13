@@ -34,6 +34,7 @@ $status = get_post_meta( $member_id, '_member_status', true );
 							<a href="?action=overview" class="list-group-item list-group-item-action active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
 							<a href="?action=edit-profile" class="list-group-item list-group-item-action"><i class="bi bi-person-gear me-2"></i> Edit Profile</a>
 							<a href="?action=my-products" class="list-group-item list-group-item-action"><i class="bi bi-box-seam me-2"></i> My Products</a>
+							<a href="?action=my-jobs" class="list-group-item list-group-item-action"><i class="bi bi-briefcase me-2"></i> My Job Postings</a>
 							<a href="?action=my-events" class="list-group-item list-group-item-action"><i class="bi bi-calendar-event me-2"></i> My Events</a>
 							<a href="?action=my-applications" class="list-group-item list-group-item-action"><i class="bi bi-file-earmark-person me-2"></i> Job Applications</a>
 							<a href="?action=billing" class="list-group-item list-group-item-action"><i class="bi bi-credit-card me-2"></i> Billing & Renewal</a>
@@ -59,6 +60,9 @@ $status = get_post_meta( $member_id, '_member_status', true );
 							break;
 						case 'my-products':
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/my-products.php';
+							break;
+						case 'my-jobs':
+							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/my-jobs.php';
 							break;
 						case 'billing':
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/billing.php';

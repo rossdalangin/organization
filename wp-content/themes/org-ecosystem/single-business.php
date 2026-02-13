@@ -76,17 +76,35 @@ while ( have_posts() ) :
 						<div class="card shadow-sm mb-4">
 							<div class="card-body">
 								<h5 class="card-title mb-4"><?php _e( 'Contact Info', 'org-ecosystem' ); ?></h5>
-								<ul class="list-unstyled">
-									<li class="mb-3"><i class="bi bi-geo-alt me-2 text-primary"></i> <?php the_terms( get_the_ID(), 'location', '', ', ', '' ); ?></li>
-									<?php
-									$phone = get_post_meta( get_the_ID(), '_business_phone', true );
-									if ( $phone ) : ?>
-										<li class="mb-3"><i class="bi bi-telephone me-2 text-primary"></i> <?php echo esc_html( $phone ); ?></li>
-									<?php endif; ?>
-								</ul>
-								<div class="d-grid mt-4">
-									<a href="#inquiry-form-wrapper" class="btn btn-primary"><?php _e( 'Inquire Now', 'org-ecosystem' ); ?></a>
-								</div>
+								<?php
+								$can_view = true;
+								if ( get_theme_mod( 'protect_leads', false ) ) {
+									$curr_user_id = get_current_user_id();
+									$level = get_user_meta( $curr_user_id, '_membership_level', true );
+									if ( ! is_user_logged_in() || ! in_array( $level, array( 'premium', 'corporate', 'lifetime' ) ) ) {
+										$can_view = false;
+									}
+								}
+
+								if ( $can_view ) : ?>
+									<ul class="list-unstyled">
+										<li class="mb-3"><i class="bi bi-geo-alt me-2 text-primary"></i> <?php the_terms( get_the_ID(), 'location', '', ', ', '' ); ?></li>
+										<?php
+										$phone = get_post_meta( get_the_ID(), '_business_phone', true );
+										if ( $phone ) : ?>
+											<li class="mb-3"><i class="bi bi-telephone me-2 text-primary"></i> <?php echo esc_html( $phone ); ?></li>
+										<?php endif; ?>
+									</ul>
+									<div class="d-grid mt-4">
+										<a href="#inquiry-form-wrapper" class="btn btn-primary"><?php _e( 'Inquire Now', 'org-ecosystem' ); ?></a>
+									</div>
+								<?php else : ?>
+									<div class="text-center bg-light p-3 border rounded">
+										<i class="bi bi-lock-fill text-muted d-block mb-2 h4"></i>
+										<p class="small text-muted mb-2"><?php _e( 'Upgrade to see contact info.', 'org-ecosystem' ); ?></p>
+										<a href="<?php echo home_url( '/membership-plans' ); ?>" class="btn btn-primary btn-sm fw-bold"><?php _e( 'Upgrade Now', 'org-ecosystem' ); ?></a>
+									</div>
+								<?php endif; ?>
 							</div>
 						</div>
 

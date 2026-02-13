@@ -75,6 +75,17 @@ while ( have_posts() ) :
 											<div class="fw-bold"><?php echo $venue ? esc_html( $venue ) : __( 'TBA', 'org-ecosystem' ); ?></div>
 										</div>
 									</li>
+									<?php
+									$price = get_post_meta( get_the_ID(), '_event_price', true );
+									if ( $price ) : ?>
+										<li class="mb-3 d-flex">
+											<i class="bi bi-ticket-perforated text-primary me-3 h4 mb-0"></i>
+											<div>
+												<div class="small text-muted"><?php _e( 'Ticket Price', 'org-ecosystem' ); ?></div>
+												<div class="fw-bold text-success h5 mb-0">₱ <?php echo number_format( floatval($price) ); ?></div>
+											</div>
+										</li>
+									<?php endif; ?>
 								</ul>
 								<hr>
 								<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
@@ -82,7 +93,7 @@ while ( have_posts() ) :
 									<input type="hidden" name="event_id" value="<?php the_ID(); ?>">
 									<?php wp_nonce_field( 'org_event_register', 'org_event_nonce' ); ?>
 									<div class="d-grid mt-4">
-										<button type="submit" class="btn btn-primary btn-lg"><?php _e( 'Register for Event', 'org-ecosystem' ); ?></button>
+										<button type="submit" class="btn btn-primary btn-lg"><?php echo $price ? __( 'Buy Ticket & Register', 'org-ecosystem' ) : __( 'Register for Event', 'org-ecosystem' ); ?></button>
 									</div>
 								</form>
 							</div>
