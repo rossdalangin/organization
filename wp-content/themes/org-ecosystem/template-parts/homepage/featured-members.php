@@ -3,7 +3,7 @@
  * Homepage Featured Members Section
  */
 ?>
-<section class="featured-members py-5 bg-light">
+<section class="section-featured-members featured-members py-5 bg-light">
 	<div class="container">
 		<div class="section-header text-center mb-5">
 			<h2 class="fw-bold"><?php _e( 'Featured Members', 'org-ecosystem' ); ?></h2>

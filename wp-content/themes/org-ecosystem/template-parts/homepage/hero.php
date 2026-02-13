@@ -5,7 +5,7 @@
 $hero_bg = get_theme_mod( 'hero_bg_image' );
 $style = $hero_bg ? 'style="background-image: linear-gradient(rgba(13, 110, 253, 0.9), rgba(13, 110, 253, 0.9)), url(' . esc_url( $hero_bg ) . '); background-size: cover; background-position: center;"' : '';
 ?>
-<section class="hero-section bg-primary text-white position-relative overflow-hidden" <?php echo $style; ?>>
+<section class="section-hero hero-section bg-primary text-white position-relative overflow-hidden" <?php echo $style; ?>>
 	<div class="container py-5 position-relative z-index-1">
 		<div class="row align-items-center py-5">
 			<div class="col-lg-7 animate-fade-in-up">

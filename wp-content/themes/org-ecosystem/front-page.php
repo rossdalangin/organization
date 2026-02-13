@@ -17,7 +17,7 @@ get_header();
 	<?php endif; ?>
 
 	<?php if ( get_theme_mod( 'show_about', true ) ) : ?>
-	<section class="about-organization py-5 bg-white">
+	<section class="section-about py-5 bg-white">
 		<div class="container">
 			<div class="row align-items-center">
 				<div class="col-lg-6 mb-4 mb-lg-0">
@@ -70,7 +70,7 @@ get_header();
 	<?php endif; ?>
 
 	<?php if ( get_theme_mod( 'show_partners', true ) ) : ?>
-	<section class="partner-logos py-5 bg-light border-top">
+	<section class="section-partners py-5 bg-light border-top">
 		<div class="container text-center">
 			<h5 class="text-muted text-uppercase mb-5 small fw-bold letter-spacing-1"><?php _e( 'Our Partners & Sponsors', 'org-ecosystem' ); ?></h5>
 			<div class="d-flex flex-wrap justify-content-center gap-5 opacity-50 align-items-center">

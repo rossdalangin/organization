@@ -3,7 +3,7 @@
  * Homepage Stats Section
  */
 ?>
-<section class="stats-section py-5 bg-white border-bottom">
+<section class="section-stats stats-section py-5 bg-white border-bottom">
 	<div class="container">
 		<div class="row g-4 text-center">
 			<div class="col-6 col-md-3">
