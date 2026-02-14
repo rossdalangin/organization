@@ -61,7 +61,7 @@ function org_ecosystem_admin_menu() {
 
 	add_submenu_page(
 		'org-settings',
-		__( 'Payment Settings', 'org-ecosystem' ),
+		__( 'Payment & Gateway Setup', 'org-ecosystem' ),
 		__( 'Payments', 'org-ecosystem' ),
 		'manage_payments',
 		'org-payments',
@@ -146,7 +146,7 @@ function org_ecosystem_settings_page() {
 							<a class="button button-secondary button-hero" href="<?php echo admin_url( 'admin.php?page=org-membership' ); ?>"><?php _e( 'Manage Growth', 'org-ecosystem' ); ?></a>
 						</div>
 					</div>
-					<div class="welcome-panel-column">
+					<div class="welcome-panel-column welcome-panel-last-column">
 						<div style="padding: 25px; background: #fff5f5; border-radius: 15px; height: 100%; border: 1px solid rgba(220, 53, 69, 0.1);">
 							<h3 style="margin-top: 0; color: #dc3545;"><span class="dashicons dashicons-admin-tools"></span> <?php _e( 'Governance', 'org-ecosystem' ); ?></h3>
 							<p><?php _e( 'Control directory settings, post content, and user role capabilities.', 'org-ecosystem' ); ?></p>
@@ -661,8 +661,14 @@ function org_ecosystem_payments_page() {
 	if ( isset( $_POST['org_save_payments'] ) ) {
 		check_admin_referer( 'org_save_payments_action' );
 		update_option( 'org_stripe_enabled', isset( $_POST['stripe_enabled'] ) ? '1' : '0' );
+		update_option( 'org_stripe_mode', sanitize_text_field( $_POST['stripe_mode'] ) );
 		update_option( 'org_stripe_api_key', sanitize_text_field( $_POST['stripe_api_key'] ) );
+        update_option( 'org_stripe_pub_key', sanitize_text_field( $_POST['stripe_pub_key'] ) );
+
+		update_option( 'org_paypal_enabled', isset( $_POST['paypal_enabled'] ) ? '1' : '0' );
+		update_option( 'org_paypal_mode', sanitize_text_field( $_POST['paypal_mode'] ) );
 		update_option( 'org_paypal_email', sanitize_email( $_POST['paypal_email'] ) );
+
         update_option( 'org_gcash_number', sanitize_text_field( $_POST['gcash_number'] ) );
 		update_option( 'org_offline_instructions', sanitize_textarea_field( $_POST['offline_instructions'] ) );
 		echo '<div class="updated"><p>Revenue configuration saved.</p></div>';
@@ -680,20 +686,43 @@ function org_ecosystem_payments_page() {
 				<div class="mb-4 mt-4">
 					<label style="font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 10px; cursor: pointer;">
 						<input type="checkbox" name="stripe_enabled" value="1" <?php checked( get_option( 'org_stripe_enabled' ), '1' ); ?> style="width: 18px; height: 18px;">
-						<?php _e( 'Activate Stripe Gateway Integration', 'org-ecosystem' ); ?>
+						<?php _e( 'Activate Stripe Gateway', 'org-ecosystem' ); ?>
 					</label>
 				</div>
+                <div class="mb-4">
+                    <label class="form-label d-block fw-bold"><?php _e( 'Environment Mode', 'org-ecosystem' ); ?></label>
+                    <select name="stripe_mode" class="form-select w-auto">
+                        <option value="test" <?php selected(get_option('org_stripe_mode'), 'test'); ?>>Test / Sandbox</option>
+                        <option value="live" <?php selected(get_option('org_stripe_mode'), 'live'); ?>>Production / Live</option>
+                    </select>
+                </div>
 				<div class="mb-3">
-					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'Live Secret API Key', 'org-ecosystem' ); ?></label>
-					<input type="password" name="stripe_api_key" class="widefat" value="<?php echo esc_attr( get_option( 'org_stripe_api_key' ) ); ?>" placeholder="sk_live_..." style="padding: 12px; border-radius: 8px; font-size: 1rem;">
-					<p class="description mt-2"><?php _e( 'Found in your Stripe Dashboard under Developers > API Keys. Use restricted keys for maximum security.', 'org-ecosystem' ); ?></p>
+					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'Secret API Key', 'org-ecosystem' ); ?></label>
+					<input type="password" name="stripe_api_key" class="widefat" value="<?php echo esc_attr( get_option( 'org_stripe_api_key' ) ); ?>" placeholder="sk_..." style="padding: 12px; border-radius: 8px; font-size: 1rem;">
+				</div>
+                <div class="mb-3">
+					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'Publishable Key', 'org-ecosystem' ); ?></label>
+					<input type="text" name="stripe_pub_key" class="widefat" value="<?php echo esc_attr( get_option( 'org_stripe_pub_key' ) ); ?>" placeholder="pk_..." style="padding: 12px; border-radius: 8px; font-size: 1rem;">
 				</div>
 			</div>
 
 			<div class="card p-5 bg-white border mb-4 shadow-sm" style="border-radius: 15px; border: 1px solid #e2e8f0;">
 				<h3 style="margin-top: 0; display: flex; align-items: center; gap: 15px;"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" height="30" alt="PayPal"> <span style="font-size: 14px; color: #64748b; font-weight: 400;">Global Digital Wallet</span></h3>
-				<div class="mb-3 mt-4">
-					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'PayPal Merchant Email', 'org-ecosystem' ); ?></label>
+				<div class="mb-4 mt-4">
+					<label style="font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 10px; cursor: pointer;">
+						<input type="checkbox" name="paypal_enabled" value="1" <?php checked( get_option( 'org_paypal_enabled' ), '1' ); ?> style="width: 18px; height: 18px;">
+						<?php _e( 'Activate PayPal Gateway', 'org-ecosystem' ); ?>
+					</label>
+				</div>
+                <div class="mb-4">
+                    <label class="form-label d-block fw-bold"><?php _e( 'Environment Mode', 'org-ecosystem' ); ?></label>
+                    <select name="paypal_mode" class="form-select w-auto">
+                        <option value="test" <?php selected(get_option('org_paypal_mode'), 'test'); ?>>Sandbox</option>
+                        <option value="live" <?php selected(get_option('org_paypal_mode'), 'live'); ?>>Live</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'PayPal Business Email', 'org-ecosystem' ); ?></label>
 					<input type="email" name="paypal_email" class="widefat" value="<?php echo esc_attr( get_option( 'org_paypal_email' ) ); ?>" placeholder="payments@your-org.com" style="padding: 12px; border-radius: 8px; font-size: 1rem;">
 				</div>
 			</div>
@@ -787,91 +816,6 @@ function org_ecosystem_roles_page() {
 	</div>
 	<?php
 }
-
-/**
- * Handle Member Approval from Admin
- */
-function org_ecosystem_handle_admin_approve_member() {
-	if ( ! current_user_can( 'approve_members' ) ) return;
-	check_admin_referer( 'org_approve_member_action' );
-
-	$member_id = isset( $_GET['member_id'] ) ? intval( $_GET['member_id'] ) : 0;
-	if ( $member_id ) {
-		org_ecosystem_approve_member( $member_id );
-	}
-
-	wp_redirect( add_query_arg( array( 'approved' => 'true' ), admin_url( 'admin.php?page=org-membership' ) ) );
-	exit;
-}
-add_action( 'admin_post_org_approve_member', 'org_ecosystem_handle_admin_approve_member' );
-
-/**
- * Reset Database Action
- */
-function org_ecosystem_handle_reset_db() {
-    if ( ! current_user_can( 'manage_options' ) ) return;
-    check_admin_referer( 'org_reset_db', 'org_reset_nonce' );
-
-    $types = array( 'member', 'business', 'product', 'event', 'job', 'program', 'resource', 'donation', 'announcement', 'org_message', 'org_transaction', 'support_ticket' );
-    foreach ( $types as $type ) {
-        $posts = get_posts( array( 'post_type' => $type, 'posts_per_page' => -1, 'post_status' => 'any' ) );
-        foreach ( $posts as $p ) {
-            wp_delete_post( $p->ID, true );
-        }
-    }
-
-    wp_redirect( admin_url( 'admin.php?page=org-settings&reset=success' ) );
-    exit;
-}
-add_action( 'admin_post_org_reset_db', 'org_ecosystem_handle_reset_db' );
-
-/**
- * Handle Demo Data Import
- */
-function org_ecosystem_handle_demo_import() {
-	if ( ! current_user_can( 'manage_options' ) ) return;
-	check_admin_referer( 'org_import_demo', 'org_demo_nonce' );
-
-	$types = array(
-        'member'        => 'Sample Member',
-        'business'      => 'Corp',
-        'product'       => 'Solution',
-        'event'         => 'Conference',
-        'job'           => 'Opening',
-        'program'       => 'Initiative',
-        'resource'      => 'Guide',
-        'donation'      => 'Gift',
-        'announcement'  => 'Notice',
-        'support_ticket'=> 'Help Request',
-        'org_message'   => 'Inbox Item',
-    );
-
-	foreach ( $types as $type => $label ) {
-        for ( $i = 1; $i <= 10; $i++ ) {
-            $id = wp_insert_post( array(
-                'post_title' => "$label #$i",
-                'post_type'  => $type,
-                'post_status'=> 'publish',
-                'post_content'=> "This is a high-value sample record for $label number $i."
-            ) );
-
-            if ( $type === 'member' ) {
-                update_post_meta( $id, '_member_status', 'active' );
-                update_post_meta( $id, '_member_view_count', rand(50, 500) );
-            }
-            if ( $type === 'org_transaction' ) {
-                update_post_meta( $id, '_txn_amount', rand(500, 5000) );
-                update_post_meta( $id, '_txn_gateway', 'paypal' );
-                update_post_meta( $id, '_txn_status', 'completed' );
-                update_post_meta( $id, '_txn_type', 'membership' );
-            }
-        }
-	}
-
-	wp_redirect( add_query_arg( array( 'import' => 'success' ), admin_url( 'admin.php?page=org-settings' ) ) );
-	exit;
-}
-add_action( 'admin_post_org_import_demo', 'org_ecosystem_handle_demo_import' );
 
 /**
  * Reports Page Callback
@@ -1014,3 +958,89 @@ function org_ecosystem_reports_page() {
 	</div>
 	<?php
 }
+
+/**
+ * Handle Member Approval from Admin
+ */
+function org_ecosystem_handle_admin_approve_member() {
+	if ( ! current_user_can( 'approve_members' ) ) return;
+	check_admin_referer( 'org_approve_member_action' );
+
+	$member_id = isset( $_GET['member_id'] ) ? intval( $_GET['member_id'] ) : 0;
+	if ( $member_id ) {
+		org_ecosystem_approve_member( $member_id );
+	}
+
+	wp_redirect( add_query_arg( array( 'approved' => 'true' ), admin_url( 'admin.php?page=org-membership' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_approve_member', 'org_ecosystem_handle_admin_approve_member' );
+
+/**
+ * Reset Database Action
+ */
+function org_ecosystem_handle_reset_db() {
+    if ( ! current_user_can( 'manage_options' ) ) return;
+    check_admin_referer( 'org_reset_db', 'org_reset_nonce' );
+
+    $types = array( 'member', 'business', 'product', 'event', 'job', 'program', 'resource', 'donation', 'announcement', 'org_message', 'org_transaction', 'support_ticket' );
+    foreach ( $types as $type ) {
+        $posts = get_posts( array( 'post_type' => $type, 'posts_per_page' => -1, 'post_status' => 'any' ) );
+        foreach ( $posts as $p ) {
+            wp_delete_post( $p->ID, true );
+        }
+    }
+
+    wp_redirect( admin_url( 'admin.php?page=org-settings&reset=success' ) );
+    exit;
+}
+add_action( 'admin_post_org_reset_db', 'org_ecosystem_handle_reset_db' );
+
+/**
+ * Handle Demo Data Import
+ */
+function org_ecosystem_handle_demo_import() {
+	if ( ! current_user_can( 'manage_options' ) ) return;
+	check_admin_referer( 'org_import_demo', 'org_demo_nonce' );
+
+	$types = array(
+        'member'        => 'Sample Member',
+        'business'      => 'Corp',
+        'product'       => 'Solution',
+        'event'         => 'Conference',
+        'job'           => 'Opening',
+        'program'       => 'Initiative',
+        'resource'      => 'Guide',
+        'donation'      => 'Gift',
+        'announcement'  => 'Notice',
+        'support_ticket'=> 'Help Request',
+        'org_message'   => 'Inbox Item',
+    );
+
+	foreach ( $types as $type => $label ) {
+        for ( $i = 1; $i <= 10; $i++ ) {
+            $id = wp_insert_post( array(
+                'post_title' => "$label #$i",
+                'post_type'  => $type,
+                'post_status'=> 'publish',
+                'post_content'=> "This is a high-value sample record for $label number $i."
+            ) );
+
+            if ( $type === 'member' ) {
+                update_post_meta( $id, '_member_status', 'active' );
+                update_post_meta( $id, '_member_view_count', rand(50, 500) );
+            }
+            if ( $type === 'org_transaction' ) {
+                update_post_meta( $id, '_txn_amount', rand(500, 5000) );
+                update_post_meta( $id, '_txn_gateway', 'paypal' );
+                update_post_meta( $id, '_txn_status', 'completed' );
+                update_post_meta( $id, '_txn_type', 'membership' );
+            }
+        }
+	}
+
+	wp_redirect( add_query_arg( array( 'import' => 'success' ), admin_url( 'admin.php?page=org-settings' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_import_demo', 'org_ecosystem_handle_demo_import' );
+?>

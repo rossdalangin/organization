@@ -23,6 +23,13 @@
     --body-font: 'Inter', sans-serif;
     --heading-font: 'Plus Jakarta Sans', sans-serif;
     --heading-weight: 800;
+
+    /* Global Spacing Scale */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 4rem;
+    --space-xl: 8rem;
 }
 
 body {
@@ -30,23 +37,33 @@ body {
     background-color: var(--body-bg);
     color: var(--text-main);
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--heading-font);
     font-weight: var(--heading-weight);
+    margin-bottom: var(--space-sm);
 }
 
 /* Global Spacing Helpers */
-section {
-    padding: 100px 0;
+section, .py-section {
+    padding: var(--space-lg) 0;
 }
 
+.mb-section { margin-bottom: var(--space-lg); }
+.mt-section { margin-top: var(--space-lg); }
+
 @media (max-width: 768px) {
-    section {
-        padding: 60px 0;
+    section, .py-section {
+        padding: var(--space-md) 0;
     }
 }
+
+/* Accessibility & Semantics */
+main { display: block; }
+:focus { outline: 2px solid var(--primary-color); outline-offset: 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 
 /* Professional Header & Navigation */
 .site-header {
@@ -139,7 +156,7 @@ section {
 
 /* Hero Section */
 .hero-section {
-    padding: 120px 0;
+    padding: var(--space-lg) 0;
     background-size: cover;
     background-position: center;
     position: relative;
@@ -154,6 +171,7 @@ section {
     transition: var(--transition);
     overflow: hidden;
     height: 100%;
+    margin-bottom: var(--space-sm);
 }
 
 .org-card:hover {
@@ -208,7 +226,7 @@ section {
 
 /* Member Dashboard Specific Spacing */
 .member-dashboard {
-    padding: 80px 0;
+    padding: var(--space-lg) 0;
 }
 
 .dashboard-content {
@@ -221,3 +239,7 @@ section {
         margin-top: 30px;
     }
 }
+
+/* Semantic Sections Backgrounds */
+.bg-light-subtle { background-color: #fcfcfd; }
+.border-dashed { border-style: dashed !important; }
