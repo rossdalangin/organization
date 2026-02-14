@@ -30,6 +30,25 @@ function org_ecosystem_admin_menu() {
 		'org_ecosystem_reports_page'
 	);
 
+    // 1.1 Transactions Manager
+	add_submenu_page(
+		'org-settings',
+		__( 'Transaction Manager', 'org-ecosystem' ),
+		__( 'Transactions', 'org-ecosystem' ),
+		'manage_payments',
+		'org-transactions',
+		'org_ecosystem_transactions_page'
+	);
+
+    add_submenu_page(
+		'org-settings',
+		__( 'Withdrawal Requests', 'org-ecosystem' ),
+		__( 'Withdrawals', 'org-ecosystem' ),
+		'manage_payments',
+		'org-withdrawals',
+		'org_ecosystem_withdrawals_page'
+	);
+
 	// 2. Growth & Revenue
 	add_submenu_page(
 		'org-settings',
@@ -184,13 +203,22 @@ function org_ecosystem_settings_page() {
 
 					<hr style="margin: 25px 0;">
 
-					<h3><?php _e( 'Ecosystem Setup', 'org-ecosystem' ); ?></h3>
-					<p class="description"><?php _e( 'New installation? Use the importer to populate sample data and see the design.', 'org-ecosystem' ); ?></p>
-					<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post" style="margin-top: 15px;">
-						<input type="hidden" name="action" value="org_import_demo">
-						<?php wp_nonce_field( 'org_import_demo', 'org_demo_nonce' ); ?>
-						<button type="submit" class="button button-secondary w-100" style="display: block; width: 100%; border-color: #64748b; color: #64748b;"><?php _e( 'Import Demo Content', 'org-ecosystem' ); ?></button>
-					</form>
+					<h3><?php _e( 'Database Tools', 'org-ecosystem' ); ?></h3>
+					<p class="description"><?php _e( 'Manage your ecosystem records and sample data.', 'org-ecosystem' ); ?></p>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
+                            <input type="hidden" name="action" value="org_import_demo">
+                            <?php wp_nonce_field( 'org_import_demo', 'org_demo_nonce' ); ?>
+                            <button type="submit" class="button button-secondary w-100 mb-2"><?php _e( 'Import 10+ Records (Each Table)', 'org-ecosystem' ); ?></button>
+                        </form>
+
+                        <form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post" onsubmit="return confirm('WARNING: This will delete ALL organization records. Continue?');">
+                            <input type="hidden" name="action" value="org_reset_db">
+                            <?php wp_nonce_field( 'org_reset_db', 'org_reset_nonce' ); ?>
+                            <button type="submit" class="button button-link text-danger w-100" style="color: #dc3545;"><?php _e( 'Delete All Records (Reset)', 'org-ecosystem' ); ?></button>
+                        </form>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -202,6 +230,111 @@ function org_ecosystem_settings_page() {
 		.org-admin-wrap .button-hero { padding: 15px 30px !important; height: auto !important; line-height: 1 !important; margin-top: 10px; }
 	</style>
 	<?php
+}
+
+/**
+ * Transaction Manager Page
+ */
+function org_ecosystem_transactions_page() {
+    $transactions = new WP_Query( array(
+        'post_type' => 'org_transaction',
+        'posts_per_page' => -1,
+    ) );
+    ?>
+    <div class="wrap">
+        <h1><?php _e( 'Master Transaction Ledger', 'org-ecosystem' ); ?></h1>
+        <div class="card p-4 mt-4" style="border-radius: 12px; background: #fff; border: 1px solid #e2e8f0;">
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>User</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Gateway</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ( $transactions->have_posts() ) : ?>
+                        <?php while ( $transactions->have_posts() ) : $transactions->the_post();
+                            $status = get_post_meta( get_the_ID(), '_txn_status', true );
+                            $color = $status === 'completed' ? '#198754' : '#f59e0b';
+                        ?>
+                            <tr>
+                                <td><?php echo get_the_date(); ?></td>
+                                <td><?php echo get_the_author(); ?></td>
+                                <td><?php echo esc_html( get_post_meta( get_the_ID(), '_txn_type', true ) ); ?></td>
+                                <td><strong>₱ <?php echo number_format( get_post_meta( get_the_ID(), '_txn_amount', true ), 2 ); ?></strong></td>
+                                <td><?php echo esc_html( strtoupper( get_post_meta( get_the_ID(), '_txn_gateway', true ) ) ); ?></td>
+                                <td><span class="badge" style="background: <?php echo $color; ?>; color: #fff; padding: 4px 8px; border-radius: 4px;"><?php echo esc_html( ucfirst( $status ) ); ?></span></td>
+                            </tr>
+                        <?php endwhile; wp_reset_postdata(); ?>
+                    <?php else : ?>
+                        <tr><td colspan="6">No transactions found.</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php
+}
+
+function org_ecosystem_withdrawals_page() {
+    if ( isset( $_GET['txn_id'] ) && isset( $_GET['status'] ) ) {
+        check_admin_referer( 'org_update_withdrawal' );
+        update_post_meta( intval( $_GET['txn_id'] ), '_txn_status', sanitize_text_field( $_GET['status'] ) );
+        echo '<div class="updated"><p>Withdrawal status updated.</p></div>';
+    }
+
+    $withdrawals = new WP_Query( array(
+        'post_type' => 'org_transaction',
+        'meta_query' => array(
+            array( 'key' => '_txn_type', 'value' => 'withdrawal' ),
+        )
+    ) );
+    ?>
+    <div class="wrap">
+        <h1><?php _e( 'Withdrawal Requests & Payouts', 'org-ecosystem' ); ?></h1>
+        <div class="card p-4 mt-4" style="border-radius: 12px; background: #fff; border: 1px solid #e2e8f0;">
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Member</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ( $withdrawals->have_posts() ) : ?>
+                        <?php while ( $withdrawals->have_posts() ) : $withdrawals->the_post();
+                            $status = get_post_meta( get_the_ID(), '_txn_status', true );
+                            $amount = abs( floatval( get_post_meta( get_the_ID(), '_txn_amount', true ) ) );
+                        ?>
+                            <tr>
+                                <td><?php echo get_the_date(); ?></td>
+                                <td><?php echo get_the_author(); ?></td>
+                                <td class="text-danger fw-bold">₱ <?php echo number_format( $amount, 2 ); ?></td>
+                                <td><?php echo esc_html( strtoupper( get_post_meta( get_the_ID(), '_txn_gateway', true ) ) ); ?></td>
+                                <td><span class="badge" style="background: <?php echo $status === 'completed' ? '#198754' : '#f59e0b'; ?>; color: #fff; padding: 4px 8px; border-radius: 4px;"><?php echo esc_html( ucfirst( $status ) ); ?></span></td>
+                                <td>
+                                    <?php if ( $status === 'pending' ) : ?>
+                                        <a href="<?php echo wp_nonce_url( add_query_arg( array( 'txn_id' => get_the_ID(), 'status' => 'completed' ) ), 'org_update_withdrawal' ); ?>" class="button button-primary button-small"><?php _e( 'Mark Paid', 'org-ecosystem' ); ?></a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endwhile; wp_reset_postdata(); ?>
+                    <?php else : ?>
+                        <tr><td colspan="6">No withdrawal requests.</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php
 }
 
 /**
@@ -225,7 +358,7 @@ function org_ecosystem_content_manager_page() {
 				</thead>
 				<tbody>
 					<?php
-					$types = array( 'member', 'business', 'product', 'event', 'job', 'program', 'resource', 'donation', 'announcement' );
+					$types = array( 'member', 'business', 'product', 'event', 'job', 'program', 'resource', 'donation', 'announcement', 'org_message', 'org_transaction' );
 					foreach ( $types as $type ) :
 						$count = wp_count_posts( $type );
 						$obj = get_post_type_object( $type );
@@ -312,6 +445,9 @@ function org_ecosystem_directory_settings_page() {
 	<?php
 }
 
+/**
+ * Support Tickets Page Callback
+ */
 function org_ecosystem_tickets_page() {
 	if ( isset( $_GET['ticket_id'] ) && isset( $_GET['new_status'] ) ) {
 		check_admin_referer( 'org_update_ticket' );
@@ -527,6 +663,7 @@ function org_ecosystem_payments_page() {
 		update_option( 'org_stripe_enabled', isset( $_POST['stripe_enabled'] ) ? '1' : '0' );
 		update_option( 'org_stripe_api_key', sanitize_text_field( $_POST['stripe_api_key'] ) );
 		update_option( 'org_paypal_email', sanitize_email( $_POST['paypal_email'] ) );
+        update_option( 'org_gcash_number', sanitize_text_field( $_POST['gcash_number'] ) );
 		update_option( 'org_offline_instructions', sanitize_textarea_field( $_POST['offline_instructions'] ) );
 		echo '<div class="updated"><p>Revenue configuration saved.</p></div>';
 	}
@@ -558,6 +695,14 @@ function org_ecosystem_payments_page() {
 				<div class="mb-3 mt-4">
 					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'PayPal Merchant Email', 'org-ecosystem' ); ?></label>
 					<input type="email" name="paypal_email" class="widefat" value="<?php echo esc_attr( get_option( 'org_paypal_email' ) ); ?>" placeholder="payments@your-org.com" style="padding: 12px; border-radius: 8px; font-size: 1rem;">
+				</div>
+			</div>
+
+            <div class="card p-5 bg-white border mb-4 shadow-sm" style="border-radius: 15px; border: 1px solid #e2e8f0;">
+				<h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px; color: #007bff;"><span class="dashicons dashicons-smartphone"></span> <?php _e( 'GCash Payment', 'org-ecosystem' ); ?></h3>
+				<div class="mb-3 mt-4">
+					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'GCash Registered Number', 'org-ecosystem' ); ?></label>
+					<input type="text" name="gcash_number" class="widefat" value="<?php echo esc_attr( get_option( 'org_gcash_number' ) ); ?>" placeholder="0917XXXXXXX" style="padding: 12px; border-radius: 8px; font-size: 1rem;">
 				</div>
 			</div>
 
@@ -644,6 +789,91 @@ function org_ecosystem_roles_page() {
 }
 
 /**
+ * Handle Member Approval from Admin
+ */
+function org_ecosystem_handle_admin_approve_member() {
+	if ( ! current_user_can( 'approve_members' ) ) return;
+	check_admin_referer( 'org_approve_member_action' );
+
+	$member_id = isset( $_GET['member_id'] ) ? intval( $_GET['member_id'] ) : 0;
+	if ( $member_id ) {
+		org_ecosystem_approve_member( $member_id );
+	}
+
+	wp_redirect( add_query_arg( array( 'approved' => 'true' ), admin_url( 'admin.php?page=org-membership' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_approve_member', 'org_ecosystem_handle_admin_approve_member' );
+
+/**
+ * Reset Database Action
+ */
+function org_ecosystem_handle_reset_db() {
+    if ( ! current_user_can( 'manage_options' ) ) return;
+    check_admin_referer( 'org_reset_db', 'org_reset_nonce' );
+
+    $types = array( 'member', 'business', 'product', 'event', 'job', 'program', 'resource', 'donation', 'announcement', 'org_message', 'org_transaction', 'support_ticket' );
+    foreach ( $types as $type ) {
+        $posts = get_posts( array( 'post_type' => $type, 'posts_per_page' => -1, 'post_status' => 'any' ) );
+        foreach ( $posts as $p ) {
+            wp_delete_post( $p->ID, true );
+        }
+    }
+
+    wp_redirect( admin_url( 'admin.php?page=org-settings&reset=success' ) );
+    exit;
+}
+add_action( 'admin_post_org_reset_db', 'org_ecosystem_handle_reset_db' );
+
+/**
+ * Handle Demo Data Import
+ */
+function org_ecosystem_handle_demo_import() {
+	if ( ! current_user_can( 'manage_options' ) ) return;
+	check_admin_referer( 'org_import_demo', 'org_demo_nonce' );
+
+	$types = array(
+        'member'        => 'Sample Member',
+        'business'      => 'Corp',
+        'product'       => 'Solution',
+        'event'         => 'Conference',
+        'job'           => 'Opening',
+        'program'       => 'Initiative',
+        'resource'      => 'Guide',
+        'donation'      => 'Gift',
+        'announcement'  => 'Notice',
+        'support_ticket'=> 'Help Request',
+        'org_message'   => 'Inbox Item',
+    );
+
+	foreach ( $types as $type => $label ) {
+        for ( $i = 1; $i <= 10; $i++ ) {
+            $id = wp_insert_post( array(
+                'post_title' => "$label #$i",
+                'post_type'  => $type,
+                'post_status'=> 'publish',
+                'post_content'=> "This is a high-value sample record for $label number $i."
+            ) );
+
+            if ( $type === 'member' ) {
+                update_post_meta( $id, '_member_status', 'active' );
+                update_post_meta( $id, '_member_view_count', rand(50, 500) );
+            }
+            if ( $type === 'org_transaction' ) {
+                update_post_meta( $id, '_txn_amount', rand(500, 5000) );
+                update_post_meta( $id, '_txn_gateway', 'paypal' );
+                update_post_meta( $id, '_txn_status', 'completed' );
+                update_post_meta( $id, '_txn_type', 'membership' );
+            }
+        }
+	}
+
+	wp_redirect( add_query_arg( array( 'import' => 'success' ), admin_url( 'admin.php?page=org-settings' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_import_demo', 'org_ecosystem_handle_demo_import' );
+
+/**
  * Reports Page Callback
  */
 function org_ecosystem_reports_page() {
@@ -679,6 +909,13 @@ function org_ecosystem_reports_page() {
 	}
 	$total_revenue = $membership_revenue + $donation_revenue;
 
+    // Calculate Total Commissions Paid
+    $total_commissions = 0;
+    $comm_query = new WP_Query( array( 'post_type' => 'org_transaction', 'meta_query' => array( array( 'key' => '_txn_type', 'value' => 'commission' ) ) ) );
+    foreach ( $comm_query->posts as $c ) {
+        $total_commissions += abs( floatval( get_post_meta( $c->ID, '_txn_amount', true ) ) );
+    }
+
 	?>
 	<div class="wrap">
 		<h1><?php _e( 'Ecosystem Reports & Economic Analytics', 'org-ecosystem' ); ?></h1>
@@ -698,12 +935,17 @@ function org_ecosystem_reports_page() {
 				<p style="font-size: 42px; font-weight: 800; margin: 20px 0; color: #1e293b; line-height: 1;"><?php echo esc_html( $total_businesses ); ?> <span style="font-size: 14px; font-weight: 400; color: #64748b;">Businesses</span></p>
 				<span style="font-size: 12px; color: #64748b; font-weight: 500;"><?php echo esc_html( $total_products ); ?> members' products showcased</span>
 			</div>
-			<div class="card" style="flex: 1; min-width: 300px; background: #fff; padding: 30px; border-left: 6px solid #f59e0b; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-				<h3 style="margin-top: 0; color: #64748b; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;"><?php _e( 'Economic Impact', 'org-ecosystem' ); ?></h3>
-				<p style="font-size: 42px; font-weight: 800; margin: 20px 0; color: #1e293b; line-height: 1;">₱ <?php echo number_format( $total_revenue, 2 ); ?></p>
-				<div style="font-size: 13px; color: #64748b; font-weight: 500;">
+			<div class="card" style="flex: 1; min-width: 280px; background: #fff; padding: 25px; border-left: 5px solid #f59e0b; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+				<h3 style="margin-top: 0; color: #64748b; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;"><?php _e( 'Gross Revenue', 'org-ecosystem' ); ?></h3>
+				<p style="font-size: 36px; font-weight: 800; margin: 15px 0; color: #1e293b;">₱ <?php echo number_format( $total_revenue, 2 ); ?></p>
+				<div style="font-size: 12px; color: #64748b;">
 					Subs: ₱<?php echo number_format( $membership_revenue ); ?> | Donations: ₱<?php echo number_format( $donation_revenue ); ?>
 				</div>
+			</div>
+            <div class="card" style="flex: 1; min-width: 280px; background: #fff; padding: 25px; border-left: 5px solid #dc3545; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+				<h3 style="margin-top: 0; color: #64748b; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;"><?php _e( 'Payouts & Comms', 'org-ecosystem' ); ?></h3>
+				<p style="font-size: 36px; font-weight: 800; margin: 15px 0; color: #1e293b;">₱ <?php echo number_format( $total_commissions, 2 ); ?></p>
+				<span style="font-size: 12px; color: #64748b;">Pending Withdrawal Requests: <?php echo count(get_posts(array('post_type'=>'org_transaction', 'meta_query'=>array(array('key'=>'_txn_type','value'=>'withdrawal'),array('key'=>'_txn_status','value'=>'pending'))))); ?></span>
 			</div>
 		</div>
 
@@ -772,64 +1014,3 @@ function org_ecosystem_reports_page() {
 	</div>
 	<?php
 }
-
-/**
- * Handle Member Approval from Admin
- */
-function org_ecosystem_handle_admin_approve_member() {
-	if ( ! current_user_can( 'approve_members' ) ) return;
-	check_admin_referer( 'org_approve_member_action' );
-
-	$member_id = isset( $_GET['member_id'] ) ? intval( $_GET['member_id'] ) : 0;
-	if ( $member_id ) {
-		org_ecosystem_approve_member( $member_id );
-	}
-
-	wp_redirect( add_query_arg( array( 'approved' => 'true' ), admin_url( 'admin.php?page=org-membership' ) ) );
-	exit;
-}
-add_action( 'admin_post_org_approve_member', 'org_ecosystem_handle_admin_approve_member' );
-
-/**
- * Handle Demo Data Import
- */
-function org_ecosystem_handle_demo_import() {
-	if ( ! current_user_can( 'manage_options' ) ) return;
-	check_admin_referer( 'org_import_demo', 'org_demo_nonce' );
-
-	// Import 10 Members
-	for ( $i = 1; $i <= 10; $i++ ) {
-		$member_id = wp_insert_post( array(
-			'post_title' => "Sample Member $i",
-			'post_type'  => 'member',
-			'post_status'=> 'publish',
-		) );
-		update_post_meta( $member_id, '_member_business_name', "Business $i Inc." );
-		update_post_meta( $member_id, '_member_status', 'active' );
-		update_post_meta( $member_id, '_member_view_count', rand(100, 1000) );
-		if ( $i <= 3 ) update_post_meta( $member_id, '_member_is_featured', '1' );
-	}
-
-	// Import 5 Businesses
-	for ( $i = 1; $i <= 5; $i++ ) {
-		wp_insert_post( array(
-			'post_title' => "Organization $i",
-			'post_type'  => 'business',
-			'post_status'=> 'publish',
-		) );
-	}
-
-	// Import 3 Events
-	$events = array( 'Networking Night', 'Business Summit 2024', 'Tech Workshop' );
-	foreach ( $events as $event ) {
-		wp_insert_post( array(
-			'post_title' => $event,
-			'post_type'  => 'event',
-			'post_status'=> 'publish',
-		) );
-	}
-
-	wp_redirect( add_query_arg( array( 'import' => 'success' ), admin_url( 'admin.php?page=org-settings' ) ) );
-	exit;
-}
-add_action( 'admin_post_org_import_demo', 'org_ecosystem_handle_demo_import' );

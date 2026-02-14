@@ -20,7 +20,9 @@ Welcome to the Organization Ecosystem. This manual will guide you through config
 ### Step 3: Setting Up Payments
 1. Go to **Org Settings > Payments**.
 2. Enter your **Stripe Secret Key** or **PayPal Email**.
-3. Configure **Offline Payment Instructions** for members who prefer bank transfers.
+3. Configure **GCash Number** for mobile payments.
+4. Configure **Offline Payment Instructions** for members who prefer bank transfers.
+5. **Note on Transactions:** This theme provides a complete Ledger and Payout system. For production server-to-server security (Webhook verification), we recommend installing a dedicated gateway plugin like "WooCommerce" or "Stripe for WordPress" and linking it to our Transaction API if advanced fraud detection is required.
 
 ---
 

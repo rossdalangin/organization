@@ -83,13 +83,21 @@ while ( have_posts() ) :
 							<?php endif; ?>
 						</div>
 
-						<div class="member-social d-flex justify-content-center gap-3">
+						<div class="member-social d-flex justify-content-center gap-3 mb-4">
 							<?php if ( $can_view ) : ?>
 								<?php if ( $facebook ) : ?><a href="<?php echo esc_url( $facebook ); ?>" class="text-primary h4"><i class="bi bi-facebook"></i></a><?php endif; ?>
 								<?php if ( $linkedin ) : ?><a href="<?php echo esc_url( $linkedin ); ?>" class="text-primary h4"><i class="bi bi-linkedin"></i></a><?php endif; ?>
 								<?php if ( $twitter ) : ?><a href="<?php echo esc_url( $twitter ); ?>" class="text-primary h4"><i class="bi bi-twitter"></i></a><?php endif; ?>
 							<?php endif; ?>
 						</div>
+
+                        <?php if ( is_user_logged_in() ) : ?>
+                            <div class="d-grid px-3">
+                                <button type="button" class="btn btn-primary rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#directMessageModal">
+                                    <i class="bi bi-chat-dots me-2"></i> <?php _e( 'Message Member', 'org-ecosystem' ); ?>
+                                </button>
+                            </div>
+                        <?php endif; ?>
 					</div>
 				</div>
 
@@ -217,6 +225,35 @@ while ( have_posts() ) :
 			</div>
 		</div>
 	</article>
+
+    <!-- Message Modal -->
+    <div class="modal fade" id="directMessageModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content border-0 rounded-4 shadow-lg" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+          <input type="hidden" name="action" value="org_send_message">
+          <input type="hidden" name="receiver_id" value="<?php echo get_the_author_meta('ID'); ?>">
+          <?php wp_nonce_field( 'org_send_message', 'org_message_nonce' ); ?>
+
+          <div class="modal-header border-0 p-4">
+            <h5 class="modal-title fw-bold"><?php _e( 'New Message', 'org-ecosystem' ); ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body p-4 pt-0">
+            <div class="mb-3">
+                <label class="form-label small fw-bold text-uppercase"><?php _e( 'Subject', 'org-ecosystem' ); ?></label>
+                <input type="text" name="msg_subject" class="form-control bg-light border-0 py-2" placeholder="Brief topic..." required>
+            </div>
+            <div class="mb-0">
+                <label class="form-label small fw-bold text-uppercase"><?php _e( 'Your Message', 'org-ecosystem' ); ?></label>
+                <textarea name="msg_content" class="form-control bg-light border-0 py-2" rows="6" placeholder="Write your message here..." required></textarea>
+            </div>
+          </div>
+          <div class="modal-footer border-0 p-4 pt-0">
+            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold"><?php _e( 'Send Direct Message', 'org-ecosystem' ); ?></button>
+          </div>
+        </form>
+      </div>
+    </div>
 
 <?php
 endwhile;

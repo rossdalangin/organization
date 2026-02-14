@@ -9,61 +9,176 @@ get_header();
 
 while ( have_posts() ) :
 	the_post();
+    $price = get_post_meta( get_the_ID(), '_product_price', true );
 	?>
 
-	<article id="post-<?php the_ID(); ?>" <?php post_class( 'product-single py-5' ); ?>>
-		<div class="container">
+	<article id="post-<?php the_ID(); ?>" <?php post_class( 'product-single pb-5' ); ?>>
+		<div class="container py-5">
 			<?php org_ecosystem_breadcrumbs(); ?>
-			<div class="row">
-				<div class="col-md-6 mb-4">
+			<div class="row g-5 mt-2">
+				<div class="col-md-6 animate-fade-in-up">
 					<?php if ( has_post_thumbnail() ) : ?>
-						<?php the_post_thumbnail( 'large', array( 'class' => 'img-fluid rounded shadow' ) ); ?>
+						<?php the_post_thumbnail( 'large', array( 'class' => 'img-fluid rounded-4 shadow-lg border p-2 bg-white' ) ); ?>
 					<?php else : ?>
-						<div class="bg-light rounded shadow d-flex align-items-center justify-content-center" style="height: 400px;">
-							<i class="bi bi-box text-secondary display-1"></i>
+						<div class="bg-white border rounded-4 shadow-sm d-flex align-items-center justify-content-center" style="height: 500px;">
+							<i class="bi bi-box text-light display-1"></i>
 						</div>
 					<?php endif; ?>
 				</div>
-				<div class="col-md-6">
-					<h1 class="display-5 fw-bold mb-3"><?php the_title(); ?></h1>
-					<?php the_terms( get_the_ID(), 'product_cat', '<div class="mb-4">', ' ', '</div>' ); ?>
+				<div class="col-md-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+					<div class="product-badge mb-3">
+                        <?php the_terms( get_the_ID(), 'product_cat', '<span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">', ' ', '</span>' ); ?>
+                    </div>
+                    <h1 class="display-4 fw-bold mb-3"><?php the_title(); ?></h1>
 
-					<div class="product-price h3 text-primary fw-bold mb-4">
-						<?php echo esc_html( get_post_meta( get_the_ID(), '_product_price', true ) ); ?>
+					<div class="product-price h2 text-primary fw-bold mb-4">
+						₱ <?php echo number_format( floatval($price), 2 ); ?>
 					</div>
 
-					<div class="product-description mb-5">
+					<div class="product-description mb-5 fs-5 text-muted">
 						<?php the_content(); ?>
 					</div>
 
 					<?php
 					$business_id = get_post_meta( get_the_ID(), '_product_business_id', true );
 					if ( $business_id ) : ?>
-						<div class="card bg-light border-0 p-3 mb-4">
-							<div class="d-flex align-items-center">
-								<div class="me-3">
-									<?php if ( has_post_thumbnail( $business_id ) ) echo get_the_post_thumbnail( $business_id, array( 50, 50 ), array( 'class' => 'rounded-circle' ) ); ?>
-								</div>
-								<div>
-									<h6 class="mb-0"><?php _e( 'Sold by', 'org-ecosystem' ); ?> <strong><?php echo get_the_title( $business_id ); ?></strong></h6>
-									<a href="<?php echo get_permalink( $business_id ); ?>" class="small text-decoration-none"><?php _e( 'Visit Store', 'org-ecosystem' ); ?></a>
-								</div>
+						<div class="card border-0 bg-light p-4 mb-5 rounded-4 d-flex flex-row align-items-center">
+							<div class="me-4">
+								<?php if ( has_post_thumbnail( $business_id ) ) : ?>
+                                    <?php echo get_the_post_thumbnail( $business_id, array( 60, 60 ), array( 'class' => 'rounded-circle border border-2 border-white shadow-sm' ) ); ?>
+                                <?php else : ?>
+                                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 60px; height: 60px;"><i class="bi bi-shop"></i></div>
+                                <?php endif; ?>
+							</div>
+							<div>
+								<h6 class="mb-1 fw-bold"><?php _e( 'Verified Seller', 'org-ecosystem' ); ?></h6>
+								<h5 class="mb-2"><?php echo get_the_title( $business_id ); ?></h5>
+								<a href="<?php echo get_permalink( $business_id ); ?>" class="btn btn-sm btn-link p-0 text-decoration-none fw-bold"><?php _e( 'Visit Storefront', 'org-ecosystem' ); ?> <i class="bi bi-arrow-right"></i></a>
 							</div>
 						</div>
 					<?php endif; ?>
 
-					<div class="d-grid mb-5">
-						<a href="#inquiry-form-wrapper" class="btn btn-primary btn-lg"><?php _e( 'Inquire About Product', 'org-ecosystem' ); ?></a>
+					<div class="d-grid gap-3 mb-5">
+						<button type="button" class="btn btn-primary btn-lg py-3 fw-bold rounded-pill shadow" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+                            <i class="bi bi-cart-check me-2"></i> <?php _e( 'Purchase Now', 'org-ecosystem' ); ?>
+                        </button>
+                        <?php if ( is_user_logged_in() ) : ?>
+                            <button type="button" class="btn btn-outline-primary btn-lg py-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#directMessageModal">
+                                <i class="bi bi-chat-dots me-2"></i> <?php _e( 'Message Seller', 'org-ecosystem' ); ?>
+                            </button>
+                        <?php endif; ?>
+                        <a href="#inquiry" class="btn btn-outline-secondary btn-lg py-3 rounded-pill"><?php _e( 'Custom Quote / Inquiry', 'org-ecosystem' ); ?></a>
 					</div>
 
-					<div class="inquiry-section bg-white p-4 border rounded shadow-sm">
-						<h5 class="fw-bold mb-3"><?php _e( 'Send Inquiry', 'org-ecosystem' ); ?></h5>
+					<div id="inquiry" class="inquiry-section bg-white p-5 border rounded-4 shadow-sm">
+						<h4 class="fw-bold mb-4"><?php _e( 'Inquire about this Solution', 'org-ecosystem' ); ?></h4>
 						<?php org_ecosystem_inquiry_form( get_the_ID() ); ?>
 					</div>
 				</div>
 			</div>
 		</div>
 	</article>
+
+    <!-- Checkout Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content border-0 rounded-4 shadow-lg" id="product-checkout-form">
+          <input type="hidden" name="amount" value="<?php echo esc_attr($price); ?>">
+          <input type="hidden" name="type" value="product_sale">
+          <input type="hidden" name="item_id" value="<?php the_ID(); ?>">
+          <?php wp_nonce_field( 'org_payment_nonce', 'security' ); ?>
+
+          <div class="modal-header border-0 p-4">
+            <h5 class="modal-title fw-bold"><?php _e( 'Secure Checkout', 'org-ecosystem' ); ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="d-flex justify-content-between mb-4 pb-3 border-bottom">
+                <span class="text-muted"><?php the_title(); ?></span>
+                <span class="fw-bold">₱ <?php echo number_format(floatval($price), 2); ?></span>
+            </div>
+
+            <h6 class="fw-bold mb-3"><?php _e( 'Select Payment Method', 'org-ecosystem' ); ?></h6>
+            <div class="payment-options d-grid gap-2">
+                <label class="btn btn-outline-light text-dark border p-3 text-start d-flex align-items-center rounded-3">
+                    <input type="radio" name="gateway" value="stripe" class="me-3" required checked>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" height="20" class="me-auto" alt="Stripe">
+                </label>
+                <label class="btn btn-outline-light text-dark border p-3 text-start d-flex align-items-center rounded-3">
+                    <input type="radio" name="gateway" value="paypal" class="me-3" required>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" height="20" class="me-auto" alt="PayPal">
+                </label>
+                <label class="btn btn-outline-light text-dark border p-3 text-start d-flex align-items-center rounded-3">
+                    <input type="radio" name="gateway" value="gcash" class="me-3" required>
+                    <span class="fw-bold text-primary"><?php _e( 'GCash Mobile', 'org-ecosystem' ); ?></span>
+                </label>
+                <label class="btn btn-outline-light text-dark border p-3 text-start d-flex align-items-center rounded-3">
+                    <input type="radio" name="gateway" value="offline" class="me-3" required>
+                    <span class="fw-bold text-muted"><?php _e( 'Bank Transfer / Cash', 'org-ecosystem' ); ?></span>
+                </label>
+            </div>
+          </div>
+          <div class="modal-footer border-0 p-4 pt-0">
+            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 rounded-pill fw-bold" id="pay-btn"><?php _e( 'Complete Order', 'org-ecosystem' ); ?></button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div class="modal fade" id="directMessageModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content border-0 rounded-4 shadow-lg" method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+          <input type="hidden" name="action" value="org_send_message">
+          <input type="hidden" name="receiver_id" value="<?php echo get_post_field('post_author', $business_id); ?>">
+          <input type="hidden" name="msg_subject" value="Product Inquiry: <?php the_title(); ?>">
+          <?php wp_nonce_field( 'org_send_message', 'org_message_nonce' ); ?>
+
+          <div class="modal-header border-0 p-4">
+            <h5 class="modal-title fw-bold"><?php _e( 'Direct Message', 'org-ecosystem' ); ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body p-4 pt-0">
+            <p class="small text-muted mb-3">Send a direct message to <strong><?php echo get_the_title($business_id); ?></strong> regarding this solution.</p>
+            <textarea name="msg_content" class="form-control bg-light border-0" rows="5" placeholder="How can we help you?" required></textarea>
+          </div>
+          <div class="modal-footer border-0 p-4 pt-0">
+            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold"><?php _e( 'Send Message', 'org-ecosystem' ); ?></button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+    jQuery(document).ready(function($) {
+        $('#product-checkout-form').on('submit', function(e) {
+            e.preventDefault();
+            var btn = $('#pay-btn');
+            var originalText = btn.text();
+
+            btn.prop('disabled', true).text('Processing...');
+
+            var data = {
+                action: 'org_process_payment',
+                security: $('input[name="security"]').val(),
+                amount: $('input[name="amount"]').val(),
+                gateway: $('input[name="gateway"]:checked').val(),
+                type: $('input[name="type"]').val(),
+                item_id: $('input[name="item_id"]').val()
+            };
+
+            $.post(org_ajax.ajaxurl, data, function(res) {
+                if (res.success) {
+                    alert('Order Successful! Transaction ID: ' + res.data.txn_id);
+                    location.reload();
+                } else {
+                    alert('Error: ' + res.data);
+                    btn.prop('disabled', false).text(originalText);
+                }
+            });
+        });
+    });
+    </script>
 
 <?php
 endwhile;

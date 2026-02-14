@@ -157,5 +157,31 @@ function org_ecosystem_register_cpts() {
 		'menu_icon' => 'dashicons-sos',
 		'show_in_rest' => true,
 	) );
+
+	// Message CPT (Internal Messaging)
+	register_post_type( 'org_message', array(
+		'labels' => array(
+			'name' => __( 'Messages', 'org-ecosystem' ),
+			'singular_name' => __( 'Message', 'org-ecosystem' ),
+		),
+		'public' => false,
+		'show_ui' => true,
+		'supports' => array( 'title', 'editor', 'author' ),
+		'menu_icon' => 'dashicons-email-alt',
+		'show_in_rest' => true,
+	) );
+
+    // Transaction CPT
+	register_post_type( 'org_transaction', array(
+		'labels' => array(
+			'name' => __( 'Transactions', 'org-ecosystem' ),
+			'singular_name' => __( 'Transaction', 'org-ecosystem' ),
+		),
+		'public' => false,
+		'show_ui' => true,
+		'supports' => array( 'title', 'excerpt' ),
+		'menu_icon' => 'dashicons-money-alt',
+		'show_in_rest' => true,
+	) );
 }
 add_action( 'init', 'org_ecosystem_register_cpts' );

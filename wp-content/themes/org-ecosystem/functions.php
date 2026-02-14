@@ -134,3 +134,14 @@ require ORG_ECOSYSTEM_DIR . '/inc/ajax-filters.php';
 require ORG_ECOSYSTEM_DIR . '/inc/admin-panel.php';
 require ORG_ECOSYSTEM_DIR . '/inc/seo-security.php';
 require ORG_ECOSYSTEM_DIR . '/inc/patterns.php';
+require ORG_ECOSYSTEM_DIR . '/inc/transactions.php';
+
+/**
+ * Handle Referral Tracking
+ */
+function org_ecosystem_track_referral() {
+    if ( isset( $_GET['ref'] ) ) {
+        setcookie( 'org_referral', sanitize_text_field( $_GET['ref'] ), time() + ( 30 * DAY_IN_SECONDS ), COOKIEPATH, COOKIE_DOMAIN );
+    }
+}
+add_action( 'init', 'org_ecosystem_track_referral' );
