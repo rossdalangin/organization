@@ -169,10 +169,10 @@ function org_ecosystem_settings_page() {
 		<h1 class="wp-heading-inline"><?php _e( 'Organization Command Center', 'org-ecosystem' ); ?></h1>
 		<hr class="wp-header-end">
 
-		<div class="welcome-panel" style="padding: 30px; margin-top: 20px; border-radius: 12px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+		<div class="welcome-panel" style="padding: 30px; margin-top: 20px; border-radius: 12px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.08); background: linear-gradient(to right, #ffffff, #f0f7ff);">
 			<div class="welcome-panel-content">
-				<h2 style="font-size: 28px; margin-bottom: 10px;"><?php _e( 'Ecosystem Dashboard', 'org-ecosystem' ); ?></h2>
-				<p class="about-description" style="font-size: 18px; color: #666;"><?php _e( 'Real-time overview of your organization\'s health and activity.', 'org-ecosystem' ); ?></p>
+				<h2 style="font-size: 32px; margin-bottom: 10px; font-weight: 800; color: #1e293b;"><?php _e( 'Organization Command Center', 'org-ecosystem' ); ?></h2>
+				<p class="about-description" style="font-size: 18px; color: #64748b;"><?php _e( 'Welcome back! Here is a real-time overview of your digital ecosystem.', 'org-ecosystem' ); ?></p>
 
 				<div class="welcome-panel-column-container" style="margin-top: 40px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
 					<div class="welcome-panel-column">
@@ -263,6 +263,38 @@ function org_ecosystem_settings_page() {
                     </div>
                     <div style="margin-top: 20px; text-align: right;">
                         <a href="<?php echo admin_url('admin.php?page=org-setup'); ?>" class="button button-secondary"><?php _e( 'Run Setup Wizard', 'org-ecosystem' ); ?></a>
+                    </div>
+                </div>
+
+				<div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <h2 style="margin-top: 0;"><span class="dashicons dashicons-flag" style="color: #0d6efd;"></span> <?php _e( 'Launch Checklist (Onboarding)', 'org-ecosystem' ); ?></h2>
+                    <p class="description"><?php _e( 'Complete these steps to fully activate your organization platform.', 'org-ecosystem' ); ?></p>
+
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; align-items: center; gap: 15px; padding: 12px; border-bottom: 1px solid #f1f5f9;">
+                            <span class="dashicons dashicons-yes-alt text-success"></span>
+                            <div>
+                                <strong style="display: block; font-size: 14px;"><?php _e( '1. Configure Payments', 'org-ecosystem' ); ?></strong>
+                                <span style="font-size: 12px; color: #64748b;"><?php _e( 'Set up Stripe, PayPal, or GCash to receive membership fees.', 'org-ecosystem' ); ?></span>
+                            </div>
+                            <a href="<?php echo admin_url('admin.php?page=org-payments'); ?>" class="button button-small" style="margin-left: auto;"><?php _e( 'Configure', 'org-ecosystem' ); ?></a>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px; padding: 12px; border-bottom: 1px solid #f1f5f9;">
+                            <span class="dashicons dashicons-yes-alt text-success"></span>
+                            <div>
+                                <strong style="display: block; font-size: 14px;"><?php _e( '2. Initialize Required Pages', 'org-ecosystem' ); ?></strong>
+                                <span style="font-size: 12px; color: #64748b;"><?php _e( 'Auto-generate Dashboard, Join, and Directory pages.', 'org-ecosystem' ); ?></span>
+                            </div>
+                            <a href="<?php echo admin_url('admin.php?page=org-setup'); ?>" class="button button-small" style="margin-left: auto;"><?php _e( 'Generate', 'org-ecosystem' ); ?></a>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px; padding: 12px;">
+                            <span class="dashicons dashicons-yes-alt text-success"></span>
+                            <div>
+                                <strong style="display: block; font-size: 14px;"><?php _e( '3. Define Pricing Tiers', 'org-ecosystem' ); ?></strong>
+                                <span style="font-size: 12px; color: #64748b;"><?php _e( 'Customize membership plan rates in the Theme Customizer.', 'org-ecosystem' ); ?></span>
+                            </div>
+                            <a href="<?php echo admin_url('customize.php?autofocus[panel]=org_panel_revenue'); ?>" class="button button-small" style="margin-left: auto;"><?php _e( 'Set Prices', 'org-ecosystem' ); ?></a>
+                        </div>
                     </div>
                 </div>
 
