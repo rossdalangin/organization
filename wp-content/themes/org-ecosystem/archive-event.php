@@ -25,7 +25,10 @@ get_header();
 				$location = get_the_terms( get_the_ID(), 'location' );
 				?>
 				<div class="col-md-6">
-					<div class="card h-100 shadow-sm border-0 overflow-hidden">
+					<div class="card h-100 shadow-sm border-0 overflow-hidden position-relative">
+                        <?php if ( get_post_meta( get_the_ID(), '_event_is_upcoming', true ) ) : ?>
+                            <span class="position-absolute top-0 end-0 m-3 badge bg-danger text-white shadow-sm" style="z-index: 5;"><i class="bi bi-fire me-1"></i> <?php _e( 'NEXT UP', 'org-ecosystem' ); ?></span>
+                        <?php endif; ?>
 						<div class="row g-0">
 							<div class="col-md-4">
 								<?php if ( has_post_thumbnail() ) : ?>

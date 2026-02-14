@@ -23,14 +23,23 @@ get_header();
 				the_post();
 				?>
 				<div class="col-md-6 col-lg-4 col-xl-3">
-					<div class="card h-100 shadow-sm border-0">
+					<div class="card h-100 shadow-sm border-0 position-relative">
+                        <?php
+                        if ( get_post_meta( get_the_ID(), '_product_is_featured', true ) ) : ?>
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-warning text-dark shadow-sm" style="z-index: 5;"><i class="bi bi-star-fill me-1"></i> <?php _e( 'Featured', 'org-ecosystem' ); ?></span>
+                        <?php endif; ?>
 						<?php if ( has_post_thumbnail() ) : ?>
 							<a href="<?php the_permalink(); ?>">
 								<?php the_post_thumbnail( 'medium', array( 'class' => 'card-img-top' ) ); ?>
 							</a>
 						<?php endif; ?>
 						<div class="card-body">
-							<h5 class="card-title fw-bold h6"><?php the_title(); ?></h5>
+							<h5 class="card-title fw-bold h6">
+                                <?php the_title(); ?>
+                                <?php if ( get_post_meta( get_the_ID(), '_product_is_solution', true ) ) : ?>
+                                    <i class="bi bi-patch-check-fill text-primary ms-1" title="Enterprise Solution"></i>
+                                <?php endif; ?>
+                            </h5>
 							<?php
 							$business_id = get_post_meta( get_the_ID(), '_product_business_id', true );
 							if ( $business_id ) : ?>

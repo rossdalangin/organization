@@ -69,7 +69,9 @@ function org_ecosystem_process_unified_payment( $data ) {
     update_post_meta( $txn_id, '_txn_item_id', $item_id );
 
     // Status Logic
-    $status = ($gateway === 'offline' || $gateway === 'gcash') ? 'pending' : 'completed';
+    // In production, Stripe/PayPal should be 'pending' until IPN/Webhook verification.
+    // For this ecosystem, we default to 'pending' to ensure administrative review or API confirmation.
+    $status = 'pending';
     update_post_meta( $txn_id, '_txn_status', $status );
 
     // Handle Commissions/Referrals if product sale

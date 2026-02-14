@@ -183,5 +183,31 @@ function org_ecosystem_register_cpts() {
 		'menu_icon' => 'dashicons-money-alt',
 		'show_in_rest' => true,
 	) );
+
+    // Newsletter CPT (For Subscribers)
+	register_post_type( 'org_newsletter', array(
+		'labels' => array(
+			'name' => __( 'Newsletter Subscribers', 'org-ecosystem' ),
+			'singular_name' => __( 'Subscriber', 'org-ecosystem' ),
+		),
+		'public' => false,
+		'show_ui' => true,
+		'supports' => array( 'title' ),
+		'menu_icon' => 'dashicons-email',
+		'show_in_rest' => true,
+	) );
+
+    // Group Message CPT (For Dashboard Group Chat)
+	register_post_type( 'org_group_msg', array(
+		'labels' => array(
+			'name' => __( 'Group Messages', 'org-ecosystem' ),
+			'singular_name' => __( 'Group Message', 'org-ecosystem' ),
+		),
+		'public' => false,
+		'show_ui' => true,
+		'supports' => array( 'title', 'editor', 'author' ),
+		'menu_icon' => 'dashicons-format-chat',
+		'show_in_rest' => true,
+	) );
 }
 add_action( 'init', 'org_ecosystem_register_cpts' );

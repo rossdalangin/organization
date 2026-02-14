@@ -19,8 +19,15 @@ while ( have_posts() ) :
 			<?php org_ecosystem_breadcrumbs(); ?>
 			<div class="row">
 				<div class="col-lg-8">
-					<div class="event-featured-image mb-4">
+					<div class="event-featured-image mb-4 position-relative">
 						<?php if ( has_post_thumbnail() ) the_post_thumbnail( 'large', array( 'class' => 'img-fluid rounded shadow' ) ); ?>
+                        <?php
+                        $is_upcoming = get_post_meta( get_the_ID(), '_event_is_upcoming', true );
+                        if ( $is_upcoming ) : ?>
+                            <div class="upcoming-badge position-absolute top-0 end-0 m-3 bg-danger text-white fw-bold px-3 py-1 rounded shadow-sm">
+                                <i class="bi bi-fire me-1"></i> <?php _e( 'NEXT UP', 'org-ecosystem' ); ?>
+                            </div>
+                        <?php endif; ?>
 					</div>
 					<h1 class="display-4 fw-bold mb-4"><?php the_title(); ?></h1>
 					<div class="event-content bg-white p-4 shadow-sm border rounded mb-4">

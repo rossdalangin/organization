@@ -39,6 +39,9 @@ function is_dash_active($slug, $action) {
 							<div class="px-4 py-3 small text-muted text-uppercase fw-bold bg-light border-bottom"><?php _e( 'Overview', 'org-ecosystem' ); ?></div>
                             <a href="?action=overview" class="list-group-item list-group-item-action <?php echo is_dash_active('overview', $action); ?> border-0"><i class="bi bi-speedometer2 me-3"></i> <?php _e( 'Insights', 'org-ecosystem' ); ?></a>
 							<a href="?action=analytics" class="list-group-item list-group-item-action <?php echo is_dash_active('analytics', $action); ?> border-0"><i class="bi bi-bar-chart me-3"></i> <?php _e( 'Visibility Stats', 'org-ecosystem' ); ?></a>
+
+                            <div class="px-4 py-3 small text-muted text-uppercase fw-bold bg-light border-bottom border-top"><?php _e( 'Communication', 'org-ecosystem' ); ?></div>
+                            <a href="?action=group-chat" class="list-group-item list-group-item-action <?php echo is_dash_active('group-chat', $action); ?> border-0"><i class="bi bi-people me-3"></i> <?php _e( 'Community Chat', 'org-ecosystem' ); ?></a>
                             <a href="?action=messages" class="list-group-item list-group-item-action <?php echo is_dash_active('messages', $action); ?> border-0"><i class="bi bi-chat-left-text me-3"></i> <?php _e( 'Internal Inbox', 'org-ecosystem' ); ?></a>
 
                             <div class="px-4 py-3 small text-muted text-uppercase fw-bold bg-light border-bottom border-top"><?php _e( 'Professional Hub', 'org-ecosystem' ); ?></div>
@@ -49,6 +52,7 @@ function is_dash_active($slug, $action) {
 
                             <div class="px-4 py-3 small text-muted text-uppercase fw-bold bg-light border-bottom border-top"><?php _e( 'Financials & Tools', 'org-ecosystem' ); ?></div>
                             <a href="?action=transactions" class="list-group-item list-group-item-action <?php echo is_dash_active('transactions', $action); ?> border-0"><i class="bi bi-wallet2 me-3"></i> <?php _e( 'Earnings & Ledger', 'org-ecosystem' ); ?></a>
+                            <a href="?action=referrals" class="list-group-item list-group-item-action <?php echo is_dash_active('referrals', $action); ?> border-0"><i class="bi bi-share me-3"></i> <?php _e( 'Referral Center', 'org-ecosystem' ); ?></a>
                             <a href="?action=billing" class="list-group-item list-group-item-action <?php echo is_dash_active('billing', $action); ?> border-0"><i class="bi bi-credit-card me-3"></i> <?php _e( 'Subscription', 'org-ecosystem' ); ?></a>
 							<a href="?action=resources" class="list-group-item list-group-item-action <?php echo is_dash_active('resources', $action); ?> border-0"><i class="bi bi-file-earmark-arrow-down me-3"></i> <?php _e( 'Downloads', 'org-ecosystem' ); ?></a>
 							<a href="?action=support" class="list-group-item list-group-item-action <?php echo is_dash_active('support', $action); ?> border-0"><i class="bi bi-life-preserver me-3"></i> <?php _e( 'Support Tickets', 'org-ecosystem' ); ?></a>
@@ -90,8 +94,14 @@ function is_dash_active($slug, $action) {
                         case 'messages':
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/messages.php';
 							break;
+                        case 'group-chat':
+							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/group-chat.php';
+							break;
                         case 'transactions':
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/transactions.php';
+							break;
+                        case 'referrals':
+							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/referrals.php';
 							break;
 						case 'gdpr':
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/gdpr.php';

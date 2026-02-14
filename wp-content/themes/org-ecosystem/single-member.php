@@ -216,6 +216,61 @@ while ( have_posts() ) :
 						</div>
 
 						<hr>
+                        <div class="member-announcements mt-4">
+							<h5 class="fw-bold mb-4"><?php _e( 'Latest Updates', 'org-ecosystem' ); ?></h5>
+							<?php
+							$announcements = new WP_Query( array(
+								'post_type' => 'announcement',
+								'author'    => get_the_author_meta('ID'),
+								'posts_per_page' => 3
+							) );
+
+							if ( $announcements->have_posts() ) : ?>
+								<div class="list-group list-group-flush shadow-sm rounded-4 overflow-hidden border">
+									<?php while ( $announcements->have_posts() ) : $announcements->the_post(); ?>
+										<a href="<?php the_permalink(); ?>" class="list-group-item list-group-item-action p-3">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1 fw-bold"><?php the_title(); ?></h6>
+                                                <small class="text-muted"><?php echo get_the_date(); ?></small>
+                                            </div>
+                                            <p class="mb-1 small text-muted"><?php echo wp_trim_words( get_the_excerpt(), 15 ); ?></p>
+                                        </a>
+									<?php endwhile; wp_reset_postdata(); ?>
+								</div>
+							<?php else : ?>
+								<p class="text-muted small"><?php _e( 'No recent announcements.', 'org-ecosystem' ); ?></p>
+							<?php endif; ?>
+						</div>
+
+						<hr>
+                        <div class="member-programs mt-4">
+							<h5 class="fw-bold mb-4"><?php _e( 'Active Programs & Projects', 'org-ecosystem' ); ?></h5>
+							<?php
+							$programs = new WP_Query( array(
+								'post_type' => 'program',
+								'author'    => get_the_author_meta('ID'),
+								'posts_per_page' => 3
+							) );
+
+							if ( $programs->have_posts() ) : ?>
+								<div class="row g-3">
+									<?php while ( $programs->have_posts() ) : $programs->the_post(); ?>
+										<div class="col-md-6">
+											<div class="card h-100 border-0 shadow-sm bg-light">
+												<div class="card-body">
+													<h6 class="fw-bold mb-1"><?php the_title(); ?></h6>
+													<a href="<?php the_permalink(); ?>" class="btn btn-sm btn-link p-0 text-decoration-none small"><?php _e( 'Learn More', 'org-ecosystem' ); ?></a>
+												</div>
+											</div>
+										</div>
+									<?php endwhile; wp_reset_postdata(); ?>
+								</div>
+							<?php else : ?>
+								<p class="text-muted small"><?php _e( 'No active programs listed.', 'org-ecosystem' ); ?></p>
+							<?php endif; ?>
+						</div>
+
+						<hr>
 						<div class="member-contact-form mt-4">
 							<h5 class="fw-bold mb-3"><?php _e( 'Send a Message', 'org-ecosystem' ); ?></h5>
 							<?php org_ecosystem_inquiry_form( get_the_ID() ); ?>

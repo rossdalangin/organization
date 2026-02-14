@@ -87,6 +87,15 @@ function org_ecosystem_admin_menu() {
 		'org_ecosystem_emails_page'
 	);
 
+    add_submenu_page(
+		'org-settings',
+		__( 'Newsletter Management', 'org-ecosystem' ),
+		__( 'Newsletters', 'org-ecosystem' ),
+		'publish_posts',
+		'org-newsletters',
+		'org_ecosystem_newsletters_page'
+	);
+
 	// 4. Governance & Management
 	add_submenu_page(
 		'org-settings',
@@ -157,6 +166,29 @@ function org_ecosystem_settings_page() {
 			</div>
 		</div>
 
+        <div class="shortcode-reference mt-5 p-5 bg-white border" style="border-radius: 15px; border: 1px solid #e2e8f0; margin-top: 40px;">
+            <h2 style="margin-top: 0;"><span class="dashicons dashicons-editor-code" style="color: #0d6efd;"></span> <?php _e( 'Ecosystem Shortcode Library', 'org-ecosystem' ); ?></h2>
+            <p class="description mb-4"><?php _e( 'Use these shortcodes to build custom pages and landing sections.', 'org-ecosystem' ); ?></p>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                <div style="padding: 15px; background: #f8fafc; border-radius: 8px;">
+                    <code>[org_directory]</code>
+                    <p class="small text-muted mt-1"><?php _e( 'Renders the searchable member directory with AJAX filters.', 'org-ecosystem' ); ?></p>
+                </div>
+                <div style="padding: 15px; background: #f8fafc; border-radius: 8px;">
+                    <code>[org_pricing_table]</code>
+                    <p class="small text-muted mt-1"><?php _e( 'Displays the 4 membership tiers with Join buttons.', 'org-ecosystem' ); ?></p>
+                </div>
+                <div style="padding: 15px; background: #f8fafc; border-radius: 8px;">
+                    <code>[org_stats_counter]</code>
+                    <p class="small text-muted mt-1"><?php _e( 'Dynamic counters for members, revenue, and impact.', 'org-ecosystem' ); ?></p>
+                </div>
+                <div style="padding: 15px; background: #f8fafc; border-radius: 8px;">
+                    <code>[org_featured_carousel]</code>
+                    <p class="small text-muted mt-1"><?php _e( 'A sliding showcase of featured members/businesses.', 'org-ecosystem' ); ?></p>
+                </div>
+            </div>
+        </div>
+
 		<div class="grid-container" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-top: 40px;">
 			<div class="card-main">
 				<div class="card p-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
@@ -219,6 +251,16 @@ function org_ecosystem_settings_page() {
                             <button type="submit" class="button button-link text-danger w-100" style="color: #dc3545;"><?php _e( 'Delete All Records (Reset)', 'org-ecosystem' ); ?></button>
                         </form>
                     </div>
+
+                    <hr style="margin: 25px 0;">
+
+                    <h3><?php _e( 'System Ecosystem Info', 'org-ecosystem' ); ?></h3>
+                    <p class="description"><?php _e( 'Useful technical details for site administrators.', 'org-ecosystem' ); ?></p>
+                    <table class="wp-list-table widefat" style="border: none; background: transparent;">
+                        <tr><td><strong>Version:</strong></td><td><?php echo ORG_ECOSYSTEM_VERSION; ?></td></tr>
+                        <tr><td><strong>PHP:</strong></td><td><?php echo phpversion(); ?></td></tr>
+                        <tr><td><strong>WP:</strong></td><td><?php echo get_bloginfo('version'); ?></td></tr>
+                    </table>
 				</div>
 			</div>
 		</div>
@@ -338,6 +380,84 @@ function org_ecosystem_withdrawals_page() {
 }
 
 /**
+ * Newsletter Management Page Callback
+ */
+function org_ecosystem_newsletters_page() {
+    if ( isset( $_POST['org_send_newsletter'] ) ) {
+        check_admin_referer( 'org_send_newsletter_action' );
+        $subject = sanitize_text_field( $_POST['newsletter_subject'] );
+        $content = wp_kses_post( $_POST['newsletter_content'] );
+
+        // In a real app, this would loop through subscribers and send emails.
+        // For this theme, we'll just log the newsletter as a CPT.
+        wp_insert_post( array(
+            'post_title'   => $subject,
+            'post_content' => $content,
+            'post_type'    => 'org_newsletter',
+            'post_status'  => 'publish',
+        ) );
+        echo '<div class="updated"><p>Newsletter dispatched and archived.</p></div>';
+    }
+
+    $newsletters = new WP_Query( array(
+        'post_type' => 'org_newsletter',
+        'posts_per_page' => 10,
+    ) );
+    ?>
+    <div class="wrap">
+        <h1><?php _e( 'Community Broadcast & Newsletters', 'org-ecosystem' ); ?></h1>
+
+        <div class="grid-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+            <div class="compose-area">
+                <div class="card p-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <h3 style="margin-top: 0;"><?php _e( 'Compose New Broadcast', 'org-ecosystem' ); ?></h3>
+                    <form method="post" action="">
+                        <?php wp_nonce_field( 'org_send_newsletter_action' ); ?>
+                        <div class="mb-3">
+                            <label class="form-label d-block fw-bold"><?php _e( 'Campaign Subject', 'org-ecosystem' ); ?></label>
+                            <input type="text" name="newsletter_subject" class="widefat" required style="padding: 10px; border-radius: 6px;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label d-block fw-bold"><?php _e( 'Message Body', 'org-ecosystem' ); ?></label>
+                            <?php wp_editor( '', 'newsletter_content', array( 'textarea_name' => 'newsletter_content', 'media_buttons' => true, 'textarea_rows' => 10 ) ); ?>
+                        </div>
+                        <button type="submit" name="org_send_newsletter" class="button button-primary button-large"><?php _e( 'Dispatch to All Members', 'org-ecosystem' ); ?></button>
+                    </form>
+                </div>
+            </div>
+            <div class="archive-area">
+                <div class="card p-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <h3 style="margin-top: 0;"><?php _e( 'Recent Dispatches', 'org-ecosystem' ); ?></h3>
+                    <table class="wp-list-table widefat fixed striped mt-3">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ( $newsletters->have_posts() ) : ?>
+                                <?php while ( $newsletters->have_posts() ) : $newsletters->the_post(); ?>
+                                    <tr>
+                                        <td><?php echo get_the_date(); ?></td>
+                                        <td><strong><?php the_title(); ?></strong></td>
+                                        <td><span class="badge" style="background: #198754; color: #fff; padding: 3px 8px; border-radius: 4px;">Sent</span></td>
+                                    </tr>
+                                <?php endwhile; wp_reset_postdata(); ?>
+                            <?php else : ?>
+                                <tr><td colspan="3">No previous newsletters.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
+/**
  * Content Manager Page Callback
  */
 function org_ecosystem_content_manager_page() {
@@ -358,7 +478,7 @@ function org_ecosystem_content_manager_page() {
 				</thead>
 				<tbody>
 					<?php
-					$types = array( 'member', 'business', 'product', 'event', 'job', 'program', 'resource', 'donation', 'announcement', 'org_message', 'org_transaction' );
+					$types = array( 'member', 'business', 'product', 'event', 'job', 'program', 'resource', 'donation', 'announcement', 'org_message', 'org_transaction', 'org_newsletter' );
 					foreach ( $types as $type ) :
 						$count = wp_count_posts( $type );
 						$obj = get_post_type_object( $type );

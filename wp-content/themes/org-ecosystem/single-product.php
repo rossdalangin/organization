@@ -16,7 +16,16 @@ while ( have_posts() ) :
 		<div class="container py-5">
 			<?php org_ecosystem_breadcrumbs(); ?>
 			<div class="row g-5 mt-2">
-				<div class="col-md-6 animate-fade-in-up">
+				<div class="col-md-6 animate-fade-in-up position-relative">
+                    <?php
+                    $is_featured = get_post_meta( get_the_ID(), '_product_is_featured', true );
+                    $is_solution = get_post_meta( get_the_ID(), '_product_is_solution', true );
+                    if ( $is_featured ) : ?>
+                        <div class="featured-ribbon bg-warning text-dark fw-bold px-4 py-1 position-absolute top-0 start-0 translate-middle-y ms-3 shadow-sm rounded-pill" style="z-index: 10;">
+                            <i class="bi bi-star-fill me-1"></i> <?php _e( 'Featured Offering', 'org-ecosystem' ); ?>
+                        </div>
+                    <?php endif; ?>
+
 					<?php if ( has_post_thumbnail() ) : ?>
 						<?php the_post_thumbnail( 'large', array( 'class' => 'img-fluid rounded-4 shadow-lg border p-2 bg-white' ) ); ?>
 					<?php else : ?>
@@ -29,7 +38,12 @@ while ( have_posts() ) :
 					<div class="product-badge mb-3">
                         <?php the_terms( get_the_ID(), 'product_cat', '<span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">', ' ', '</span>' ); ?>
                     </div>
-                    <h1 class="display-4 fw-bold mb-3"><?php the_title(); ?></h1>
+                    <h1 class="display-4 fw-bold mb-3">
+                        <?php the_title(); ?>
+                        <?php if ( $is_solution ) : ?>
+                            <span class="ms-2" title="<?php _e( 'Verified Enterprise Solution', 'org-ecosystem' ); ?>"><i class="bi bi-patch-check-fill text-primary fs-2"></i></span>
+                        <?php endif; ?>
+                    </h1>
 
 					<div class="product-price h2 text-primary fw-bold mb-4">
 						₱ <?php echo number_format( floatval($price), 2 ); ?>
