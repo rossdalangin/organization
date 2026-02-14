@@ -19,10 +19,15 @@ get_header();
 			<div class="col-lg-6">
 				<div class="page-content lead">
 					<?php
-					while ( have_posts() ) :
-						the_post();
-						the_content();
-					endwhile;
+                    $about_content = get_option( 'org_about_text' );
+                    if ( $about_content ) {
+                        echo wp_kses_post( $about_content );
+                    } else {
+                        while ( have_posts() ) :
+                            the_post();
+                            the_content();
+                        endwhile;
+                    }
 					?>
 				</div>
 			</div>

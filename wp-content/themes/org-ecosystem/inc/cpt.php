@@ -6,6 +6,8 @@
  */
 
 function org_ecosystem_register_cpts() {
+    $parent_slug = 'org-settings';
+
 	// Member CPT
 	register_post_type( 'member', array(
 		'labels' => array(
@@ -18,6 +20,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
 		'menu_icon' => 'dashicons-groups',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Business CPT
@@ -32,6 +35,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
 		'menu_icon' => 'dashicons-store',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Product CPT
@@ -46,6 +50,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
 		'menu_icon' => 'dashicons-cart',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Event CPT
@@ -60,6 +65,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
 		'menu_icon' => 'dashicons-calendar-alt',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Program CPT
@@ -74,6 +80,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
 		'menu_icon' => 'dashicons-clipboard',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Announcement CPT
@@ -88,6 +95,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor' ),
 		'menu_icon' => 'dashicons-megaphone',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Testimonial CPT
@@ -101,6 +109,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'thumbnail' ),
 		'menu_icon' => 'dashicons-format-quote',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Resource CPT
@@ -115,6 +124,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
 		'menu_icon' => 'dashicons-pdf',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Job CPT
@@ -129,6 +139,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'excerpt' ),
 		'menu_icon' => 'dashicons-businessperson',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Donation CPT
@@ -143,6 +154,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'thumbnail' ),
 		'menu_icon' => 'dashicons-heart',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Support Ticket CPT
@@ -156,6 +168,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'comments' ),
 		'menu_icon' => 'dashicons-sos',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
 	// Message CPT (Internal Messaging)
@@ -169,6 +182,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'author' ),
 		'menu_icon' => 'dashicons-email-alt',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
     // Transaction CPT
@@ -182,6 +196,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'excerpt' ),
 		'menu_icon' => 'dashicons-money-alt',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
     // Newsletter CPT (For Subscribers)
@@ -195,6 +210,7 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title' ),
 		'menu_icon' => 'dashicons-email',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 
     // Group Message CPT (For Dashboard Group Chat)
@@ -208,6 +224,22 @@ function org_ecosystem_register_cpts() {
 		'supports' => array( 'title', 'editor', 'author' ),
 		'menu_icon' => 'dashicons-format-chat',
 		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
+	) );
+
+    // FAQ CPT
+	register_post_type( 'faq', array(
+		'labels' => array(
+			'name' => __( 'FAQs', 'org-ecosystem' ),
+			'singular_name' => __( 'FAQ', 'org-ecosystem' ),
+		),
+		'public' => true,
+		'has_archive' => true,
+		'rewrite' => array( 'slug' => 'faqs' ),
+		'supports' => array( 'title', 'editor' ),
+		'menu_icon' => 'dashicons-editor-help',
+		'show_in_rest' => true,
+        'show_in_menu' => $parent_slug,
 	) );
 }
 add_action( 'init', 'org_ecosystem_register_cpts' );

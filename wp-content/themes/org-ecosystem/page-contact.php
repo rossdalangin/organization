@@ -13,7 +13,16 @@ get_header();
 		<div class="row g-5">
 			<div class="col-lg-5">
 				<h1 class="display-4 fw-bold mb-4"><?php _e( 'Get in Touch', 'org-ecosystem' ); ?></h1>
-				<p class="lead mb-5"><?php _e( 'Have questions? We are here to help. Reach out to us through any of the following channels.', 'org-ecosystem' ); ?></p>
+				<div class="lead mb-5">
+                    <?php
+                    $contact_info = get_option( 'org_contact_info' );
+                    if ( $contact_info ) {
+                        echo wp_kses_post( $contact_info );
+                    } else {
+                        _e( 'Have questions? We are here to help. Reach out to us through any of the following channels.', 'org-ecosystem' );
+                    }
+                    ?>
+                </div>
 
 				<div class="contact-info">
 					<div class="d-flex align-items-center mb-4">

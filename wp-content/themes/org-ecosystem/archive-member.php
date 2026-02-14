@@ -74,55 +74,42 @@ get_header();
 
 		<!-- Members Grid -->
 		<div class="col-lg-9" id="directory-results">
-			<div class="directory-grid">
+			<div class="row g-4">
 				<?php
 				if ( have_posts() ) :
 					while ( have_posts() ) :
 						the_post();
 						?>
-						<div class="animate-fade-in-up">
-							<div class="org-card p-0">
-								<div class="org-card-body text-center">
-									<div class="member-avatar-wrapper mb-3 position-relative d-inline-block">
-										<?php if ( has_post_thumbnail() ) : ?>
-											<?php the_post_thumbnail( 'thumbnail', array( 'class' => 'rounded-circle shadow-sm border p-1 bg-white', 'style' => 'width: 100px; height: 100px; object-fit: cover;' ) ); ?>
-										<?php else : ?>
-											<div class="bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm border p-1" style="width: 100px; height: 100px;">
-												<i class="bi bi-person text-secondary display-6"></i>
-											</div>
-										<?php endif; ?>
-
-										<?php if ( get_post_meta( get_the_ID(), '_member_is_verified', true ) ) : ?>
-											<span class="position-absolute bottom-0 end-0 bg-white rounded-circle p-1 shadow-sm" style="width: 30px; height: 30px;" title="Verified">
-												<i class="bi bi-patch-check-fill text-primary"></i>
-											</span>
-										<?php endif; ?>
-									</div>
-
-									<h4 class="h5 mb-1"><?php the_title(); ?></h4>
-									<p class="text-primary fw-bold small mb-3"><?php echo esc_html( get_post_meta( get_the_ID(), '_member_business_name', true ) ); ?></p>
-
-									<div class="mb-4">
-										<?php
-										$industries = get_the_terms( get_the_ID(), 'industry' );
-										if ( $industries ) :
-											foreach ( $industries as $ind ) : ?>
-												<span class="badge bg-light text-dark border-0 shadow-none py-2 px-3 rounded-pill me-1 mb-1"><?php echo esc_html( $ind->name ); ?></span>
-											<?php endforeach;
-										endif; ?>
-									</div>
-
-									<div class="d-grid">
-										<a href="<?php the_permalink(); ?>" class="btn btn-outline-primary rounded-pill"><?php _e( 'View Full Profile', 'org-ecosystem' ); ?></a>
-									</div>
-
-									<?php if ( get_post_meta( get_the_ID(), '_member_is_featured', true ) ) : ?>
-										<div class="mt-3">
-											<span class="badge-featured"><?php _e( 'Partner Spotlight', 'org-ecosystem' ); ?></span>
-										</div>
-									<?php endif; ?>
-								</div>
-							</div>
+						<div class="col-md-6 col-xl-4 animate-fade-in-up">
+                            <div class="card h-100 shadow-sm border-0 member-card-hover">
+                                <div class="card-body text-center p-4">
+                                    <div class="mb-3">
+                                        <?php if ( has_post_thumbnail() ) : ?>
+                                            <?php the_post_thumbnail( 'thumbnail', array( 'class' => 'rounded-circle shadow-sm', 'style' => 'width: 80px; height: 80px; object-fit: cover;' ) ); ?>
+                                        <?php else : ?>
+                                            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 80px; height: 80px;">
+                                                <i class="bi bi-person text-secondary h2 mb-0"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <h5 class="card-title mb-1">
+                                        <?php the_title(); ?>
+                                        <?php if ( get_post_meta( get_the_ID(), '_member_is_verified', true ) ) : ?>
+                                            <i class="bi bi-patch-check-fill text-primary ms-1" title="Verified Member"></i>
+                                        <?php endif; ?>
+                                    </h5>
+                                    <p class="text-muted small mb-2">
+                                        <?php echo esc_html( get_post_meta( get_the_ID(), '_member_business_name', true ) ); ?>
+                                        <?php if ( get_post_meta( get_the_ID(), '_member_is_featured', true ) ) : ?>
+                                            <span class="badge bg-warning text-dark ms-1 small" style="font-size: 0.65rem;"><?php _e( 'FEATURED', 'org-ecosystem' ); ?></span>
+                                        <?php endif; ?>
+                                    </p>
+                                    <div class="mb-3">
+                                        <?php the_terms( get_the_ID(), 'industry', '<span class="badge bg-light text-dark border me-1">', '</span> <span class="badge bg-light text-dark border me-1">', '</span>' ); ?>
+                                    </div>
+                                    <a href="<?php the_permalink(); ?>" class="btn btn-outline-primary btn-sm rounded-pill"><?php _e( 'View Profile', 'org-ecosystem' ); ?></a>
+                                </div>
+                            </div>
 						</div>
 						<?php
 					endwhile;

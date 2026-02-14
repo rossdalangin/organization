@@ -64,7 +64,7 @@ function org_ecosystem_handle_contact_form() {
 	// Mock sending email or saving to database
 	// wp_mail( get_option('admin_email'), 'New Contact Form Submission: ' . $subject, $message );
 
-	wp_redirect( add_query_arg( 'contact_sent', 'true', home_url( '/contact' ) ) );
+	wp_redirect( add_query_arg( 'contact_sent', 'true', org_ecosystem_get_page_url( 'page-contact.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_submit_contact', 'org_ecosystem_handle_contact_form' );
@@ -201,6 +201,21 @@ function org_ecosystem_breadcrumbs() {
 /**
  * Custom Comment Callback
  */
+/**
+ * Get Page URL by Template
+ */
+function org_ecosystem_get_page_url( $template_path ) {
+    $pages = get_pages( array(
+        'meta_key'   => '_wp_page_template',
+        'meta_value' => $template_path,
+        'number'     => 1
+    ) );
+    if ( $pages ) {
+        return get_permalink( $pages[0]->ID );
+    }
+    return home_url();
+}
+
 function org_ecosystem_comment_callback( $comment, $args, $depth ) {
 	?>
 	<li <?php comment_class( 'mb-4' ); ?> id="comment-<?php comment_ID(); ?>">

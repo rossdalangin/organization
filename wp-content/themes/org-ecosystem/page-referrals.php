@@ -13,11 +13,20 @@ get_header();
         <div class="row align-items-center mb-5">
             <div class="col-lg-6">
                 <h1 class="display-3 fw-bold mb-4"><?php _e( 'Earn While You Grow', 'org-ecosystem' ); ?></h1>
-                <p class="lead text-muted mb-5"><?php _e( 'Our Referral Program allows you to earn 10% commission on every product or service sale made by members you bring into the ecosystem.', 'org-ecosystem' ); ?></p>
+                <div class="lead text-muted mb-5">
+                    <?php
+                    $referral_intro = get_option( 'org_referral_intro' );
+                    if ( $referral_intro ) {
+                        echo wp_kses_post( $referral_intro );
+                    } else {
+                        _e( 'Our Referral Program allows you to earn 10% commission on every product or service sale made by members you bring into the ecosystem.', 'org-ecosystem' );
+                    }
+                    ?>
+                </div>
                 <?php if ( is_user_logged_in() ) : ?>
-                    <a href="<?php echo home_url('/dashboard?action=overview'); ?>" class="btn btn-primary btn-lg px-5 rounded-pill shadow"><?php _e( 'Get Your Code', 'org-ecosystem' ); ?></a>
+                    <a href="<?php echo add_query_arg( 'action', 'referrals', org_ecosystem_get_page_url( 'templates/dashboard.php' ) ); ?>" class="btn btn-primary btn-lg px-5 rounded-pill shadow"><?php _e( 'Get Your Code', 'org-ecosystem' ); ?></a>
                 <?php else : ?>
-                    <a href="<?php echo home_url('/join'); ?>" class="btn btn-primary btn-lg px-5 rounded-pill shadow"><?php _e( 'Join & Start Earning', 'org-ecosystem' ); ?></a>
+                    <a href="<?php echo org_ecosystem_get_page_url( 'page-join.php' ); ?>" class="btn btn-primary btn-lg px-5 rounded-pill shadow"><?php _e( 'Join & Start Earning', 'org-ecosystem' ); ?></a>
                 <?php endif; ?>
             </div>
             <div class="col-lg-6 mt-5 mt-lg-0">

@@ -12,58 +12,59 @@ get_header();
 	<div class="container">
 		<header class="page-header text-center mb-5">
 			<h1 class="display-4 fw-bold"><?php the_title(); ?></h1>
-			<p class="lead text-muted"><?php _e( 'Find answers to common questions about our organization and membership.', 'org-ecosystem' ); ?></p>
+			<div class="lead text-muted">
+                <?php
+                $faq_intro = get_option( 'org_faq_intro' );
+                if ( $faq_intro ) {
+                    echo wp_kses_post( $faq_intro );
+                } else {
+                    _e( 'Find answers to common questions about our organization and membership.', 'org-ecosystem' );
+                }
+                ?>
+            </div>
 		</header>
 
 		<div class="row justify-content-center">
 			<div class="col-lg-8">
 				<div class="accordion shadow-sm" id="faqAccordion">
 					<?php
-					$faqs = array(
-						array(
-							'q' => __( 'How do I join the organization?', 'org-ecosystem' ),
-							'a' => __( 'You can join by clicking the "Join Now" button in the header and filling out the registration form. After submission, our team will review your application.', 'org-ecosystem' )
-						),
-						array(
-							'q' => __( 'What are the membership levels?', 'org-ecosystem' ),
-							'a' => __( 'We offer multiple levels: Free, Basic, Premium, Corporate, and Lifetime. Each level comes with different benefits and access to resources.', 'org-ecosystem' )
-						),
-						array(
-							'q' => __( 'How can I list my business?', 'org-ecosystem' ),
-							'a' => __( 'Once your membership is active, you can log in to your dashboard and navigate to the "My Business" section to create and manage your business listing.', 'org-ecosystem' )
-						),
-						array(
-							'q' => __( 'Can I upgrade my plan later?', 'org-ecosystem' ),
-							'a' => __( 'Yes, you can upgrade your plan at any time through the Billing section of your member dashboard.', 'org-ecosystem' )
-						),
-						array(
-							'q' => __( 'Who do I contact for support?', 'org-ecosystem' ),
-							'a' => __( 'Registered members can submit support tickets directly from their dashboard. Non-members can use our general contact form.', 'org-ecosystem' )
-						)
-					);
+					$faqs_query = new WP_Query( array(
+                        'post_type'      => 'faq',
+                        'posts_per_page' => -1,
+                    ) );
 
-					foreach ( $faqs as $index => $faq ) :
-						$id = 'faq-' . $index;
+                    if ( $faqs_query->have_posts() ) :
+                        $index = 0;
+                        while ( $faqs_query->have_posts() ) : $faqs_query->the_post();
+						    $id = 'faq-' . get_the_ID();
 						?>
 						<div class="accordion-item border-0 mb-3 rounded shadow-sm overflow-hidden">
 							<h2 class="accordion-header" id="heading-<?php echo $id; ?>">
 								<button class="accordion-button <?php echo $index === 0 ? '' : 'collapsed'; ?> fw-bold py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<?php echo $id; ?>" aria-expanded="<?php echo $index === 0 ? 'true' : 'false'; ?>" aria-controls="collapse-<?php echo $id; ?>">
-									<?php echo esc_html( $faq['q'] ); ?>
+									<?php the_title(); ?>
 								</button>
 							</h2>
 							<div id="collapse-<?php echo $id; ?>" class="accordion-collapse collapse <?php echo $index === 0 ? 'show' : ''; ?>" aria-labelledby="heading-<?php echo $id; ?>" data-bs-parent="#faqAccordion">
 								<div class="accordion-body bg-white py-4">
-									<?php echo esc_html( $faq['a'] ); ?>
+									<?php the_content(); ?>
 								</div>
 							</div>
 						</div>
-					<?php endforeach; ?>
+					<?php
+                        $index++;
+                        endwhile;
+                        wp_reset_postdata();
+                    else : ?>
+                        <div class="text-center py-5 text-muted">
+                            <p><?php _e( 'No FAQs found. Please check back later.', 'org-ecosystem' ); ?></p>
+                        </div>
+                    <?php endif; ?>
 				</div>
 
 				<div class="mt-5 text-center p-5 bg-white border rounded shadow-sm">
 					<h3><?php _e( 'Still have questions?', 'org-ecosystem' ); ?></h3>
 					<p class="text-muted"><?php _e( 'We are here to help you. Reach out to our support team.', 'org-ecosystem' ); ?></p>
-					<a href="<?php echo home_url( '/contact' ); ?>" class="btn btn-primary px-4"><?php _e( 'Contact Us', 'org-ecosystem' ); ?></a>
+					<a href="<?php echo org_ecosystem_get_page_url( 'page-contact.php' ); ?>" class="btn btn-primary px-4"><?php _e( 'Contact Us', 'org-ecosystem' ); ?></a>
 				</div>
 			</div>
 		</div>

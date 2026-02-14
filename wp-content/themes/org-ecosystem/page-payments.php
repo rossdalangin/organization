@@ -11,7 +11,16 @@ get_header();
 <div class="payments-page py-5 bg-light">
     <div class="container py-5 text-center">
         <h1 class="display-4 fw-bold mb-3"><?php _e( 'Secure Payment Solutions', 'org-ecosystem' ); ?></h1>
-        <p class="lead text-muted mb-5"><?php _e( 'We support multiple payment gateways to ensure a seamless experience for our members.', 'org-ecosystem' ); ?></p>
+        <div class="lead text-muted mb-5">
+            <?php
+            $payments_intro = get_option( 'org_payments_intro' );
+            if ( $payments_intro ) {
+                echo wp_kses_post( $payments_intro );
+            } else {
+                _e( 'We support multiple payment gateways to ensure a seamless experience for our members.', 'org-ecosystem' );
+            }
+            ?>
+        </div>
 
         <div class="row g-4 justify-content-center">
             <div class="col-md-3">

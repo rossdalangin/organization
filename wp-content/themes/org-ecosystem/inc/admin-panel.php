@@ -11,8 +11,8 @@
 function org_ecosystem_admin_menu() {
 	// Main Parent
 	add_menu_page(
-		__( 'Organization Settings', 'org-ecosystem' ),
-		__( 'Org Settings', 'org-ecosystem' ),
+		__( 'Org Plugin Settings', 'org-ecosystem' ),
+		__( 'Org Plugin', 'org-ecosystem' ),
 		'manage_options',
 		'org-settings',
 		'org_ecosystem_settings_page',
@@ -122,6 +122,24 @@ function org_ecosystem_admin_menu() {
 		'manage_options',
 		'org-roles',
 		'org_ecosystem_roles_page'
+	);
+
+    add_submenu_page(
+		'org-settings',
+		__( 'Page Content Manager', 'org-ecosystem' ),
+		__( 'Page Content', 'org-ecosystem' ),
+		'manage_options',
+		'org-page-content',
+		'org_ecosystem_page_content_page'
+	);
+
+    add_submenu_page(
+		'org-settings',
+		__( 'System Setup & Tools', 'org-ecosystem' ),
+		__( 'System Setup', 'org-ecosystem' ),
+		'manage_options',
+		'org-setup',
+		'org_ecosystem_setup_page'
 	);
 }
 add_action( 'admin_menu', 'org_ecosystem_admin_menu' );
@@ -374,6 +392,134 @@ function org_ecosystem_withdrawals_page() {
                     <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+    <?php
+}
+
+/**
+ * Page Content Manager Callback
+ */
+function org_ecosystem_page_content_page() {
+    if ( isset( $_POST['org_save_page_content'] ) ) {
+        check_admin_referer( 'org_save_page_content_action' );
+
+        $fields = array(
+            'org_about_text', 'org_mission_text', 'org_vision_text',
+            'org_contact_info', 'org_plans_intro', 'org_referral_intro',
+            'org_faq_intro', 'org_payments_intro'
+        );
+
+        foreach ( $fields as $field ) {
+            if ( isset( $_POST[$field] ) ) {
+                update_option( $field, wp_kses_post( $_POST[$field] ) );
+            }
+        }
+        echo '<div class="updated"><p>Page content saved successfully.</p></div>';
+    }
+
+    ?>
+    <div class="wrap">
+        <h1><?php _e( 'Page Content Manager', 'org-ecosystem' ); ?></h1>
+        <form method="post" action="">
+            <?php wp_nonce_field( 'org_save_page_content_action' ); ?>
+
+            <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <h3><?php _e( 'About Us Page', 'org-ecosystem' ); ?></h3>
+                <?php wp_editor( get_option( 'org_about_text' ), 'org_about_text', array( 'textarea_rows' => 5 ) ); ?>
+            </div>
+
+            <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <h3><?php _e( 'Mission & Vision', 'org-ecosystem' ); ?></h3>
+                <label class="fw-bold">Mission Statement</label>
+                <?php wp_editor( get_option( 'org_mission_text' ), 'org_mission_text', array( 'textarea_rows' => 3 ) ); ?>
+                <br>
+                <label class="fw-bold">Vision Statement</label>
+                <?php wp_editor( get_option( 'org_vision_text' ), 'org_vision_text', array( 'textarea_rows' => 3 ) ); ?>
+            </div>
+
+            <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <h3><?php _e( 'Contact Page Info', 'org-ecosystem' ); ?></h3>
+                <?php wp_editor( get_option( 'org_contact_info' ), 'org_contact_info', array( 'textarea_rows' => 3 ) ); ?>
+            </div>
+
+            <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <h3><?php _e( 'Membership Plans Intro', 'org-ecosystem' ); ?></h3>
+                <?php wp_editor( get_option( 'org_plans_intro' ), 'org_plans_intro', array( 'textarea_rows' => 3 ) ); ?>
+            </div>
+
+            <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <h3><?php _e( 'Referral Program Intro', 'org-ecosystem' ); ?></h3>
+                <?php wp_editor( get_option( 'org_referral_intro' ), 'org_referral_intro', array( 'textarea_rows' => 3 ) ); ?>
+            </div>
+
+            <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <h3><?php _e( 'Payment Methods Intro', 'org-ecosystem' ); ?></h3>
+                <?php wp_editor( get_option( 'org_payments_intro' ), 'org_payments_intro', array( 'textarea_rows' => 3 ) ); ?>
+            </div>
+
+            <p class="submit">
+                <input type="submit" name="org_save_page_content" class="button button-primary" value="Save All Page Content">
+            </p>
+        </form>
+    </div>
+    <?php
+}
+
+/**
+ * System Setup Page Callback
+ */
+function org_ecosystem_setup_page() {
+    if ( isset( $_POST['org_create_pages'] ) ) {
+        check_admin_referer( 'org_create_pages_action' );
+
+        $pages = array(
+            'dashboard' => array( 'title' => 'Member Dashboard', 'template' => 'templates/dashboard.php' ),
+            'contact'   => array( 'title' => 'Contact Us', 'template' => 'page-contact.php' ),
+            'join'      => array( 'title' => 'Join Us', 'template' => 'page-join.php' ),
+            'donate'    => array( 'title' => 'Support Our Mission', 'template' => 'page-donation.php' ),
+            'about'     => array( 'title' => 'About Us', 'template' => 'page-about.php' ),
+            'mission'   => array( 'title' => 'Our Mission', 'template' => 'page-mission.php' ),
+            'plans'     => array( 'title' => 'Membership Plans', 'template' => 'page-plans.php' ),
+            'referrals' => array( 'title' => 'Referral Program', 'template' => 'page-referrals.php' ),
+            'faq'       => array( 'title' => 'Frequently Asked Questions', 'template' => 'page-faq.php' ),
+            'directory' => array( 'title' => 'Member Directory', 'template' => 'templates/template-directory.php' ),
+        );
+
+        foreach ( $pages as $slug => $data ) {
+            $exists = get_page_by_path( $slug );
+            if ( ! $exists ) {
+                $pid = wp_insert_post( array(
+                    'post_title'  => $data['title'],
+                    'post_name'   => $slug,
+                    'post_type'   => 'page',
+                    'post_status' => 'publish',
+                ) );
+                if ( $pid && $data['template'] ) {
+                    update_post_meta( $pid, '_wp_page_template', $data['template'] );
+                }
+            }
+        }
+        echo '<div class="updated"><p>Required pages created successfully.</p></div>';
+    }
+
+    ?>
+    <div class="wrap">
+        <h1><?php _e( 'System Setup & Tools', 'org-ecosystem' ); ?></h1>
+
+        <div class="card p-4 mt-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+            <h3><?php _e( 'Page Initialization', 'org-ecosystem' ); ?></h3>
+            <p><?php _e( 'Click the button below to automatically create all the required pages for the organization ecosystem (Dashboard, Contact, Join, etc.).', 'org-ecosystem' ); ?></p>
+            <form method="post" action="">
+                <?php wp_nonce_field( 'org_create_pages_action' ); ?>
+                <button type="submit" name="org_create_pages" class="button button-primary"><?php _e( 'Auto-Create Required Pages', 'org-ecosystem' ); ?></button>
+            </form>
+        </div>
+
+        <div class="card p-4 mt-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+            <h3><?php _e( 'Permalinks Notice', 'org-ecosystem' ); ?></h3>
+            <p><?php _e( 'If you encounter 404 errors, please go to Settings > Permalinks and click "Save Changes" to flush the rewrite rules.', 'org-ecosystem' ); ?></p>
+            <a href="<?php echo admin_url('options-permalink.php'); ?>" class="button button-secondary"><?php _e( 'Go to Permalink Settings', 'org-ecosystem' ); ?></a>
         </div>
     </div>
     <?php

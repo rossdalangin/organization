@@ -211,7 +211,7 @@ function org_ecosystem_handle_registration() {
 	$plan = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : 'free';
 
 	if ( username_exists( $username ) || email_exists( $email ) ) {
-		wp_redirect( home_url( '/join?error=exists' ) );
+		wp_redirect( add_query_arg( 'error', 'exists', org_ecosystem_get_page_url( 'page-join.php' ) ) );
 		exit;
 	}
 
@@ -254,7 +254,7 @@ function org_ecosystem_handle_registration() {
 
 		wp_mail( $email, $subject, $message );
 
-		wp_redirect( add_query_arg( 'registered', 'true', home_url( '/dashboard' ) ) );
+		wp_redirect( add_query_arg( 'registered', 'true', org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
 		exit;
 	}
 }
@@ -276,7 +276,7 @@ function org_ecosystem_handle_email_verification() {
 			// Optional: Auto-approve on email verify if configured
 			// org_ecosystem_approve_member( get_user_meta( $user_id, '_member_profile_id', true ) );
 
-			wp_redirect( add_query_arg( 'verified', 'true', home_url( '/dashboard' ) ) );
+			wp_redirect( add_query_arg( 'verified', 'true', org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
 			exit;
 		} else {
 			wp_die( __( 'Invalid or expired verification token.', 'org-ecosystem' ) );
@@ -560,7 +560,7 @@ function org_ecosystem_handle_donation() {
 		update_post_meta( $donation_id, '_donation_email', $email );
 	}
 
-	wp_redirect( add_query_arg( 'thanks', 'true', home_url( '/donate' ) ) );
+	wp_redirect( add_query_arg( 'thanks', 'true', org_ecosystem_get_page_url( 'page-donation.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_process_donation', 'org_ecosystem_handle_donation' );
@@ -578,7 +578,7 @@ function org_ecosystem_handle_renewal() {
 
 	// Mock successful payment and renewal
 	if ( org_ecosystem_process_payment( $user_id, $level, 'mock_gateway' ) ) {
-		wp_redirect( add_query_arg( array( 'action' => 'billing', 'renewed' => 'true' ), home_url( '/dashboard' ) ) );
+		wp_redirect( add_query_arg( array( 'action' => 'billing', 'renewed' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
 		exit;
 	}
 }

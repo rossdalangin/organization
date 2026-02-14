@@ -39,7 +39,7 @@ function org_ecosystem_handle_profile_update() {
 		}
 	}
 
-	wp_redirect( add_query_arg( array( 'action' => 'edit-profile', 'updated' => 'true' ), home_url( '/dashboard' ) ) );
+	wp_redirect( add_query_arg( array( 'action' => 'edit-profile', 'updated' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_update_profile', 'org_ecosystem_handle_profile_update' );
@@ -70,7 +70,7 @@ function org_ecosystem_handle_send_message() {
         update_post_meta( $msg_id, '_msg_read', '0' );
     }
 
-    wp_redirect( add_query_arg( array( 'action' => 'messages', 'sent' => 'true' ), home_url( '/dashboard' ) ) );
+    wp_redirect( add_query_arg( array( 'action' => 'messages', 'sent' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
     exit;
 }
 add_action( 'admin_post_org_send_message', 'org_ecosystem_handle_send_message' );
@@ -99,7 +99,7 @@ function org_ecosystem_handle_ticket_submission() {
 		update_post_meta( $ticket_id, '_ticket_status', 'open' );
 	}
 
-	wp_redirect( add_query_arg( array( 'action' => 'support', 'submitted' => 'true' ), home_url( '/dashboard' ) ) );
+	wp_redirect( add_query_arg( array( 'action' => 'support', 'submitted' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_submit_ticket', 'org_ecosystem_handle_ticket_submission' );
@@ -142,7 +142,7 @@ function org_ecosystem_handle_event_registration() {
 		update_post_meta( $event_id, '_event_attendees', $attendees );
 	}
 
-	wp_redirect( add_query_arg( array( 'action' => 'my-events', 'registered' => 'true' ), home_url( '/dashboard' ) ) );
+	wp_redirect( add_query_arg( array( 'action' => 'my-events', 'registered' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_event_register', 'org_ecosystem_handle_event_registration' );
@@ -187,7 +187,7 @@ function org_ecosystem_handle_product_save() {
 		}
 	}
 
-	wp_redirect( add_query_arg( array( 'action' => 'my-products', 'saved' => 'true' ), home_url( '/dashboard' ) ) );
+	wp_redirect( add_query_arg( array( 'action' => 'my-products', 'saved' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_save_product', 'org_ecosystem_handle_product_save' );

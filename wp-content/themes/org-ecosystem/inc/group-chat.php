@@ -28,7 +28,7 @@ function org_ecosystem_handle_group_msg() {
         ) );
     }
 
-    wp_redirect( add_query_arg( array( 'action' => 'group-chat', 'sent' => 'true' ), home_url( '/dashboard' ) ) );
+    wp_redirect( add_query_arg( array( 'action' => 'group-chat', 'sent' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
     exit;
 }
 add_action( 'admin_post_org_send_group_msg', 'org_ecosystem_handle_group_msg' );
