@@ -30,7 +30,7 @@ while ( have_posts() ) :
 							</div>
 						</div>
 						<div class="card-footer bg-light py-3 px-5 border-0">
-							<a href="<?php echo home_url( '/announcements' ); ?>" class="btn btn-link text-decoration-none p-0 fw-bold"><i class="bi bi-arrow-left me-2"></i> <?php _e( 'Back to Announcements', 'org-ecosystem' ); ?></a>
+							<a href="<?php echo esc_url( get_post_type_archive_link( 'announcement' ) ); ?>" class="btn btn-link text-decoration-none p-0 fw-bold"><i class="bi bi-arrow-left me-2"></i> <?php _e( 'Back to Announcements', 'org-ecosystem' ); ?></a>
 						</div>
 					</div>
 				</div>

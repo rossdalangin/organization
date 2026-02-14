@@ -64,11 +64,11 @@ if ( ! $ref_code ) {
                 <p class="text-muted mb-4 small"><?php _e( 'Promote your profile to the top of the directory and get 3x more views.', 'org-ecosystem' ); ?></p>
                 <?php
                 $is_featured = get_post_meta( $member_id, '_member_is_featured', true );
-                if ( ! $is_featured ) : ?>
+                if ( ! $is_featured && $member_id ) : ?>
                     <a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_promote_listing', 'item_id' => $member_id, 'type' => 'member' ), admin_url( 'admin-post.php' ) ), 'org_promote_listing_action' ); ?>" class="btn btn-primary w-100 py-2 fw-bold">
                         <?php printf( __( 'Promote Profile - ₱ %s', 'org-ecosystem' ), get_theme_mod( 'promotion_price', '500' ) ); ?>
                     </a>
-                <?php else : ?>
+                <?php elseif ( $is_featured ) : ?>
                     <div class="bg-success-subtle text-success p-2 rounded text-center small fw-bold"><i class="bi bi-star-fill me-1"></i> <?php _e( 'Featured Active', 'org-ecosystem' ); ?></div>
                 <?php endif; ?>
             </div>

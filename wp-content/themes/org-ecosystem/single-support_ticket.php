@@ -15,7 +15,7 @@ $post_author = get_post_field( 'post_author', get_the_ID() );
 
 // Only author or admin can view
 if ( (int) $user_id !== (int) $post_author && ! current_user_can( 'manage_options' ) && ! current_user_can( 'manage_tickets' ) ) {
-	wp_redirect( home_url( '/dashboard' ) );
+	wp_redirect( org_ecosystem_get_page_url( 'templates/dashboard.php' ) );
 	exit;
 }
 
@@ -24,14 +24,15 @@ get_header();
 while ( have_posts() ) :
 	the_post();
 	$status = get_post_meta( get_the_ID(), '_ticket_status', true ) ?: 'open';
+    $dash_url = org_ecosystem_get_page_url( 'templates/dashboard.php' );
 	?>
 
 	<main id="primary" class="site-main py-5 bg-light">
 		<div class="container">
 			<nav aria-label="breadcrumb" class="mb-4">
 				<ol class="breadcrumb">
-					<li class="breadcrumb-item"><a href="<?php echo home_url( '/dashboard' ); ?>"><?php _e( 'Dashboard', 'org-ecosystem' ); ?></a></li>
-					<li class="breadcrumb-item"><a href="<?php echo home_url( '/dashboard?action=support' ); ?>"><?php _e( 'Support Tickets', 'org-ecosystem' ); ?></a></li>
+					<li class="breadcrumb-item"><a href="<?php echo esc_url($dash_url); ?>"><?php _e( 'Dashboard', 'org-ecosystem' ); ?></a></li>
+					<li class="breadcrumb-item"><a href="<?php echo esc_url( add_query_arg( 'action', 'support', $dash_url ) ); ?>"><?php _e( 'Support Tickets', 'org-ecosystem' ); ?></a></li>
 					<li class="breadcrumb-item active" aria-current="page"><?php the_title(); ?></li>
 				</ol>
 			</nav>
@@ -39,7 +40,7 @@ while ( have_posts() ) :
 			<div class="card shadow-sm border-0 mb-4">
 				<div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
 					<div>
-						<a href="<?php echo home_url( '/dashboard?action=support' ); ?>" class="btn btn-outline-secondary btn-sm me-3"><i class="bi bi-arrow-left"></i></a>
+						<a href="<?php echo esc_url( add_query_arg( 'action', 'support', $dash_url ) ); ?>" class="btn btn-outline-secondary btn-sm me-3"><i class="bi bi-arrow-left"></i></a>
 						<h1 class="h4 d-inline-block mb-0"><?php the_title(); ?></h1>
 					</div>
 					<span class="badge <?php echo $status === 'open' ? 'bg-warning text-dark' : 'bg-success'; ?>">

@@ -83,6 +83,19 @@ $certs = get_post_meta( $member_id, '_member_certifications', true );
 		</div>
 	</div>
 
+    <h5 class="mt-4 mb-3"><?php _e( 'Payout Details', 'org-ecosystem' ); ?></h5>
+    <p class="small text-muted mb-3"><?php _e( 'Enter your details where you want to receive your commissions and sales earnings.', 'org-ecosystem' ); ?></p>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label small"><?php _e( 'PayPal Email', 'org-ecosystem' ); ?></label>
+            <input type="email" name="member_paypal" class="form-control" value="<?php echo esc_attr( get_user_meta( $user_id, '_member_paypal', true ) ); ?>" placeholder="your@email.com">
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label small"><?php _e( 'GCash Number', 'org-ecosystem' ); ?></label>
+            <input type="text" name="member_gcash" class="form-control" value="<?php echo esc_attr( get_user_meta( $user_id, '_member_gcash', true ) ); ?>" placeholder="0917XXXXXXX">
+        </div>
+    </div>
+
 	<div class="mt-4">
 		<button type="submit" class="btn btn-primary px-4 fw-bold"><?php _e( 'Update Profile', 'org-ecosystem' ); ?></button>
 	</div>

@@ -6,7 +6,7 @@
 $user_id = get_current_user_id();
 $referral_code = get_user_meta( $user_id, '_org_referral_code', true );
 if ( ! $referral_code ) {
-    $referral_code = 'REF' . $user_id . strtoupper( wp_generate_password( 4, false ) );
+    $referral_code = strtoupper( substr( md5( $user_id . time() ), 0, 8 ) );
     update_user_meta( $user_id, '_org_referral_code', $referral_code );
 }
 

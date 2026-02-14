@@ -12,8 +12,8 @@ $style = $hero_bg ? 'style="background-image: linear-gradient(rgba(13, 110, 253,
 				<h1 class="display-3 fw-bold mb-4"><?php echo esc_html( get_theme_mod( 'hero_title', __( 'Empowering Our Professional Community', 'org-ecosystem' ) ) ); ?></h1>
 				<p class="lead mb-5 opacity-75 fs-4"><?php echo esc_html( get_theme_mod( 'hero_subtitle', __( 'The complete digital ecosystem for professional organizations, business networking, and member growth.', 'org-ecosystem' ) ) ); ?></p>
 				<div class="d-flex flex-wrap gap-3">
-					<a href="<?php echo esc_url( home_url( '/join' ) ); ?>" class="btn btn-light btn-lg px-5 fw-bold"><?php echo esc_html( get_theme_mod( 'hero_primary_cta_text', 'Join Now' ) ); ?></a>
-					<a href="<?php echo esc_url( home_url( '/members' ) ); ?>" class="btn btn-outline-light btn-lg px-4"><?php echo esc_html( get_theme_mod( 'hero_secondary_cta_text', 'Explore Members' ) ); ?></a>
+					<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-join.php' ) ); ?>" class="btn btn-light btn-lg px-5 fw-bold"><?php echo esc_html( get_theme_mod( 'hero_primary_cta_text', 'Join Now' ) ); ?></a>
+					<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'templates/template-directory.php' ) ); ?>" class="btn btn-outline-light btn-lg px-4"><?php echo esc_html( get_theme_mod( 'hero_secondary_cta_text', 'Explore Members' ) ); ?></a>
 				</div>
 			</div>
 			<div class="col-lg-5 d-none d-lg-block">

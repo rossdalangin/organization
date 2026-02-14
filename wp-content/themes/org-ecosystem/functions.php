@@ -137,6 +137,7 @@ require ORG_ECOSYSTEM_DIR . '/inc/patterns.php';
 require ORG_ECOSYSTEM_DIR . '/inc/transactions.php';
 require ORG_ECOSYSTEM_DIR . '/inc/shortcodes.php';
 require ORG_ECOSYSTEM_DIR . '/inc/meta-fields.php';
+require ORG_ECOSYSTEM_DIR . '/inc/group-chat.php';
 
 /**
  * Handle Referral Tracking

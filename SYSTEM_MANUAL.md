@@ -12,6 +12,7 @@ Most page content is managed through the **Org Plugin Settings > Page Content** 
 | **About Us** | Org Plugin Settings > Page Content | `org_about_text` option is queried. |
 | **Our Mission** | Org Plugin Settings > Page Content | `org_mission_text` and `org_vision_text` options are queried. |
 | **Contact Us** | Org Plugin Settings > Page Content | `org_contact_info` option and Customizer settings (Address, Phone, Email) are queried. |
+| **Payment Methods**| Org Plugin Settings > Page Content | `org_payments_intro` is used for the header. |
 | **FAQ Page** | **Org Plugin > FAQs** (Custom Post Type) | All published FAQ records are looped into an accordion. |
 | **Membership Plans**| Org Plugin Settings > Page Content | `org_plans_intro` is used for the header. Prices are set in **Appearance > Customize > Monetization**. |
 | **Referral Program**| Org Plugin Settings > Page Content | `org_referral_intro` is used for the header. |
@@ -43,6 +44,13 @@ A user fills the form at `/join`. This creates:
 Members can choose a plan. Payments are currently processed through a unified ledger.
 *   **Production Note:** Stripe/PayPal transactions are initially set to **Pending**.
 *   **Management:** Go to **Org Plugin Settings > Transactions** to view and approve payments.
+
+### New Membership Packages (Tiers)
+1. **Community Member (Free):** Basic directory browsing and dashboard access.
+2. **Professional (Paid):** Includes a public Profile and Business Listing.
+3. **Vendor (Paid):** Includes Profile + Unlimited Product Showcase + Sales Analytics.
+4. **Corporate Partner (Paid):** Advanced support and multiple staff accounts.
+5. **Lifetime Elite (One-time):** All features for a lifetime fee.
 
 ### Step 3: Approval
 Once payment is confirmed or manual review is complete:

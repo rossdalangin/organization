@@ -130,7 +130,7 @@ while ( have_posts() ) :
 									<i class="bi bi-lock display-5 text-secondary mb-3"></i>
 									<h6 class="fw-bold mb-2"><?php _e( 'Premium Member Content', 'org-ecosystem' ); ?></h6>
 									<p class="small text-muted mb-4"><?php _e( 'Direct contact info is exclusive to Premium members. Upgrade today to unlock networking.', 'org-ecosystem' ); ?></p>
-									<a href="<?php echo home_url('/membership-plans'); ?>" class="btn btn-primary btn-sm w-100"><?php _e( 'Upgrade to Unlock', 'org-ecosystem' ); ?></a>
+									<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-plans.php' ) ); ?>" class="btn btn-primary btn-sm w-100"><?php _e( 'Upgrade to Unlock', 'org-ecosystem' ); ?></a>
 								</div>
 							<?php endif; ?>
 						</div>

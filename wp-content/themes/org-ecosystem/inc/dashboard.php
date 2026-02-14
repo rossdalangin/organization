@@ -39,6 +39,14 @@ function org_ecosystem_handle_profile_update() {
 		}
 	}
 
+    // Save Payout Details to User Meta
+    if ( isset( $_POST['member_paypal'] ) ) {
+        update_user_meta( $user_id, '_member_paypal', sanitize_email( $_POST['member_paypal'] ) );
+    }
+    if ( isset( $_POST['member_gcash'] ) ) {
+        update_user_meta( $user_id, '_member_gcash', sanitize_text_field( $_POST['member_gcash'] ) );
+    }
+
 	wp_redirect( add_query_arg( array( 'action' => 'edit-profile', 'updated' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
 	exit;
 }
@@ -103,6 +111,34 @@ function org_ecosystem_handle_ticket_submission() {
 	exit;
 }
 add_action( 'admin_post_org_submit_ticket', 'org_ecosystem_handle_ticket_submission' );
+
+/**
+ * Handle Ticket Reply
+ */
+function org_ecosystem_handle_ticket_reply() {
+    if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( $_POST['security'], 'org_reply_ticket' ) ) {
+        wp_die('Security check failed.');
+    }
+
+    $ticket_id = intval( $_POST['ticket_id'] );
+    $content = sanitize_textarea_field( $_POST['reply_content'] );
+    $user_id = get_current_user_id();
+
+    if ( $ticket_id && $content ) {
+        wp_insert_comment( array(
+            'comment_post_ID'      => $ticket_id,
+            'comment_content'      => $content,
+            'user_id'             => $user_id,
+            'comment_author'       => wp_get_current_user()->display_name,
+            'comment_author_email' => wp_get_current_user()->user_email,
+            'comment_approved'     => 1,
+        ) );
+        wp_redirect( add_query_arg( array( 'action' => 'support', 'view_ticket' => $ticket_id, 'replied' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+        exit;
+    }
+}
+add_action( 'admin_post_org_reply_ticket', 'org_ecosystem_handle_ticket_reply' );
+add_action( 'admin_post_nopriv_org_reply_ticket', 'org_ecosystem_handle_ticket_reply' );
 
 /**
  * Handle Event Registration
@@ -191,6 +227,106 @@ function org_ecosystem_handle_product_save() {
 	exit;
 }
 add_action( 'admin_post_org_save_product', 'org_ecosystem_handle_product_save' );
+
+/**
+ * Handle Job Save
+ */
+function org_ecosystem_handle_job_save() {
+	if ( ! isset( $_POST['org_job_nonce'] ) || ! wp_verify_nonce( $_POST['org_job_nonce'], 'org_save_job_action' ) ) {
+		return;
+	}
+
+	$user_id = get_current_user_id();
+	$job_id = isset( $_POST['job_id'] ) ? intval( $_POST['job_id'] ) : 0;
+	$title = sanitize_text_field( $_POST['job_title'] );
+	$description = sanitize_textarea_field( $_POST['job_description'] );
+	$location = intval( $_POST['job_location'] );
+    $promote = isset( $_POST['job_promote'] ) ? '1' : '0';
+
+	if ( $job_id ) {
+		if ( (int) get_post_field( 'post_author', $job_id ) === (int) $user_id ) {
+			wp_update_post( array(
+				'ID'           => $job_id,
+				'post_title'   => $title,
+				'post_content' => $description,
+			) );
+		}
+	} else {
+		$job_id = wp_insert_post( array(
+			'post_title'   => $title,
+			'post_content' => $description,
+			'post_type'    => 'job',
+			'post_status'  => current_user_can('publish_posts') ? 'publish' : 'pending',
+			'post_author'  => $user_id,
+		) );
+	}
+
+	if ( $job_id ) {
+		if ( $location ) {
+			wp_set_post_terms( $job_id, array( $location ), 'location' );
+		}
+        update_post_meta( $job_id, '_job_is_featured', $promote );
+
+        if ( $promote === '1' ) {
+            org_ecosystem_process_unified_payment( array(
+                'amount'  => get_theme_mod( 'promotion_price', '500' ),
+                'gateway' => 'offline',
+                'type'    => 'job_promotion',
+                'item_id' => $job_id
+            ) );
+        }
+	}
+
+	wp_redirect( add_query_arg( array( 'action' => 'my-jobs', 'saved' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+	exit;
+}
+add_action( 'admin_post_org_save_job', 'org_ecosystem_handle_job_save' );
+
+/**
+ * Handle Job Delete
+ */
+function org_ecosystem_handle_job_delete() {
+    $job_id = isset( $_GET['job_id'] ) ? intval( $_GET['job_id'] ) : 0;
+    if ( ! $job_id || ! check_admin_referer( 'org_delete_job_action' ) ) return;
+
+    $user_id = get_current_user_id();
+    if ( (int) get_post_field( 'post_author', $job_id ) === (int) $user_id ) {
+        wp_delete_post( $job_id, true );
+    }
+
+    wp_redirect( add_query_arg( array( 'action' => 'my-jobs', 'deleted' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    exit;
+}
+add_action( 'admin_post_org_delete_job', 'org_ecosystem_handle_job_delete' );
+
+/**
+ * Handle Listing Promotion
+ */
+function org_ecosystem_handle_promote_listing() {
+    $item_id = isset( $_GET['item_id'] ) ? intval( $_GET['item_id'] ) : 0;
+    $type = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : 'member';
+
+    if ( ! $item_id || ! check_admin_referer( 'org_promote_listing_action' ) ) return;
+
+    $user_id = get_current_user_id();
+    if ( (int) get_post_field( 'post_author', $item_id ) === (int) $user_id ) {
+        // Mark as featured
+        $meta_key = ($type === 'member') ? '_member_is_featured' : '_product_is_featured';
+        update_post_meta( $item_id, $meta_key, '1' );
+
+        // Record Transaction
+        org_ecosystem_process_unified_payment( array(
+            'amount'  => get_theme_mod( 'promotion_price', '500' ),
+            'gateway' => 'offline',
+            'type'    => $type . '_promotion',
+            'item_id' => $item_id
+        ) );
+    }
+
+    wp_redirect( add_query_arg( array( 'action' => 'overview', 'promoted' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    exit;
+}
+add_action( 'admin_post_org_promote_listing', 'org_ecosystem_handle_promote_listing' );
 
 /**
  * Get Member Stats

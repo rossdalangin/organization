@@ -78,7 +78,7 @@ while ( have_posts() ) :
 								<div class="list-group-item px-0 py-3 text-center bg-light border rounded">
 									<i class="bi bi-lock-fill text-muted d-block mb-2 h4"></i>
 									<p class="small text-muted mb-2"><?php _e( 'Contact details are restricted to Premium members.', 'org-ecosystem' ); ?></p>
-									<a href="<?php echo home_url( '/membership-plans' ); ?>" class="btn btn-primary btn-sm fw-bold"><?php _e( 'Upgrade to View', 'org-ecosystem' ); ?></a>
+									<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-plans.php' ) ); ?>" class="btn btn-primary btn-sm fw-bold"><?php _e( 'Upgrade to View', 'org-ecosystem' ); ?></a>
 								</div>
 							<?php endif; ?>
 						</div>

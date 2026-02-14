@@ -25,8 +25,8 @@ get_header();
 					<p class="lead mb-4"><?php echo esc_html( get_theme_mod( 'about_subtitle', __( 'We are dedicated to fostering growth and collaboration within our professional community.', 'org-ecosystem' ) ) ); ?></p>
 					<p><?php echo wp_kses_post( get_theme_mod( 'about_text', __( 'Our mission is to provide a platform where members can showcase their businesses, products, and services while gaining access to exclusive resources and networking opportunities.', 'org-ecosystem' ) ) ); ?></p>
 					<div class="d-flex gap-3 mt-4">
-						<a href="<?php echo esc_url( home_url( '/about' ) ); ?>" class="btn btn-primary"><?php _e( 'Learn More About Us', 'org-ecosystem' ); ?></a>
-						<a href="<?php echo esc_url( home_url( '/mission' ) ); ?>" class="btn btn-outline-primary"><?php _e( 'Our Mission & Vision', 'org-ecosystem' ); ?></a>
+						<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-about.php' ) ); ?>" class="btn btn-primary"><?php _e( 'Learn More About Us', 'org-ecosystem' ); ?></a>
+						<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-mission.php' ) ); ?>" class="btn btn-outline-primary"><?php _e( 'Our Mission & Vision', 'org-ecosystem' ); ?></a>
 					</div>
 				</div>
 				<div class="col-lg-6">
@@ -49,7 +49,7 @@ get_header();
 		<div class="container py-4">
 			<h2 class="display-5 fw-bold mb-4"><?php _e( 'Ready to Grow Your Business?', 'org-ecosystem' ); ?></h2>
 			<p class="lead mb-5 px-lg-5"><?php _e( 'Join hundreds of professionals who are already benefiting from our exclusive network, tools, and community support.', 'org-ecosystem' ); ?></p>
-			<a href="<?php echo esc_url( home_url( '/join' ) ); ?>" class="btn btn-light btn-lg px-5 fw-bold shadow-sm"><?php _e( 'Become a Member Today', 'org-ecosystem' ); ?></a>
+			<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-join.php' ) ); ?>" class="btn btn-light btn-lg px-5 fw-bold shadow-sm"><?php _e( 'Become a Member Today', 'org-ecosystem' ); ?></a>
 		</div>
 	</section>
 

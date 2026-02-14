@@ -37,7 +37,7 @@ while ( have_posts() ) :
 								<h4 class="fw-bold mb-3"><?php _e( 'Get Involved', 'org-ecosystem' ); ?></h4>
 								<p><?php _e( 'Would you like to support or participate in this program?', 'org-ecosystem' ); ?></p>
 								<div class="d-grid mt-4">
-									<a href="<?php echo home_url( '/contact' ); ?>" class="btn btn-light fw-bold"><?php _e( 'Join Program', 'org-ecosystem' ); ?></a>
+									<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-contact.php' ) ); ?>" class="btn btn-light fw-bold"><?php _e( 'Join Program', 'org-ecosystem' ); ?></a>
 								</div>
 							</div>
 						</div>

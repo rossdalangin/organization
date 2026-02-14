@@ -48,7 +48,7 @@
 		</div>
 
 		<div class="text-center mt-5">
-			<a href="<?php echo esc_url( home_url( '/members' ) ); ?>" class="btn btn-primary btn-lg"><?php _e( 'View All Members', 'org-ecosystem' ); ?></a>
+			<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'templates/template-directory.php' ) ); ?>" class="btn btn-primary btn-lg"><?php _e( 'View All Members', 'org-ecosystem' ); ?></a>
 		</div>
 	</div>
 </section>

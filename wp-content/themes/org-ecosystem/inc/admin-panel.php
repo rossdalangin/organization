@@ -225,7 +225,12 @@ function org_ecosystem_settings_page() {
 							<tr>
 								<td><strong><?php _e( 'Monetization', 'org-ecosystem' ); ?></strong></td>
 								<td><?php _e( 'Plans, Payments, Promotions', 'org-ecosystem' ); ?></td>
-								<td><em><?php _e( 'Set Basic to ₱1,500/yr to cover admin costs.', 'org-ecosystem' ); ?></em></td>
+								<td><em><?php _e( 'Set Professional to ₱1,500/yr to cover admin costs.', 'org-ecosystem' ); ?></em></td>
+							</tr>
+							<tr>
+								<td><strong><?php _e( 'Payouts', 'org-ecosystem' ); ?></strong></td>
+								<td><?php _e( 'Commissions & Sales', 'org-ecosystem' ); ?></td>
+								<td><em><?php _e( 'Review and approve member withdrawals manually.', 'org-ecosystem' ); ?></em></td>
 							</tr>
 							<tr>
 								<td><strong><?php _e( 'Gating', 'org-ecosystem' ); ?></strong></td>

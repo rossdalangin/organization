@@ -21,8 +21,33 @@
     </ul>
 
     <div class="tab-content" id="msgTabContent">
+        <?php
+        $view_id = isset($_GET['view_msg']) ? intval($_GET['view_msg']) : 0;
+        if ( $view_id ) :
+            $msg = get_post($view_id);
+            if ( $msg && ($msg->post_author == get_current_user_id() || get_post_meta($view_id, '_msg_receiver_id', true) == get_current_user_id()) ) :
+                update_post_meta($view_id, '_msg_read', '1');
+            ?>
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0"><?php echo get_the_title($view_id); ?></h4>
+                        <a href="?action=messages" class="btn btn-sm btn-outline-secondary">Back to Inbox</a>
+                    </div>
+                    <div class="mb-4 text-muted small">
+                        <strong>From:</strong> <?php echo get_the_author_meta('display_name', $msg->post_author); ?><br>
+                        <strong>Date:</strong> <?php echo get_the_date('', $view_id); ?>
+                    </div>
+                    <div class="message-content border-top pt-4">
+                        <?php echo wpautop(esc_html($msg->post_content)); ?>
+                    </div>
+                </div>
+            <?php else : ?>
+                <div class="alert alert-danger">Message not found or access denied.</div>
+            <?php endif; ?>
+        <?php endif; ?>
+
         <!-- Inbox -->
-        <div class="tab-pane fade show active" id="inbox">
+        <div class="tab-pane fade <?php echo !$view_id ? 'show active' : ''; ?>" id="inbox">
             <?php
             $user_id = get_current_user_id();
             $inbox = new WP_Query( array(
@@ -43,9 +68,12 @@
                                 <span class="small text-muted"><?php echo get_the_date(); ?></span>
                             </div>
                             <p class="mb-2 text-muted small"><?php echo wp_trim_words( get_the_content(), 30 ); ?></p>
-                            <div class="d-flex align-items-center gap-2">
-                                <?php echo get_avatar( get_the_author_meta('ID'), 24, '', '', array('class' => 'rounded-circle') ); ?>
-                                <span class="small">From: <strong><?php echo get_the_author(); ?></strong></span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <?php echo get_avatar( get_the_author_meta('ID'), 24, '', '', array('class' => 'rounded-circle') ); ?>
+                                    <span class="small">From: <strong><?php echo get_the_author(); ?></strong></span>
+                                </div>
+                                <a href="?action=messages&view_msg=<?php the_ID(); ?>" class="btn btn-sm btn-primary">View</a>
                             </div>
                         </div>
                     <?php endwhile; wp_reset_postdata(); ?>

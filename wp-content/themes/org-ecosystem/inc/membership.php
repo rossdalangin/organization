@@ -374,32 +374,61 @@ function org_ecosystem_register_roles() {
 /**
  * Define Membership Levels (Static list for logic)
  */
+/**
+ * Check if user has capability based on membership level
+ */
+function org_ecosystem_can_user_do( $cap ) {
+    if ( current_user_can( 'manage_options' ) ) return true;
+
+    $user_id = get_current_user_id();
+    $level = get_user_meta( $user_id, '_membership_level', true ) ?: 'community';
+    $levels = org_ecosystem_get_membership_levels();
+
+    if ( isset( $levels[$level] ) ) {
+        // Corporate and Lifetime have all caps
+        if ( in_array( $level, array( 'corporate', 'lifetime' ) ) ) return true;
+
+        if ( isset( $levels[$level]['caps'] ) && in_array( $cap, $levels[$level]['caps'] ) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function org_ecosystem_get_membership_levels() {
 	return array(
-		'free' => array(
-			'name' => 'Free',
+		'community' => array(
+			'name' => 'Community Member',
 			'price' => 0,
 			'duration' => 'lifetime',
+            'features' => array( 'Browse Directory', 'Basic Dashboard', 'Event Access' ),
+            'caps' => array( 'read' )
 		),
-		'basic' => array(
-			'name' => 'Basic',
+		'professional' => array(
+			'name' => 'Professional (with Profile)',
 			'price' => get_theme_mod( 'basic_plan_price', '1500' ),
 			'duration' => 'annual',
+            'features' => array( 'Public Member Profile', 'Business Listing', 'Internal Messaging', 'Direct Inquiries' ),
+            'caps' => array( 'publish_profile', 'send_messages' )
 		),
-		'premium' => array(
-			'name' => 'Premium',
+		'vendor' => array(
+			'name' => 'Vendor (with Products)',
 			'price' => get_theme_mod( 'premium_plan_price', '5000' ),
 			'duration' => 'annual',
+            'features' => array( 'Product Showcase (unlimited)', 'Featured Spotlight', 'Receive Payments', 'Sales Analytics' ),
+            'caps' => array( 'publish_profile', 'send_messages', 'manage_products', 'featured_listing' )
 		),
 		'corporate' => array(
-			'name' => 'Corporate',
-			'price' => 20000,
+			'name' => 'Corporate Partner',
+			'price' => 25000,
 			'duration' => 'annual',
+            'features' => array( 'Multiple Staff Accounts', 'Homepage Logo Placement', 'Dedicated Support', 'White-label Tools' )
 		),
 		'lifetime' => array(
-			'name' => 'Lifetime',
+			'name' => 'Lifetime Elite',
 			'price' => 100000,
 			'duration' => 'lifetime',
+            'features' => array( 'All Features Included', 'No Recurring Fees', 'Founder\'s Badge', 'Governance Voting' )
 		),
 	);
 }

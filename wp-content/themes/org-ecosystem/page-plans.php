@@ -42,20 +42,9 @@ $levels = org_ecosystem_get_membership_levels();
 							</div>
 
 							<ul class="list-unstyled mb-5 text-start">
-								<li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <?php _e( 'Access to Member Directory', 'org-ecosystem' ); ?></li>
-								<li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <?php _e( 'Member Dashboard', 'org-ecosystem' ); ?></li>
-								<?php if ( $key !== 'free' ) : ?>
-									<li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <?php _e( 'Business Listing', 'org-ecosystem' ); ?></li>
-									<li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <?php _e( 'Product Showcase', 'org-ecosystem' ); ?></li>
-								<?php endif; ?>
-								<?php if ( in_array( $key, array( 'premium', 'corporate', 'lifetime' ) ) ) : ?>
-									<li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <?php _e( 'Featured Badge', 'org-ecosystem' ); ?></li>
-									<li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <?php _e( 'Exclusive Resources', 'org-ecosystem' ); ?></li>
-								<?php endif; ?>
-								<?php if ( $key === 'corporate' || $key === 'lifetime' ) : ?>
-									<li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <?php _e( 'Regional Admin Support', 'org-ecosystem' ); ?></li>
-									<li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> <?php _e( 'Advanced Reporting', 'org-ecosystem' ); ?></li>
-								<?php endif; ?>
+                                <?php foreach ( $level['features'] as $feature ) : ?>
+								    <li class="mb-2 small"><i class="bi bi-check-circle-fill text-success me-2"></i> <?php echo esc_html( $feature ); ?></li>
+                                <?php endforeach; ?>
 							</ul>
 
 							<div class="d-grid">

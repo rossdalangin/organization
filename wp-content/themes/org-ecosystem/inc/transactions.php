@@ -160,7 +160,7 @@ function org_ecosystem_handle_withdrawal() {
     update_post_meta( $txn_id, '_txn_user_id', $user_id );
     update_post_meta( $txn_id, '_txn_status', 'pending' );
 
-    wp_redirect( add_query_arg( array( 'action' => 'transactions', 'requested' => 'true' ), home_url( '/dashboard' ) ) );
+    wp_redirect( add_query_arg( array( 'action' => 'transactions', 'requested' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
     exit;
 }
 add_action( 'admin_post_org_withdraw_request', 'org_ecosystem_handle_withdrawal' );
