@@ -148,6 +148,22 @@ add_action( 'admin_menu', 'org_ecosystem_admin_menu' );
  * Settings Page Callback
  */
 function org_ecosystem_settings_page() {
+    $active_members = count( get_posts( array( 'post_type' => 'member', 'post_status' => 'publish', 'posts_per_page' => -1 ) ) );
+    $pending_apps = count( get_posts( array( 'post_type' => 'member', 'post_status' => 'pending', 'posts_per_page' => -1 ) ) );
+    $open_tickets = count( get_posts( array( 'post_type' => 'support_ticket', 'meta_key' => '_ticket_status', 'meta_value' => 'open', 'posts_per_page' => -1 ) ) );
+    $pending_withdrawals = count( get_posts( array( 'post_type' => 'org_transaction', 'meta_query' => array( array('key'=>'_txn_type','value'=>'withdrawal'), array('key'=>'_txn_status','value'=>'pending') ), 'posts_per_page' => -1 ) ) );
+
+    // Revenue
+    $total_revenue = 0;
+    $all_users = get_users( array( 'fields' => 'ID' ) );
+	foreach ( $all_users as $uid ) {
+		$history = get_user_meta( $uid, '_payment_history', true );
+		if ( is_array( $history ) ) {
+			foreach ( $history as $item ) {
+				$total_revenue += floatval( $item['amount'] );
+			}
+		}
+	}
 	?>
 	<div class="wrap org-admin-wrap">
 		<h1 class="wp-heading-inline"><?php _e( 'Organization Command Center', 'org-ecosystem' ); ?></h1>
@@ -155,29 +171,36 @@ function org_ecosystem_settings_page() {
 
 		<div class="welcome-panel" style="padding: 30px; margin-top: 20px; border-radius: 12px; border: none; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
 			<div class="welcome-panel-content">
-				<h2 style="font-size: 28px; margin-bottom: 10px;"><?php _e( 'Ready to Lead Your Community?', 'org-ecosystem' ); ?></h2>
-				<p class="about-description" style="font-size: 18px; color: #666;"><?php _e( 'The digital infrastructure for your organization is live. Manage every aspect of your ecosystem from this central hub.', 'org-ecosystem' ); ?></p>
+				<h2 style="font-size: 28px; margin-bottom: 10px;"><?php _e( 'Ecosystem Dashboard', 'org-ecosystem' ); ?></h2>
+				<p class="about-description" style="font-size: 18px; color: #666;"><?php _e( 'Real-time overview of your organization\'s health and activity.', 'org-ecosystem' ); ?></p>
 
-				<div class="welcome-panel-column-container" style="margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+				<div class="welcome-panel-column-container" style="margin-top: 40px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
 					<div class="welcome-panel-column">
-						<div style="padding: 25px; background: #f0f7ff; border-radius: 15px; height: 100%; border: 1px solid rgba(13, 110, 253, 0.1);">
-							<h3 style="margin-top: 0; color: #0d6efd;"><span class="dashicons dashicons-chart-bar"></span> <?php _e( 'Performance Overview', 'org-ecosystem' ); ?></h3>
-							<p><?php _e( 'Track active members, revenue growth, and member engagement statistics.', 'org-ecosystem' ); ?></p>
-							<a class="button button-primary button-hero" href="<?php echo admin_url( 'admin.php?page=org-reports' ); ?>"><?php _e( 'View Analytics', 'org-ecosystem' ); ?></a>
+						<div style="padding: 20px; background: #f0f7ff; border-radius: 15px; border: 1px solid rgba(13, 110, 253, 0.1); text-align: center;">
+							<h3 style="margin: 0; color: #0d6efd; font-size: 32px;"><?php echo $active_members; ?></h3>
+							<p style="margin: 5px 0 15px; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; color: #666;"><?php _e( 'Active Members', 'org-ecosystem' ); ?></p>
+							<a class="button button-link" href="<?php echo admin_url( 'edit.php?post_type=member' ); ?>"><?php _e( 'View All', 'org-ecosystem' ); ?></a>
 						</div>
 					</div>
 					<div class="welcome-panel-column">
-						<div style="padding: 25px; background: #f0fff4; border-radius: 15px; height: 100%; border: 1px solid rgba(25, 135, 84, 0.1);">
-							<h3 style="margin-top: 0; color: #198754;"><span class="dashicons dashicons-groups"></span> <?php _e( 'Member Growth', 'org-ecosystem' ); ?></h3>
-							<p><?php _e( 'Review pending applications and manage membership tier pricing/plans.', 'org-ecosystem' ); ?></p>
-							<a class="button button-secondary button-hero" href="<?php echo admin_url( 'admin.php?page=org-membership' ); ?>"><?php _e( 'Manage Growth', 'org-ecosystem' ); ?></a>
+						<div style="padding: 20px; background: #fffbeb; border-radius: 15px; border: 1px solid rgba(217, 119, 6, 0.1); text-align: center;">
+							<h3 style="margin: 0; color: #d97706; font-size: 32px;"><?php echo $pending_apps; ?></h3>
+							<p style="margin: 5px 0 15px; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; color: #666;"><?php _e( 'Pending Applications', 'org-ecosystem' ); ?></p>
+							<a class="button button-link" href="<?php echo admin_url( 'admin.php?page=org-membership' ); ?>"><?php _e( 'Review Now', 'org-ecosystem' ); ?></a>
 						</div>
 					</div>
-					<div class="welcome-panel-column welcome-panel-last-column">
-						<div style="padding: 25px; background: #fff5f5; border-radius: 15px; height: 100%; border: 1px solid rgba(220, 53, 69, 0.1);">
-							<h3 style="margin-top: 0; color: #dc3545;"><span class="dashicons dashicons-admin-tools"></span> <?php _e( 'Governance', 'org-ecosystem' ); ?></h3>
-							<p><?php _e( 'Control directory settings, post content, and user role capabilities.', 'org-ecosystem' ); ?></p>
-							<a class="button button-secondary button-hero" href="<?php echo admin_url( 'admin.php?page=org-directory' ); ?>"><?php _e( 'Manage System', 'org-ecosystem' ); ?></a>
+					<div class="welcome-panel-column">
+						<div style="padding: 20px; background: #f0fff4; border-radius: 15px; border: 1px solid rgba(22, 163, 74, 0.1); text-align: center;">
+							<h3 style="margin: 0; color: #16a34a; font-size: 32px;">₱<?php echo number_format($total_revenue); ?></h3>
+							<p style="margin: 5px 0 15px; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; color: #666;"><?php _e( 'Total Revenue', 'org-ecosystem' ); ?></p>
+							<a class="button button-link" href="<?php echo admin_url( 'admin.php?page=org-transactions' ); ?>"><?php _e( 'Ledger', 'org-ecosystem' ); ?></a>
+						</div>
+					</div>
+					<div class="welcome-panel-column">
+						<div style="padding: 20px; background: #fef2f2; border-radius: 15px; border: 1px solid rgba(220, 38, 38, 0.1); text-align: center;">
+							<h3 style="margin: 0; color: #dc2626; font-size: 32px;"><?php echo $open_tickets; ?></h3>
+							<p style="margin: 5px 0 15px; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; color: #666;"><?php _e( 'Open Tickets', 'org-ecosystem' ); ?></p>
+							<a class="button button-link" href="<?php echo admin_url( 'admin.php?page=org-tickets' ); ?>"><?php _e( 'Inbox', 'org-ecosystem' ); ?></a>
 						</div>
 					</div>
 				</div>
@@ -209,6 +232,40 @@ function org_ecosystem_settings_page() {
 
 		<div class="grid-container" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-top: 40px;">
 			<div class="card-main">
+                <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <h2 style="margin-top: 0;"><span class="dashicons dashicons-shield-alt" style="color: #16a34a;"></span> <?php _e( 'System Health & Setup', 'org-ecosystem' ); ?></h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                        <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
+                            <h4 style="margin: 0 0 10px; font-size: 14px;"><?php _e( 'Payment Gateways', 'org-ecosystem' ); ?></h4>
+                            <?php
+                            $stripe = get_option('org_stripe_enabled');
+                            $paypal = get_option('org_paypal_enabled');
+                            $gcash = get_option('org_gcash_number');
+                            ?>
+                            <ul style="margin: 0; padding: 0; list-style: none; font-size: 12px;">
+                                <li><span class="dashicons dashicons-<?php echo $stripe ? 'yes text-success' : 'no text-danger'; ?>" style="font-size: 16px;"></span> Stripe</li>
+                                <li><span class="dashicons dashicons-<?php echo $paypal ? 'yes text-success' : 'no text-danger'; ?>" style="font-size: 16px;"></span> PayPal</li>
+                                <li><span class="dashicons dashicons-<?php echo $gcash ? 'yes text-success' : 'no text-danger'; ?>" style="font-size: 16px;"></span> GCash</li>
+                            </ul>
+                        </div>
+                        <div style="padding: 15px; background: #f8fafc; border-radius: 10px;">
+                            <h4 style="margin: 0 0 10px; font-size: 14px;"><?php _e( 'Critical Pages', 'org-ecosystem' ); ?></h4>
+                            <ul style="margin: 0; padding: 0; list-style: none; font-size: 12px;">
+                                <?php
+                                $pages_to_check = array('dashboard', 'join', 'directory');
+                                foreach($pages_to_check as $p) :
+                                    $exists = get_page_by_path($p);
+                                ?>
+                                    <li><span class="dashicons dashicons-<?php echo $exists ? 'yes text-success' : 'no text-danger'; ?>" style="font-size: 16px;"></span> <?php echo ucfirst($p); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; text-align: right;">
+                        <a href="<?php echo admin_url('admin.php?page=org-setup'); ?>" class="button button-secondary"><?php _e( 'Run Setup Wizard', 'org-ecosystem' ); ?></a>
+                    </div>
+                </div>
+
 				<div class="card p-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
 					<h2 style="margin-top: 0;"><span class="dashicons dashicons-editor-help" style="color: #0d6efd;"></span> <?php _e( 'Business Strategy: Field Explanations', 'org-ecosystem' ); ?></h2>
 					<p class="description"><?php _e( 'A guide to optimizing your organization\'s revenue and visibility.', 'org-ecosystem' ); ?></p>
@@ -242,12 +299,23 @@ function org_ecosystem_settings_page() {
 								<td><?php _e( 'Members, Events, Products', 'org-ecosystem' ); ?></td>
 								<td><em><?php _e( 'Spotlight 3 members/week for higher engagement.', 'org-ecosystem' ); ?></em></td>
 							</tr>
+                            <tr>
+								<td><strong><?php _e( 'Governance', 'org-ecosystem' ); ?></strong></td>
+								<td><?php _e( 'Admin Roles & Permissions', 'org-ecosystem' ); ?></td>
+								<td><em><?php _e( 'Set "Organization Admin" for staff to manage data.', 'org-ecosystem' ); ?></em></td>
+							</tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
 
 			<div class="card-sidebar">
+                <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <h3 style="margin-top: 0;"><span class="dashicons dashicons-admin-users" style="color: #0d6efd;"></span> <?php _e( 'Admin Setup', 'org-ecosystem' ); ?></h3>
+                    <p class="small text-muted"><?php _e( 'To grant admin access, go to **Users > All Users**, select a user, and change their role to **Organization Admin** or **Super Admin**.', 'org-ecosystem' ); ?></p>
+                    <a href="<?php echo admin_url('users.php'); ?>" class="button button-secondary w-100"><?php _e( 'Manage Staff Accounts', 'org-ecosystem' ); ?></a>
+                </div>
+
 				<div class="card p-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
 					<h3 style="margin-top: 0;"><?php _e( 'Quick Operations', 'org-ecosystem' ); ?></h3>
 					<ul style="list-style: none; padding: 0;">
@@ -479,7 +547,7 @@ function org_ecosystem_setup_page() {
         check_admin_referer( 'org_create_pages_action' );
 
         $pages = array(
-            'dashboard' => array( 'title' => 'Member Dashboard', 'template' => 'templates/dashboard.php' ),
+            'dashboard' => array( 'title' => 'Member Dashboard', 'template' => 'page-dashboard.php' ),
             'contact'   => array( 'title' => 'Contact Us', 'template' => 'page-contact.php' ),
             'join'      => array( 'title' => 'Join Us', 'template' => 'page-join.php' ),
             'donate'    => array( 'title' => 'Support Our Mission', 'template' => 'page-donation.php' ),
@@ -488,7 +556,7 @@ function org_ecosystem_setup_page() {
             'plans'     => array( 'title' => 'Membership Plans', 'template' => 'page-plans.php' ),
             'referrals' => array( 'title' => 'Referral Program', 'template' => 'page-referrals.php' ),
             'faq'       => array( 'title' => 'Frequently Asked Questions', 'template' => 'page-faq.php' ),
-            'directory' => array( 'title' => 'Member Directory', 'template' => 'templates/template-directory.php' ),
+            'directory' => array( 'title' => 'Member Directory', 'template' => 'template-directory.php' ),
         );
 
         foreach ( $pages as $slug => $data ) {
@@ -968,12 +1036,14 @@ function org_ecosystem_payments_page() {
                     </select>
                 </div>
 				<div class="mb-3">
-					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'Secret API Key', 'org-ecosystem' ); ?></label>
-					<input type="password" name="stripe_api_key" class="widefat" value="<?php echo esc_attr( get_option( 'org_stripe_api_key' ) ); ?>" placeholder="sk_..." style="padding: 12px; border-radius: 8px; font-size: 1rem;">
+					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'Stripe Secret API Key', 'org-ecosystem' ); ?></label>
+					<input type="password" name="stripe_api_key" class="widefat" value="<?php echo esc_attr( get_option( 'org_stripe_api_key' ) ); ?>" placeholder="sk_test_..." style="padding: 12px; border-radius: 8px; font-size: 1rem;">
+                    <p class="description"><?php _e( 'Found in your Stripe Dashboard under Developers > API Keys.', 'org-ecosystem' ); ?></p>
 				</div>
                 <div class="mb-3">
-					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'Publishable Key', 'org-ecosystem' ); ?></label>
-					<input type="text" name="stripe_pub_key" class="widefat" value="<?php echo esc_attr( get_option( 'org_stripe_pub_key' ) ); ?>" placeholder="pk_..." style="padding: 12px; border-radius: 8px; font-size: 1rem;">
+					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'Stripe Publishable Key', 'org-ecosystem' ); ?></label>
+					<input type="text" name="stripe_pub_key" class="widefat" value="<?php echo esc_attr( get_option( 'org_stripe_pub_key' ) ); ?>" placeholder="pk_test_..." style="padding: 12px; border-radius: 8px; font-size: 1rem;">
+                    <p class="description"><?php _e( 'Required for the secure frontend payment elements.', 'org-ecosystem' ); ?></p>
 				</div>
 			</div>
 
@@ -995,14 +1065,16 @@ function org_ecosystem_payments_page() {
                 <div class="mb-3">
 					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'PayPal Business Email', 'org-ecosystem' ); ?></label>
 					<input type="email" name="paypal_email" class="widefat" value="<?php echo esc_attr( get_option( 'org_paypal_email' ) ); ?>" placeholder="payments@your-org.com" style="padding: 12px; border-radius: 8px; font-size: 1rem;">
+                    <p class="description"><?php _e( 'The email address associated with your PayPal Business account.', 'org-ecosystem' ); ?></p>
 				</div>
 			</div>
 
             <div class="card p-5 bg-white border mb-4 shadow-sm" style="border-radius: 15px; border: 1px solid #e2e8f0;">
-				<h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px; color: #007bff;"><span class="dashicons dashicons-smartphone"></span> <?php _e( 'GCash Payment', 'org-ecosystem' ); ?></h3>
+				<h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px; color: #007bff;"><span class="dashicons dashicons-smartphone"></span> <?php _e( 'GCash Payment (Mobile)', 'org-ecosystem' ); ?></h3>
 				<div class="mb-3 mt-4">
 					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'GCash Registered Number', 'org-ecosystem' ); ?></label>
 					<input type="text" name="gcash_number" class="widefat" value="<?php echo esc_attr( get_option( 'org_gcash_number' ) ); ?>" placeholder="0917XXXXXXX" style="padding: 12px; border-radius: 8px; font-size: 1rem;">
+                    <p class="description"><?php _e( 'Members will see this number to send mobile payments manually.', 'org-ecosystem' ); ?></p>
 				</div>
 			</div>
 

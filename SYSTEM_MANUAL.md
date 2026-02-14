@@ -4,7 +4,13 @@ This document explains the data flow, content management, and operational proces
 
 ---
 
-## 1. Page Content Management
+## 1. Administrative Setup
+### Admin Account Setup
+In WordPress, anyone with the **Administrator** role has full access. For staff, use the **Organization Admin** role which is optimized for managing the ecosystem.
+*   **Manage Staff:** Go to **Users > All Users** and assign the appropriate role.
+*   **Permissions:** You can fine-tune what each role can do in **Org Plugin Settings > Roles**.
+
+## 2. Page Content Management
 Most page content is managed through the **Org Plugin Settings > Page Content** menu.
 
 | Page Template | Content Managed In | Data Flow |

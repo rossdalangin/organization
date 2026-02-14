@@ -205,14 +205,44 @@ function org_ecosystem_breadcrumbs() {
  * Get Page URL by Template
  */
 function org_ecosystem_get_page_url( $template_path ) {
+    $search_templates = array( $template_path );
+
+    // Normalize paths
+    if ( strpos( $template_path, 'templates/' ) === 0 ) {
+        $search_templates[] = str_replace( 'templates/', 'page-', $template_path );
+        $search_templates[] = ltrim( $template_path, 'templates/' );
+    }
+    if ( $template_path === 'templates/dashboard.php' ) {
+        $search_templates[] = 'page-dashboard.php';
+    }
+    if ( $template_path === 'templates/template-directory.php' ) {
+        $search_templates[] = 'template-directory.php';
+    }
+
     $pages = get_pages( array(
         'meta_key'   => '_wp_page_template',
-        'meta_value' => $template_path,
+        'meta_value' => $search_templates,
         'number'     => 1
     ) );
     if ( $pages ) {
         return get_permalink( $pages[0]->ID );
     }
+
+    // Fallback to slugs
+    $slug = '';
+    if ( strpos( $template_path, 'dashboard' ) !== false ) $slug = 'dashboard';
+    if ( strpos( $template_path, 'join' ) !== false ) $slug = 'join';
+    if ( strpos( $template_path, 'contact' ) !== false ) $slug = 'contact';
+    if ( strpos( $template_path, 'donate' ) !== false ) $slug = 'donate';
+    if ( strpos( $template_path, 'plans' ) !== false ) $slug = 'plans';
+    if ( strpos( $template_path, 'directory' ) !== false ) $slug = 'directory';
+
+    if ( $slug ) {
+        $page = get_page_by_path( $slug );
+        if ( $page ) return get_permalink( $page->ID );
+        return home_url( '/' . $slug );
+    }
+
     return home_url();
 }
 

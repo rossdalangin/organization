@@ -9,8 +9,16 @@
  * [org_directory] - Member Directory Shortcode
  */
 function org_shortcode_directory( $atts ) {
+    $paged = max( 1, get_query_var( 'paged' ), get_query_var( 'page' ) );
+    $query = new WP_Query( array(
+        'post_type' => 'member',
+        'posts_per_page' => get_option( 'org_directory_per_page', 12 ),
+        'post_status' => 'publish',
+        'paged' => $paged,
+    ) );
+
     ob_start();
-    include ORG_ECOSYSTEM_DIR . '/archive-member.php';
+    get_template_part( 'template-parts/directory-loop', null, array( 'query' => $query ) );
     return ob_get_clean();
 }
 add_shortcode( 'org_directory', 'org_shortcode_directory' );
@@ -20,7 +28,7 @@ add_shortcode( 'org_directory', 'org_shortcode_directory' );
  */
 function org_shortcode_pricing_table( $atts ) {
     ob_start();
-    include ORG_ECOSYSTEM_DIR . '/page-plans.php';
+    get_template_part( 'template-parts/plans-table' );
     return ob_get_clean();
 }
 add_shortcode( 'org_pricing_table', 'org_shortcode_pricing_table' );
@@ -65,7 +73,7 @@ add_shortcode( 'org_latest_announcements', 'org_shortcode_announcements' );
  */
 function org_shortcode_donation_form( $atts ) {
     ob_start();
-    include ORG_ECOSYSTEM_DIR . '/page-donation.php';
+    get_template_part( 'template-parts/donation-form' );
     return ob_get_clean();
 }
 add_shortcode( 'org_donation_form', 'org_shortcode_donation_form' );
@@ -93,24 +101,12 @@ function org_shortcode_product_grid( $atts ) {
 
     $query = new WP_Query( $args );
 
-    if ( $query->have_posts() ) : ?>
-        <div class="row g-4">
-            <?php while ( $query->have_posts() ) : $query->the_post(); ?>
-                <div class="col-md-<?php echo 12 / $a['columns']; ?>">
-                    <div class="org-card p-0">
-                        <?php if ( has_post_thumbnail() ) : ?>
-                            <img src="<?php the_post_thumbnail_url('medium'); ?>" class="card-img-top" style="height: 180px; object-fit: cover;">
-                        <?php endif; ?>
-                        <div class="card-body p-3 text-center">
-                            <h6 class="fw-bold mb-1"><?php the_title(); ?></h6>
-                            <p class="text-primary fw-bold small mb-3">₱ <?php echo get_post_meta(get_the_ID(), '_product_price', true); ?></p>
-                            <a href="<?php the_permalink(); ?>" class="btn btn-outline-primary btn-sm rounded-pill w-100"><?php _e( 'View', 'org-ecosystem' ); ?></a>
-                        </div>
-                    </div>
-                </div>
-            <?php endwhile; wp_reset_postdata(); ?>
-        </div>
-    <?php endif;
+    if ( $query->have_posts() ) {
+        get_template_part( 'template-parts/product-loop', null, array( 'query' => $query ) );
+    } else {
+        echo '<p class="text-center">' . __( 'No products listed.', 'org-ecosystem' ) . '</p>';
+    }
+
     return ob_get_clean();
 }
 add_shortcode( 'org_product_grid', 'org_shortcode_product_grid' );
