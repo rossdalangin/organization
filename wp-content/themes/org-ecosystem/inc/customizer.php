@@ -1,16 +1,24 @@
 <?php
 /**
- * Theme Customizer Settings - Modular & Granular
+ * Theme Customizer Settings - Organized Hierarchy
  *
  * @package OrgEcosystem
  */
 
 function org_ecosystem_customize_register( $wp_customize ) {
 
-	// 1. Branding & Global Colors
-	$wp_customize->add_section( 'org_branding', array(
-		'title' => __( 'Brand Identity & Global Colors', 'org-ecosystem' ),
+	// =========================================================================
+	// PANEL: GLOBAL BRAND STYLES
+	// =========================================================================
+	$wp_customize->add_panel( 'org_panel_global_styles', array(
+		'title'    => __( '1. Global Brand Styles', 'org-ecosystem' ),
 		'priority' => 30,
+	) );
+
+	// Section: Identity & Colors
+	$wp_customize->add_section( 'org_branding', array(
+		'title' => __( 'Identity & Colors', 'org-ecosystem' ),
+		'panel' => 'org_panel_global_styles',
 	) );
 
 	$global_colors = array(
@@ -31,10 +39,10 @@ function org_ecosystem_customize_register( $wp_customize ) {
 		) ) );
 	}
 
-	// 2. Global Typography
+	// Section: Global Typography
 	$wp_customize->add_section( 'org_typography', array(
 		'title' => __( 'Global Typography', 'org-ecosystem' ),
-		'priority' => 35,
+		'panel' => 'org_panel_global_styles',
 	) );
 
 	$font_choices = array(
@@ -58,38 +66,76 @@ function org_ecosystem_customize_register( $wp_customize ) {
 	$wp_customize->add_setting( 'heading_font_family', array( 'default' => 'Plus Jakarta Sans', 'sanitize_callback' => 'sanitize_text_field' ) );
 	$wp_customize->add_control( 'heading_font_family', array( 'label' => __( 'Heading Font Family', 'org-ecosystem' ), 'section' => 'org_typography', 'type' => 'select', 'choices' => $font_choices ) );
 
-	// -------------------------------------------------------------------------
-	// MODULAR SECTION STYLING SYSTEM
-	// -------------------------------------------------------------------------
+	// =========================================================================
+	// PANEL: HOMEPAGE & LAYOUT
+	// =========================================================================
+	$wp_customize->add_panel( 'org_panel_homepage', array(
+		'title'    => __( '2. Homepage & Layout', 'org-ecosystem' ),
+		'priority' => 35,
+	) );
 
-	$styling_sections = array(
-		'header'            => array( 'title' => 'Header Styling', 'priority' => 40 ),
-		'footer'            => array( 'title' => 'Footer Styling', 'priority' => 41 ),
-		'hero'              => array( 'title' => 'Hero Section Styling', 'priority' => 42 ),
-		'stats'             => array( 'title' => 'Stats Section Styling', 'priority' => 43 ),
-		'about'             => array( 'title' => 'About Section Styling', 'priority' => 44 ),
-		'featured_members'  => array( 'title' => 'Featured Members Styling', 'priority' => 45 ),
-		'featured_products' => array( 'title' => 'Featured Products Styling', 'priority' => 46 ),
-		'events'            => array( 'title' => 'Events Section Styling', 'priority' => 47 ),
-		'testimonials'      => array( 'title' => 'Testimonials Styling', 'priority' => 48 ),
-		'announcements'     => array( 'title' => 'Announcements Styling', 'priority' => 49 ),
-		'news'              => array( 'title' => 'News Section Styling', 'priority' => 50 ),
-		'partners'          => array( 'title' => 'Partners Section Styling', 'priority' => 51 ),
+	// Section: Visibility
+	$wp_customize->add_section( 'org_homepage_visibility', array(
+		'title' => __( 'Section Visibility', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$visibility_toggles = array(
+		'show_stats'         => __( 'Show Impact Stats', 'org-ecosystem' ),
+		'show_about'         => __( 'Show About Organization', 'org-ecosystem' ),
+		'show_featured_mem'  => __( 'Show Featured Members', 'org-ecosystem' ),
+		'show_featured_prod' => __( 'Show Featured Products', 'org-ecosystem' ),
+		'show_events'        => __( 'Show Upcoming Events', 'org-ecosystem' ),
+		'show_testimonials'  => __( 'Show Testimonials', 'org-ecosystem' ),
+		'show_announcements' => __( 'Show Announcements', 'org-ecosystem' ),
+		'show_news'          => __( 'Show Latest News', 'org-ecosystem' ),
+		'show_partners'      => __( 'Show Partner Logos', 'org-ecosystem' ),
 	);
 
-	$wp_customize->add_panel( 'org_section_styling', array(
-		'title' => __( 'Granular Section Styling', 'org-ecosystem' ),
-		'priority' => 38,
-		'description' => __( 'Control colors, fonts, spacing, and backgrounds for every part of your site.', 'org-ecosystem' ),
+	foreach ( $visibility_toggles as $id => $label ) {
+		$wp_customize->add_setting( $id, array( 'default' => true, 'sanitize_callback' => 'org_ecosystem_sanitize_checkbox' ) );
+		$wp_customize->add_control( $id, array( 'label' => $label, 'section' => 'org_homepage_visibility', 'type' => 'checkbox' ) );
+	}
+
+	// Section: Hero Content
+	$wp_customize->add_section( 'org_hero_content', array(
+		'title' => __( 'Hero Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
 	) );
+
+	$wp_customize->add_setting( 'hero_title', array( 'default' => 'Empowering Our Community', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'postMessage' ) );
+	$wp_customize->add_control( 'hero_title', array( 'label' => 'Hero Title', 'section' => 'org_hero_content' ) );
+
+	$wp_customize->add_setting( 'hero_subtitle', array( 'default' => 'Join our professional network.', 'sanitize_callback' => 'sanitize_textarea_field', 'transport' => 'postMessage' ) );
+	$wp_customize->add_control( 'hero_subtitle', array( 'label' => 'Hero Subtitle', 'section' => 'org_hero_content', 'type' => 'textarea' ) );
+
+	// =========================================================================
+	// GRANULAR STYLING (Inside individual sections for better UX)
+	// =========================================================================
+	// Instead of a separate panel, we can move the styling sections into the Homepage panel.
+
+	$styling_sections = array(
+		'header'            => array( 'title' => 'Header Styling', 'priority' => 10 ),
+		'footer'            => array( 'title' => 'Footer Styling', 'priority' => 11 ),
+		'hero'              => array( 'title' => 'Hero Section Styling', 'priority' => 12 ),
+		'stats'             => array( 'title' => 'Stats Section Styling', 'priority' => 13 ),
+		'about'             => array( 'title' => 'About Section Styling', 'priority' => 14 ),
+		'featured_members'  => array( 'title' => 'Featured Members Styling', 'priority' => 15 ),
+		'featured_products' => array( 'title' => 'Featured Products Styling', 'priority' => 16 ),
+		'events'            => array( 'title' => 'Events Section Styling', 'priority' => 17 ),
+		'testimonials'      => array( 'title' => 'Testimonials Styling', 'priority' => 18 ),
+		'announcements'     => array( 'title' => 'Announcements Styling', 'priority' => 19 ),
+		'news'              => array( 'title' => 'News Section Styling', 'priority' => 20 ),
+		'partners'          => array( 'title' => 'Partners Section Styling', 'priority' => 21 ),
+	);
 
 	foreach ( $styling_sections as $sec_id => $sec_data ) {
 		$section_key = 'org_style_' . $sec_id;
 
 		$wp_customize->add_section( $section_key, array(
 			'title' => $sec_data['title'],
-			'panel' => 'org_section_styling',
-			'priority' => $sec_data['priority'],
+			'panel' => 'org_panel_homepage',
+			'priority' => $sec_data['priority'] + 50, // After visibility and content
 		) );
 
 		// Background
@@ -116,14 +162,13 @@ function org_ecosystem_customize_register( $wp_customize ) {
 		$wp_customize->add_setting( $sec_id . '_line_height', array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_line_height', array( 'label' => 'Line Height', 'section' => $section_key, 'type' => 'text' ) );
 
-		// Spacing (Padding)
+		// Spacing
 		$wp_customize->add_setting( $sec_id . '_padding_top', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_padding_top', array( 'label' => 'Padding Top (px)', 'section' => $section_key, 'type' => 'number' ) );
 
 		$wp_customize->add_setting( $sec_id . '_padding_bottom', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_padding_bottom', array( 'label' => 'Padding Bottom (px)', 'section' => $section_key, 'type' => 'number' ) );
 
-		// Spacing (Margin)
 		$wp_customize->add_setting( $sec_id . '_margin_top', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_margin_top', array( 'label' => 'Margin Top (px)', 'section' => $section_key, 'type' => 'number' ) );
 
@@ -141,42 +186,49 @@ function org_ecosystem_customize_register( $wp_customize ) {
 		$wp_customize->add_control( $sec_id . '_border_radius', array( 'label' => 'Border Radius (px)', 'section' => $section_key, 'type' => 'number' ) );
 	}
 
-	// -------------------------------------------------------------------------
-	// REMAINING SECTIONS
-	// -------------------------------------------------------------------------
-
-	// Homepage Content Visibility
-	$wp_customize->add_section( 'org_homepage_visibility', array(
-		'title' => __( 'Homepage Section Toggles', 'org-ecosystem' ),
-		'priority' => 60,
+	// =========================================================================
+	// PANEL: MONETIZATION & REVENUE
+	// =========================================================================
+	$wp_customize->add_panel( 'org_panel_revenue', array(
+		'title'    => __( '3. Monetization & Revenue', 'org-ecosystem' ),
+		'priority' => 40,
 	) );
 
-	$visibility_toggles = array(
-		'show_stats'         => __( 'Show Impact Stats', 'org-ecosystem' ),
-		'show_about'         => __( 'Show About Organization', 'org-ecosystem' ),
-		'show_featured_mem'  => __( 'Show Featured Members', 'org-ecosystem' ),
-		'show_featured_prod' => __( 'Show Featured Products', 'org-ecosystem' ),
-		'show_events'        => __( 'Show Upcoming Events', 'org-ecosystem' ),
-		'show_testimonials'  => __( 'Show Testimonials', 'org-ecosystem' ),
-		'show_announcements' => __( 'Show Announcements', 'org-ecosystem' ),
-		'show_news'          => __( 'Show Latest News', 'org-ecosystem' ),
-		'show_partners'      => __( 'Show Partner Logos', 'org-ecosystem' ),
-	);
+	// Section: Membership Plans & Pricing
+	$wp_customize->add_section( 'org_membership_plans', array(
+		'title' => __( 'Plans & Pricing', 'org-ecosystem' ),
+		'panel' => 'org_panel_revenue',
+	) );
 
-	foreach ( $visibility_toggles as $id => $label ) {
-		$wp_customize->add_setting( $id, array( 'default' => true, 'sanitize_callback' => 'org_ecosystem_sanitize_checkbox' ) );
-		$wp_customize->add_control( $id, array( 'label' => $label, 'section' => 'org_homepage_visibility', 'type' => 'checkbox' ) );
-	}
+	$wp_customize->add_setting( 'basic_plan_price', array( 'default' => '1500', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'basic_plan_price', array( 'label' => 'Basic Plan Price (₱)', 'section' => 'org_membership_plans' ) );
 
-	// Revenue & Lead Protection
+	$wp_customize->add_setting( 'premium_plan_price', array( 'default' => '5000', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'premium_plan_price', array( 'label' => 'Premium Plan Price (₱)', 'section' => 'org_membership_plans' ) );
+
+	// Section: Lead Protection & Promotions
 	$wp_customize->add_section( 'org_revenue', array(
-		'title' => __( 'Revenue & Lead Protection', 'org-ecosystem' ),
-		'priority' => 90,
+		'title' => __( 'Lead Gating & Promotions', 'org-ecosystem' ),
+		'panel' => 'org_panel_revenue',
 	) );
 
 	$wp_customize->add_setting( 'protect_leads', array( 'default' => false, 'sanitize_callback' => 'org_ecosystem_sanitize_checkbox' ) );
 	$wp_customize->add_control( 'protect_leads', array( 'label' => __( 'Enable Lead Gating', 'org-ecosystem' ), 'section' => 'org_revenue', 'type' => 'checkbox' ) );
 
+	$wp_customize->add_setting( 'promotion_price', array( 'default' => '500', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'promotion_price', array( 'label' => __( 'Featured Promotion Price (₱)', 'org-ecosystem' ), 'section' => 'org_revenue' ) );
+
+	// Section: Sponsor Ads
+	$wp_customize->add_section( 'org_sponsor_ads', array(
+		'title' => __( 'Sidebar Sponsor Ads', 'org-ecosystem' ),
+		'panel' => 'org_panel_revenue',
+	) );
+
+	$wp_customize->add_setting( 'sponsor_banner_image', array( 'default' => '', 'sanitize_callback' => 'esc_url_raw' ) );
+	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'sponsor_banner_image', array( 'label' => 'Sponsor Banner Image', 'section' => 'org_sponsor_ads' ) ) );
+
+	$wp_customize->add_setting( 'sponsor_banner_link', array( 'default' => '#', 'sanitize_callback' => 'esc_url_raw' ) );
+	$wp_customize->add_control( 'sponsor_banner_link', array( 'label' => 'Sponsor Target URL', 'section' => 'org_sponsor_ads', 'type' => 'url' ) );
 }
 add_action( 'customize_register', 'org_ecosystem_customize_register' );
 
