@@ -45,7 +45,10 @@ function org_ecosystem_member_profile_callback( $post ) {
 	<table class="form-table">
 		<tr>
 			<th><label for="member_bio"><?php _e( 'Bio', 'org-ecosystem' ); ?></label></th>
-			<td><textarea id="member_bio" name="member_bio" rows="4" style="width:100%"><?php echo esc_textarea( $bio ); ?></textarea></td>
+			<td>
+                <textarea id="member_bio" name="member_bio" rows="4" style="width:100%" placeholder="<?php _e( 'Example: Senior software engineer with 10+ years of experience in cloud architecture...', 'org-ecosystem' ); ?>"><?php echo esc_textarea( $bio ); ?></textarea>
+                <p class="description"><?php _e( 'A compelling professional bio to attract potential clients.', 'org-ecosystem' ); ?></p>
+            </td>
 		</tr>
 		<tr>
 			<th><label for="member_cover_photo"><?php _e( 'Cover Photo URL', 'org-ecosystem' ); ?></label></th>
@@ -65,7 +68,10 @@ function org_ecosystem_member_profile_callback( $post ) {
 		</tr>
 		<tr>
 			<th><label for="member_business_name"><?php _e( 'Business Name', 'org-ecosystem' ); ?></label></th>
-			<td><input type="text" id="member_business_name" name="member_business_name" value="<?php echo esc_attr( $business_name ); ?>" style="width:100%"></td>
+			<td>
+                <input type="text" id="member_business_name" name="member_business_name" value="<?php echo esc_attr( $business_name ); ?>" style="width:100%" placeholder="<?php _e( 'Example: Acme Corporation Solutions Inc.', 'org-ecosystem' ); ?>">
+                <p class="description"><?php _e( 'The legal or trading name of your business.', 'org-ecosystem' ); ?></p>
+            </td>
 		</tr>
 		<tr>
 			<th><label for="member_map_location"><?php _e( 'Map Location (Google Maps Embed Link)', 'org-ecosystem' ); ?></label></th>
@@ -162,6 +168,32 @@ function org_ecosystem_save_member_meta( $post_id ) {
 	update_post_meta( $post_id, '_member_is_verified', isset( $_POST['member_is_verified'] ) ? '1' : '0' );
 }
 add_action( 'save_post', 'org_ecosystem_save_member_meta' );
+
+/**
+ * Register Meta for REST API
+ */
+function org_ecosystem_register_rest_meta() {
+    $fields = array(
+        '_member_bio', '_member_cover_photo', '_member_phone', '_member_email',
+        '_member_website', '_member_business_name', '_member_status',
+        '_member_is_featured', '_member_is_verified', '_member_view_count'
+    );
+
+    foreach ( $fields as $field ) {
+        register_post_meta( 'member', $field, array(
+            'show_in_rest' => true,
+            'single'       => true,
+            'type'         => 'string',
+        ) );
+    }
+
+    register_post_meta( 'product', '_product_price', array(
+        'show_in_rest' => true,
+        'single'       => true,
+        'type'         => 'string',
+    ) );
+}
+add_action( 'init', 'org_ecosystem_register_rest_meta' );
 
 /**
  * Handle Member Registration

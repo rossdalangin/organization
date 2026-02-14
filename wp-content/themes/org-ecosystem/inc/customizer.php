@@ -201,10 +201,18 @@ function org_ecosystem_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'basic_plan_price', array( 'default' => '1500', 'sanitize_callback' => 'sanitize_text_field' ) );
-	$wp_customize->add_control( 'basic_plan_price', array( 'label' => 'Basic Plan Price (₱)', 'section' => 'org_membership_plans' ) );
+	$wp_customize->add_control( 'basic_plan_price', array(
+        'label' => 'Basic Plan Price (₱)',
+        'description' => __( 'Example: Enter 1500 for ₱1,500.00 Annual Membership Fee.', 'org-ecosystem' ),
+        'section' => 'org_membership_plans'
+    ) );
 
 	$wp_customize->add_setting( 'premium_plan_price', array( 'default' => '5000', 'sanitize_callback' => 'sanitize_text_field' ) );
-	$wp_customize->add_control( 'premium_plan_price', array( 'label' => 'Premium Plan Price (₱)', 'section' => 'org_membership_plans' ) );
+	$wp_customize->add_control( 'premium_plan_price', array(
+        'label' => 'Premium Plan Price (₱)',
+        'description' => __( 'Example: Enter 5000 for ₱5,000.00 Annual Membership Fee.', 'org-ecosystem' ),
+        'section' => 'org_membership_plans'
+    ) );
 
 	// Section: Lead Protection & Promotions
 	$wp_customize->add_section( 'org_revenue', array(
