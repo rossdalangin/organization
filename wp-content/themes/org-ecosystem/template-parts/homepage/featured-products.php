@@ -5,7 +5,7 @@
 ?>
 <section class="section-featured-products featured-products py-5 bg-white">
 	<div class="container">
-		<div class="section-header text-center mb-5">
+		<div class="section-header text-center mb-5 animate-on-scroll">
 			<h2 class="fw-bold"><?php _e( 'Featured Solutions', 'org-ecosystem' ); ?></h2>
 			<p class="text-muted"><?php _e( 'Discover high-quality products and services offered by our members.', 'org-ecosystem' ); ?></p>
 		</div>
@@ -26,8 +26,8 @@
 			if ( $products->have_posts() ) :
 				while ( $products->have_posts() ) : $products->the_post();
 					?>
-					<div class="col-md-6 col-lg-3">
-						<div class="card h-100 shadow-sm border-0 product-card-hover">
+					<div class="col-md-6 col-lg-3 animate-on-scroll delay-<?php echo $products->current_post + 1; ?>">
+						<div class="card h-100 shadow-sm border-0 product-card-hover overflow-hidden rounded-4">
 							<?php if ( has_post_thumbnail() ) : ?>
 								<?php the_post_thumbnail( 'medium', array( 'class' => 'card-img-top', 'style' => 'height: 180px; object-fit: cover;' ) ); ?>
 							<?php endif; ?>

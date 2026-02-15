@@ -56,6 +56,23 @@
             loadDirectory(paged);
         });
 
+        // Scroll Reveal Animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    $(entry.target).addClass('is-visible');
+                }
+            });
+        }, observerOptions);
+
+        $('.animate-on-scroll').each(function() {
+            observer.observe(this);
+        });
+
         // Stats Counter Animation
         $('.counter').each(function() {
             var $this = $(this);

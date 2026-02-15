@@ -5,7 +5,7 @@
 ?>
 <section class="section-featured-members featured-members py-5 bg-light">
 	<div class="container">
-		<div class="section-header text-center mb-5">
+		<div class="section-header text-center mb-5 animate-on-scroll">
 			<h2 class="fw-bold"><?php _e( 'Featured Members', 'org-ecosystem' ); ?></h2>
 			<p class="text-muted"><?php _e( 'Meet some of our top-tier professional members.', 'org-ecosystem' ); ?></p>
 		</div>
@@ -26,8 +26,8 @@
 			if ( $featured->have_posts() ) :
 				while ( $featured->have_posts() ) : $featured->the_post();
 					?>
-					<div class="col-md-6 col-lg-3">
-						<div class="card h-100 shadow-sm text-center p-4 border-0">
+					<div class="col-md-6 col-lg-3 animate-on-scroll delay-<?php echo $featured->current_post + 1; ?>">
+						<div class="card h-100 shadow-sm text-center p-4 border-0 member-card-hover">
 							<div class="mb-3">
 								<?php if ( has_post_thumbnail() ) : ?>
 									<?php the_post_thumbnail( 'thumbnail', array( 'class' => 'rounded-circle shadow-sm', 'style' => 'width: 100px; height: 100px; object-fit: cover;' ) ); ?>

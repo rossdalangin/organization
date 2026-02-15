@@ -5,7 +5,7 @@
 ?>
 <section class="section-announcements latest-announcements py-5 bg-light">
 	<div class="container">
-		<div class="section-header text-center mb-5">
+		<div class="section-header text-center mb-5 animate-on-scroll">
 			<h2 class="fw-bold"><?php _e( 'Announcements', 'org-ecosystem' ); ?></h2>
 			<p class="text-muted"><?php _e( 'Important updates and notices from the organization.', 'org-ecosystem' ); ?></p>
 		</div>
@@ -20,8 +20,8 @@
 			if ( $announcements->have_posts() ) :
 				while ( $announcements->have_posts() ) : $announcements->the_post();
 					?>
-					<div class="col-lg-4">
-						<div class="card h-100 shadow-sm border-0 bg-white border-start border-primary border-4">
+					<div class="col-lg-4 animate-on-scroll delay-<?php echo $announcements->current_post + 1; ?>">
+						<div class="card h-100 shadow-sm border-0 bg-white border-start border-primary border-4 rounded-4 overflow-hidden">
 							<div class="card-body p-4">
 								<span class="badge bg-primary mb-3"><?php echo get_the_date(); ?></span>
 								<h5 class="fw-bold mb-3"><?php the_title(); ?></h5>

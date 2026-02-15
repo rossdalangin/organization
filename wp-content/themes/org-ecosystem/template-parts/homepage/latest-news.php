@@ -5,7 +5,7 @@
 ?>
 <section class="section-news latest-news py-5 bg-white">
 	<div class="container">
-		<div class="section-header text-center mb-5">
+		<div class="section-header text-center mb-5 animate-on-scroll">
 			<h2 class="fw-bold"><?php _e( 'Inside Our Community', 'org-ecosystem' ); ?></h2>
 			<p class="text-muted"><?php _e( 'The latest stories, news, and insights from our members.', 'org-ecosystem' ); ?></p>
 		</div>
@@ -20,8 +20,8 @@
 			if ( $news->have_posts() ) :
 				while ( $news->have_posts() ) : $news->the_post();
 					?>
-					<div class="col-lg-4">
-						<article class="card h-100 shadow-sm border-0 overflow-hidden">
+					<div class="col-lg-4 animate-on-scroll delay-<?php echo $news->current_post + 1; ?>">
+						<article class="card h-100 shadow-sm border-0 overflow-hidden rounded-4">
 							<?php if ( has_post_thumbnail() ) : ?>
 								<?php the_post_thumbnail( 'medium_large', array( 'class' => 'card-img-top', 'style' => 'height: 200px; object-fit: cover;' ) ); ?>
 							<?php endif; ?>
