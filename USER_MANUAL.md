@@ -12,32 +12,32 @@ Welcome to the Organization Ecosystem. This manual will guide you through config
 3. Upload your organization's logo and select your primary brand colors.
 4. Set your typography in the **Typography & Fonts** section.
 
-### Step 2: Configuring Membership Tiers
-1. Go to **Org Settings > Membership**.
-2. Review the default tiers (Free, Basic, Premium, Corporate, Lifetime).
-3. Set your pricing in **Appearance > Customize > Membership Plans**.
+### Step 2: Instant Ecosystem Deployment (Crucial)
+1. Go to **Org Plugin Settings > System Setup**.
+2. Click **Auto-Create Required Pages**.
+3. This creates all 19 essential pages (Directory, Dashboard, Jobs, Partners, etc.) pre-configured with the correct modern templates and shortcodes.
 
 ### Step 3: Setting Up Payments
-1. Go to **Org Settings > Payments**.
+1. Go to **Org Plugin Settings > Payments**.
 2. Enter your **Stripe Secret Key** or **PayPal Email**.
 3. Configure **GCash Number** for mobile payments.
-4. Configure **Offline Payment Instructions** for members who prefer bank transfers.
-5. **Note on Transactions:** This theme provides a complete Ledger and Payout system. For production server-to-server security (Webhook verification), we recommend installing a dedicated gateway plugin like "WooCommerce" or "Stripe for WordPress" and linking it to our Transaction API if advanced fraud detection is required.
+4. Set your membership prices in **Appearance > Customize > Monetization**.
 
 ---
 
-## 2. Managing the Member Directory
+## 2. Managing Content and Ecosystem
 
-### Adding Members Manually
-1. Go to **Members > Add New**.
-2. Enter the member's name, bio, and business details.
-3. Assign an **Industry** and **Location** taxonomy.
-4. Set the **Membership Status** to "Active" to show them in the directory.
+### Using Shortcodes
+You can easily build custom pages by pasting these shortcodes into any Gutenberg block:
+*   `[org_directory]` - The primary searchable member list.
+*   `[org_business_grid]` - A directory of all member businesses.
+*   `[org_event_grid]` - Your organization's upcoming event schedule.
+*   `[org_job_list]` - A professional job board for your members.
+*   `[org_resource_grid]` - A library of downloadable PDFs and guides.
 
-### Approving Registered Members
-1. When a user registers on the frontend, their profile is set to "Pending".
-2. Go to **Org Settings > Membership**.
-3. Click **Approve Member** to publish their profile and grant them access to the dashboard.
+### Governance and Partners
+*   **Governance Page:** Showcases your leadership. Edit the content in **Pages > Governance & Leadership**.
+*   **Partners Page:** Attract sponsors. Edit in **Pages > Partner With Us**. These pages use specialized layouts designed for professional appeal.
 
 ---
 
@@ -46,33 +46,25 @@ Welcome to the Organization Ecosystem. This manual will guide you through config
 ### Lead Gating (The #1 Revenue Driver)
 1. Navigate to **Appearance > Customize > Revenue & Lead Protection**.
 2. Check **Enable Lead Gating**.
-3. This hides contact buttons from guests and Basic members, encouraging them to upgrade to a higher tier.
+3. This hides member contact details from guests, forcing them to join to see phone numbers and emails.
 
-### Featured Listings
-1. Charge members a fee (e.g., ₱500) to be featured.
-2. Once paid, edit their Member profile and check the **Featured Badge** box.
-3. They will now appear at the top of the directory with a "Partner Spotlight" badge.
-
-### Sidebar Sponsor Ads
-1. Go to **Appearance > Customize > Sidebar Sponsor Ads**.
-2. Upload a banner from a local partner.
-3. Set the target URL. This provides a consistent stream of advertising revenue.
+### Featured Listing Promotions
+Members can promote their profile to the top of the directory directly from their dashboard.
+- **Admin Review:** Payments appear in **Org Plugin Settings > Transactions**.
+- **Payouts:** Referrals earn 10% on member sales. Manage payouts in **Org Plugin Settings > Withdrawals**.
 
 ---
 
 ## 4. Member Dashboard Features
 
 Members can log in to their dashboard to:
-*   **Edit Profile:** Update their business name, bio, and social links.
-*   **Manage Products:** Add or edit services they offer to the community.
-*   **Register for Events:** See upcoming organization events and sign up.
-*   **Billing History:** View past payments and download receipts.
-*   **Support Tickets:** Communicate directly with organization admins.
+*   **Edit Profile:** Update their mini-website/profile.
+*   **Manage Products:** List items for sale in the marketplace.
+*   **Community Chat:** Engage in the real-time group messaging area.
+*   **Referral Center:** Get their unique referral code to earn commissions.
+*   **Billing History:** Download professional receipts and view invoices.
 
 ---
 
-## 5. Troubleshooting & Support
-
-*   **Email Not Sending:** Ensure you have an SMTP plugin configured if your server's default mail function is disabled.
-*   **CSS Not Updating:** Clear your browser cache or any server-side caching plugins.
-*   **Member Not Showing in Directory:** Ensure the member's post status is set to "Publish" and their Membership Status meta is set to "Active".
+## 5. Modern UI & Animations
+The homepage and directories feature **Intersection Observer** scroll animations. Elements will smoothly fade in as the user scrolls down, creating a high-end SaaS experience. No configuration is required; it's built into the theme's core CSS.

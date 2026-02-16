@@ -22,60 +22,62 @@ Most page content is managed through the **Org Plugin Settings > Page Content** 
 | **FAQ Page** | **Org Plugin > FAQs** (Custom Post Type) | All published FAQ records are looped into an accordion. |
 | **Membership Plans**| Org Plugin Settings > Page Content | `org_plans_intro` is used for the header. Prices are set in **Appearance > Customize > Monetization**. |
 | **Referral Program**| Org Plugin Settings > Page Content | `org_referral_intro` is used for the header. |
+| **Governance** | `page-governance.php` | Dedicated modern layout for leadership showcase. |
+| **Partner With Us** | `page-partners.php` | Strategic layout for partnership tiers. |
+| **Legal Pages** | `page-privacy.php`, `page-terms.php` | Dark-themed, focus-oriented legal layouts. |
 
 ---
 
-## 2. Forms and Data Submission
+## 3. Shortcode Library
+The theme provides powerful shortcodes for building custom ecosystem sections.
 
-| Form | Action Handler | Redirection Target |
+| Shortcode | Purpose | Renders |
 |---|---|---|
-| **Member Registration** | `org_ecosystem_handle_registration` | Member Dashboard (after creating Member CPT and User). |
-| **Contact Form** | `org_ecosystem_handle_contact_form` | Contact Page with `?contact_sent=true`. |
-| **Donation Form** | `org_ecosystem_handle_donation` | Donation Page with `?thanks=true`. |
-| **Inquiry Form** | `org_ecosystem_handle_inquiry` | Back to the Member/Product/Business profile with `?inquiry=sent`. |
-| **Newsletter Signup** | `org_ecosystem_handle_newsletter` | Home Page with `?subscribed=true`. |
-| **Support Ticket** | `org_ecosystem_handle_ticket_submission`| Member Dashboard (Support tab). |
-| **Internal Message** | `org_ecosystem_handle_send_message` | Member Dashboard (Messages tab). |
+| `[org_directory]` | Main member directory | Searchable AJAX list of members. |
+| `[org_business_grid]`| Business directory | Grid of all member-owned businesses. |
+| `[org_product_grid]` | Product marketplace | Grid of member products/services. |
+| `[org_event_grid]` | Upcoming events | Chronological grid of organization events. |
+| `[org_resource_grid]`| Resource library | Grid of downloadable member resources. |
+| `[org_job_list]` | Job board | Structured list of active job openings. |
+| `[org_pricing_table]`| Membership plans | 5-tier responsive pricing table. |
+| `[org_donation_form]`| Support our mission | Integrated AJAX donation form. |
+| `[org_latest_announcements]` | Grid of news | Top 3 latest announcements. |
 
 ---
 
-## 3. Membership & Payment Process
-
-### Step 1: Registration
-A user fills the form at `/join`. This creates:
-1.  A standard WordPress **User** (Role: Subscriber).
-2.  A **Member** Custom Post Type record (Status: Pending).
-
-### Step 2: Payment (Optional but Recommended)
-Members can choose a plan. Payments are currently processed through a unified ledger.
-*   **Production Note:** Stripe/PayPal transactions are initially set to **Pending**.
-*   **Management:** Go to **Org Plugin Settings > Transactions** to view and approve payments.
-
-### New Membership Packages (Tiers)
-1. **Community Member (Free):** Basic directory browsing and dashboard access.
-2. **Professional (Paid):** Includes a public Profile and Business Listing.
-3. **Vendor (Paid):** Includes Profile + Unlimited Product Showcase + Sales Analytics.
-4. **Corporate Partner (Paid):** Advanced support and multiple staff accounts.
-5. **Lifetime Elite (One-time):** All features for a lifetime fee.
-
-### Step 3: Approval
-Once payment is confirmed or manual review is complete:
-1.  Admin goes to **Org Plugin Settings > Membership**.
-2.  Click **Approve & Activate**.
-3.  The User Role changes to **Member**, and the Member Profile is published to the directory.
+## 4. Ecosystem Automation (Setup Tool)
+The **Org Plugin Settings > System Setup** tool automates the creation and configuration of 19 essential pages:
+1.  **Member Dashboard** (Template: `page-dashboard.php`)
+2.  **Contact Us** (Template: `page-contact.php`)
+3.  **Join Us** (Template: `page-join.php`)
+4.  **Support Our Mission** (Shortcode: `[org_donation_form]`)
+5.  **About Us** (Template: `page-about.php`)
+6.  **Our Mission** (Template: `page-mission.php`)
+7.  **Membership Plans** (Shortcode: `[org_pricing_table]`)
+8.  **Referral Program** (Template: `page-referrals.php`)
+9.  **FAQ** (Template: `page-faq.php`)
+10. **Member Directory** (Shortcode: `[org_directory]`)
+11. **Governance & Leadership** (Template: `page-governance.php`)
+12. **Partner With Us** (Template: `page-partners.php`)
+13. **Privacy Policy** (Template: `page-privacy.php`)
+14. **Terms & Conditions** (Template: `page-terms.php`)
+15. **Business Showcase** (Shortcode: `[org_business_grid]`)
+16. **Upcoming Events** (Shortcode: `[org_event_grid]`)
+17. **Member Resources** (Shortcode: `[org_resource_grid]`)
+18. **Product Marketplace** (Shortcode: `[org_product_grid]`)
+19. **Job Board** (Shortcode: `[org_job_list]`)
 
 ---
 
-## 4. Referral System
-*   **Cookie Tracking:** When someone visits `?ref=CODE`, a cookie is set for 30 days.
-*   **Commission Calculation:** When a logged-in member makes a sale (e.g., product), the system checks for the `org_referral` cookie.
-*   **Credit:** A 10% commission transaction is created for the referrer.
-*   **Payout:** referrers can request a withdrawal from their dashboard. Admins manage this in **Org Plugin Settings > Withdrawals**.
+## 5. Forms and Data Submission
+Forms are handled by `admin-post.php` hooks in `inc/template-functions.php` and `inc/membership.php`.
+*   **Redirects:** Successful submissions typically redirect back with a `?success=true` or similar query parameter.
+*   **Permalinks:** The theme uses `org_ecosystem_get_page_url()` to resolve template paths to live permalinks dynamically.
 
 ---
 
-## 5. Troubleshooting 404s
+## 6. Troubleshooting 404s
 If you see 404 errors on any page or button:
 1.  Go to **Org Plugin Settings > System Setup**.
-2.  Click **Auto-Create Required Pages**.
-3.  Go to **Settings > Permalinks** and click **Save Changes**.
+2.  Click **Auto-Create Required Pages** (to ensure pages exist).
+3.  Go to **Settings > Permalinks** and click **Save Changes** (to flush rules).
