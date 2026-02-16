@@ -579,26 +579,36 @@ function org_ecosystem_setup_page() {
         check_admin_referer( 'org_create_pages_action' );
 
         $pages = array(
-            'dashboard' => array( 'title' => 'Member Dashboard', 'template' => 'page-dashboard.php' ),
-            'contact'   => array( 'title' => 'Contact Us', 'template' => 'page-contact.php' ),
-            'join'      => array( 'title' => 'Join Us', 'template' => 'page-join.php' ),
-            'donate'    => array( 'title' => 'Support Our Mission', 'template' => 'page-donation.php' ),
-            'about'     => array( 'title' => 'About Us', 'template' => 'page-about.php' ),
-            'mission'   => array( 'title' => 'Our Mission', 'template' => 'page-mission.php' ),
-            'plans'     => array( 'title' => 'Membership Plans', 'template' => 'page-plans.php' ),
-            'referrals' => array( 'title' => 'Referral Program', 'template' => 'page-referrals.php' ),
-            'faq'       => array( 'title' => 'Frequently Asked Questions', 'template' => 'page-faq.php' ),
-            'directory' => array( 'title' => 'Member Directory', 'template' => 'template-directory.php' ),
+            'dashboard'  => array( 'title' => 'Member Dashboard', 'template' => 'page-dashboard.php', 'content' => '' ),
+            'contact'    => array( 'title' => 'Contact Us', 'template' => 'page-contact.php', 'content' => '' ),
+            'join'       => array( 'title' => 'Join Us', 'template' => 'page-join.php', 'content' => '' ),
+            'donate'     => array( 'title' => 'Support Our Mission', 'template' => 'page-donation.php', 'content' => '[org_donation_form]' ),
+            'about'      => array( 'title' => 'About Us', 'template' => 'page-about.php', 'content' => '' ),
+            'mission'    => array( 'title' => 'Our Mission', 'template' => 'page-mission.php', 'content' => '' ),
+            'plans'      => array( 'title' => 'Membership Plans', 'template' => 'page-plans.php', 'content' => '[org_pricing_table]' ),
+            'referrals'  => array( 'title' => 'Referral Program', 'template' => 'page-referrals.php', 'content' => '' ),
+            'faq'        => array( 'title' => 'Frequently Asked Questions', 'template' => 'page-faq.php', 'content' => '' ),
+            'directory'  => array( 'title' => 'Member Directory', 'template' => 'template-directory.php', 'content' => '[org_directory]' ),
+            'governance' => array( 'title' => 'Governance & Leadership', 'template' => 'page-governance.php', 'content' => '<h2>Our Leadership Team</h2><p>Meet the dedicated professionals steering our organization.</p>' ),
+            'partners'   => array( 'title' => 'Partner With Us', 'template' => 'page-partners.php', 'content' => '<h2>Collaborate for Growth</h2><p>Join our network of elite partners and sponsors.</p>' ),
+            'privacy'    => array( 'title' => 'Privacy Policy', 'template' => 'page-privacy.php', 'content' => '<p>Your privacy is important to us. This policy explains how we handle your data.</p>' ),
+            'terms'      => array( 'title' => 'Terms & Conditions', 'template' => 'page-terms.php', 'content' => '<p>Standard terms of service for our organization ecosystem.</p>' ),
+            'businesses' => array( 'title' => 'Business Showcase', 'template' => 'page.php', 'content' => '[org_business_grid]' ),
+            'events'     => array( 'title' => 'Upcoming Events', 'template' => 'page.php', 'content' => '[org_event_grid]' ),
+            'resources'  => array( 'title' => 'Member Resources', 'template' => 'page-resources.php', 'content' => '[org_resource_grid]' ),
+            'products'   => array( 'title' => 'Product Marketplace', 'template' => 'page.php', 'content' => '[org_product_grid]' ),
+            'jobs'       => array( 'title' => 'Job Board', 'template' => 'page.php', 'content' => '[org_job_list]' ),
         );
 
         foreach ( $pages as $slug => $data ) {
             $exists = get_page_by_path( $slug );
             if ( ! $exists ) {
                 $pid = wp_insert_post( array(
-                    'post_title'  => $data['title'],
-                    'post_name'   => $slug,
-                    'post_type'   => 'page',
-                    'post_status' => 'publish',
+                    'post_title'   => $data['title'],
+                    'post_name'    => $slug,
+                    'post_type'    => 'page',
+                    'post_status'  => 'publish',
+                    'post_content' => $data['content'],
                 ) );
                 if ( $pid && $data['template'] ) {
                     update_post_meta( $pid, '_wp_page_template', $data['template'] );

@@ -110,3 +110,93 @@ function org_shortcode_product_grid( $atts ) {
     return ob_get_clean();
 }
 add_shortcode( 'org_product_grid', 'org_shortcode_product_grid' );
+
+/**
+ * [org_business_grid] - Business Directory Grid
+ */
+function org_shortcode_business_grid( $atts ) {
+    $a = shortcode_atts( array(
+        'count' => 9,
+        'paged' => true,
+    ), $atts );
+
+    $paged = $a['paged'] ? max( 1, get_query_var( 'paged' ), get_query_var( 'page' ) ) : 1;
+    $query = new WP_Query( array(
+        'post_type' => 'business',
+        'posts_per_page' => $a['count'],
+        'paged' => $paged,
+    ) );
+
+    ob_start();
+    get_template_part( 'template-parts/business-loop', null, array( 'query' => $query ) );
+    return ob_get_clean();
+}
+add_shortcode( 'org_business_grid', 'org_shortcode_business_grid' );
+
+/**
+ * [org_event_grid] - Upcoming Events Grid
+ */
+function org_shortcode_event_grid( $atts ) {
+    $a = shortcode_atts( array(
+        'count' => 6,
+    ), $atts );
+
+    $query = new WP_Query( array(
+        'post_type' => 'event',
+        'posts_per_page' => $a['count'],
+        'meta_key' => '_event_date',
+        'orderby' => 'meta_value',
+        'order' => 'ASC',
+        'meta_query' => array(
+            array(
+                'key' => '_event_date',
+                'value' => date('Y-m-d'),
+                'compare' => '>=',
+                'type' => 'DATE'
+            )
+        )
+    ) );
+
+    ob_start();
+    get_template_part( 'template-parts/event-loop', null, array( 'query' => $query ) );
+    return ob_get_clean();
+}
+add_shortcode( 'org_event_grid', 'org_shortcode_event_grid' );
+
+/**
+ * [org_resource_grid] - Resources Library Grid
+ */
+function org_shortcode_resource_grid( $atts ) {
+    $a = shortcode_atts( array(
+        'count' => 12,
+    ), $atts );
+
+    $query = new WP_Query( array(
+        'post_type' => 'resource',
+        'posts_per_page' => $a['count'],
+    ) );
+
+    ob_start();
+    get_template_part( 'template-parts/resource-loop', null, array( 'query' => $query ) );
+    return ob_get_clean();
+}
+add_shortcode( 'org_resource_grid', 'org_shortcode_resource_grid' );
+
+/**
+ * [org_job_list] - Job Board List
+ */
+function org_shortcode_job_list( $atts ) {
+    $a = shortcode_atts( array(
+        'count' => 10,
+    ), $atts );
+
+    $query = new WP_Query( array(
+        'post_type' => 'job',
+        'posts_per_page' => $a['count'],
+    ) );
+
+    ob_start();
+    get_template_part( 'template-parts/job-loop', null, array( 'query' => $query ) );
+    return ob_get_clean();
+}
+add_shortcode( 'org_job_list', 'org_shortcode_job_list' );
