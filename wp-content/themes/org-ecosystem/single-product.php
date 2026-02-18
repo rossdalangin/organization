@@ -49,6 +49,20 @@ while ( have_posts() ) :
 						₱ <?php echo number_format( floatval($price), 2 ); ?>
 					</div>
 
+                    <div class="d-flex gap-4 mb-4 small text-uppercase fw-bold letter-spacing-1">
+                        <?php
+                        $stock = get_post_meta( get_the_ID(), '_product_stock', true ) ?: 'instock';
+                        $sku = get_post_meta( get_the_ID(), '_product_sku', true );
+                        ?>
+                        <span class="<?php echo $stock === 'instock' ? 'text-success' : 'text-danger'; ?>">
+                            <i class="bi <?php echo $stock === 'instock' ? 'bi-check-circle' : 'bi-x-circle'; ?> me-1"></i>
+                            <?php echo $stock === 'instock' ? __( 'In Stock', 'org-ecosystem' ) : __( 'Out of Stock', 'org-ecosystem' ); ?>
+                        </span>
+                        <?php if ( $sku ) : ?>
+                            <span class="text-muted">SKU: <?php echo esc_html( $sku ); ?></span>
+                        <?php endif; ?>
+                    </div>
+
 					<div class="product-description mb-5 fs-5 text-muted">
 						<?php the_content(); ?>
 					</div>

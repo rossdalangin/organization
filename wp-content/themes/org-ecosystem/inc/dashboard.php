@@ -207,6 +207,10 @@ function org_ecosystem_handle_product_save() {
 	$name = sanitize_text_field( $_POST['product_name'] );
 	$description = sanitize_textarea_field( $_POST['product_description'] );
 	$price = sanitize_text_field( $_POST['product_price'] );
+	$stock = sanitize_text_field( $_POST['product_stock'] );
+	$sku = sanitize_text_field( $_POST['product_sku'] );
+	$external_url = esc_url_raw( $_POST['product_external_url'] );
+    $cat_id = intval( $_POST['product_cat'] );
 
 	if ( $product_id ) {
 		if ( (int) get_post_field( 'post_author', $product_id ) === (int) $user_id ) {
@@ -228,10 +232,30 @@ function org_ecosystem_handle_product_save() {
 
 	if ( $product_id ) {
 		update_post_meta( $product_id, '_product_price', $price );
+		update_post_meta( $product_id, '_product_stock', $stock );
+		update_post_meta( $product_id, '_product_sku', $sku );
+		update_post_meta( $product_id, '_product_external_url', $external_url );
+
+        if ( $cat_id ) {
+            wp_set_post_terms( $product_id, array( $cat_id ), 'product_cat' );
+        }
+
 		$member_id = get_user_meta( $user_id, '_member_profile_id', true );
 		if ( $member_id ) {
 			update_post_meta( $product_id, '_product_business_id', $member_id );
 		}
+
+        // Handle Image Upload
+        if ( ! empty( $_FILES['product_image']['name'] ) ) {
+            require_once( ABSPATH . 'wp-admin/includes/image.php' );
+            require_once( ABSPATH . 'wp-admin/includes/file.php' );
+            require_once( ABSPATH . 'wp-admin/includes/media.php' );
+
+            $attachment_id = media_handle_upload( 'product_image', $product_id );
+            if ( ! is_wp_error( $attachment_id ) ) {
+                set_post_thumbnail( $product_id, $attachment_id );
+            }
+        }
 	}
 
 	wp_redirect( add_query_arg( array( 'action' => 'my-products', 'saved' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
@@ -320,7 +344,7 @@ function org_ecosystem_handle_job_save() {
                 'action'  => 'checkout',
                 'type'    => $checkout_type,
                 'item_id' => $job_id
-            ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+            ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
             exit;
         }
 	}
@@ -367,7 +391,7 @@ function org_ecosystem_handle_promote_listing() {
         exit;
     }
 
-    wp_redirect( add_query_arg( array( 'action' => 'overview', 'error' => 'unauthorized' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    wp_redirect( add_query_arg( array( 'action' => 'overview', 'error' => 'unauthorized' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
     exit;
 }
 add_action( 'admin_post_org_promote_listing', 'org_ecosystem_handle_promote_listing' );

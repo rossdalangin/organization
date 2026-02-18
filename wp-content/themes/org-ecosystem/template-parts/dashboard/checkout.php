@@ -181,49 +181,57 @@ if ( ! $item_name ) {
 
         $('#checkout-form').on('submit', function(e) {
             const gateway = $('input[name="gateway"]:checked').val();
+            const btn = $(this).find('button[type="submit"]');
+
             if (gateway === 'stripe' || gateway === 'paypal') {
                 e.preventDefault();
-                const btn = $(this).find('button[type="submit"]');
-                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Connecting to ' + gateway.toUpperCase() + '...');
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Connecting to ' + gateway.toUpperCase() + ' Gateway...');
 
-                // Construct Real PayPal Redirect if applicable
-                if (gateway === 'paypal') {
-                    const business = '<?php echo esc_js( get_option("org_paypal_email") ); ?>';
-                    if (business) {
-                        const paypalUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
-                        const params = {
-                            cmd: '_xclick',
-                            business: business,
-                            item_name: '<?php echo esc_js($item_name); ?>',
-                            amount: '<?php echo $amount; ?>',
-                            currency_code: 'PHP',
-                            return: window.location.href + '&payment=success',
-                            cancel_return: window.location.href + '&payment=cancel'
-                        };
+                // Still record the transaction in our DB first via AJAX
+                const ajaxData = {
+                    action: 'org_process_payment',
+                    amount: '<?php echo $amount; ?>',
+                    gateway: gateway,
+                    type: '<?php echo $type; ?>',
+                    item_id: '<?php echo $item_id; ?>',
+                    plan: '<?php echo $plan; ?>',
+                    security: '<?php echo wp_create_nonce("org_payment_nonce"); ?>'
+                };
 
-                        const form = $('<form>', { action: paypalUrl, method: 'post' });
-                        $.each(params, (k, v) => form.append($('<input>', { type: 'hidden', name: k, value: v })));
-                        $('body').append(form);
+                $.post(org_ajax.ajaxurl, ajaxData, (response) => {
+                    if (response.success) {
+                        if (gateway === 'paypal') {
+                            const business = '<?php echo esc_js( get_option("org_paypal_email") ); ?>';
+                            const mode = '<?php echo get_option("org_paypal_mode", "test"); ?>';
+                            const paypalUrl = (mode === 'live') ? 'https://www.paypal.com/cgi-bin/webscr' : 'https://www.sandbox.paypal.com/cgi-bin/webscr';
 
-                        // Still record the transaction in our DB first
-                        $.post(org_ajax.ajaxurl, {
-                            action: 'org_process_payment',
-                            amount: params.amount,
-                            gateway: 'paypal',
-                            type: '<?php echo $type; ?>',
-                            item_id: '<?php echo $item_id; ?>',
-                            security: '<?php echo wp_create_nonce("org_payment_nonce"); ?>'
-                        }, () => {
+                            const params = {
+                                cmd: '_xclick',
+                                business: business,
+                                item_name: '<?php echo esc_js($item_name); ?>',
+                                amount: '<?php echo $amount; ?>',
+                                currency_code: 'PHP',
+                                custom: response.data.txn_id,
+                                return: '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?action=overview&payment=pending&txn=' + response.data.txn_id,
+                                cancel_return: '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?action=checkout&type=<?php echo $type; ?>&error=cancelled'
+                            };
+
+                            const form = $('<form>', { action: paypalUrl, method: 'post' });
+                            $.each(params, (k, v) => form.append($('<input>', { type: 'hidden', name: k, value: v })));
+                            $('body').append(form);
                             form.submit();
-                        });
-                        return;
+                        } else if (gateway === 'stripe') {
+                            // In a real implementation, we would call Stripe Checkout here.
+                            // For this ecosystem, we simulate the redirection to Stripe.
+                            setTimeout(() => {
+                                window.location.href = '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?action=overview&payment=pending&txn=' + response.data.txn_id;
+                            }, 1000);
+                        }
+                    } else {
+                        alert('Error: ' + response.data);
+                        btn.prop('disabled', false).text('<?php _e( "Complete Payment", "org-ecosystem" ); ?>');
                     }
-                }
-
-                // Default fallback
-                setTimeout(() => {
-                    this.submit();
-                }, 1500);
+                });
             }
         });
     });

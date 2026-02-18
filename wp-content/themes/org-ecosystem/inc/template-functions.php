@@ -212,8 +212,9 @@ function org_ecosystem_get_page_url( $template_path ) {
         $search_templates[] = str_replace( 'templates/', 'page-', $template_path );
         $search_templates[] = ltrim( $template_path, 'templates/' );
     }
-    if ( $template_path === 'templates/dashboard.php' ) {
+    if ( $template_path === 'templates/dashboard.php' || $template_path === 'page-dashboard.php' ) {
         $search_templates[] = 'page-dashboard.php';
+        $search_templates[] = 'templates/dashboard.php';
     }
     if ( $template_path === 'templates/template-directory.php' ) {
         $search_templates[] = 'template-directory.php';
@@ -222,7 +223,8 @@ function org_ecosystem_get_page_url( $template_path ) {
     $pages = get_pages( array(
         'meta_key'   => '_wp_page_template',
         'meta_value' => $search_templates,
-        'number'     => 1
+        'number'     => 1,
+        'post_status' => 'publish,private'
     ) );
     if ( $pages ) {
         return get_permalink( $pages[0]->ID );

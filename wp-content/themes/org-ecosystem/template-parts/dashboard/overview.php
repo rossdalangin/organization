@@ -25,8 +25,24 @@ if ( ! $ref_code ) {
 		<div class="d-flex align-items-center">
             <i class="bi bi-check-circle-fill fs-4 text-success me-3"></i>
             <div>
-                <strong><?php _e( 'Action Successful!', 'org-ecosystem' ); ?></strong><br>
-                <small class="text-muted"><?php _e( 'Your request has been recorded. If you chose a manual payment method, our admin will verify it shortly.', 'org-ecosystem' ); ?></small>
+                <strong><?php _e( 'Transaction Initiated!', 'org-ecosystem' ); ?></strong><br>
+                <small class="text-muted"><?php _e( 'Your payment is being processed or awaiting administrative verification. You can track the status in your Financial Ledger.', 'org-ecosystem' ); ?></small>
+                <?php if ( isset($_GET['txn']) ) : ?>
+                    <div class="mt-1 small">Transaction ID: <code><?php echo esc_html($_GET['txn']); ?></code></div>
+                <?php endif; ?>
+            </div>
+        </div>
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+<?php endif; ?>
+
+<?php if ( isset($_GET['payment']) && $_GET['payment'] === 'success' ) : ?>
+    <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm border-0 bg-white mb-4" role="alert">
+		<div class="d-flex align-items-center">
+            <i class="bi bi-patch-check-fill fs-4 text-success me-3"></i>
+            <div>
+                <strong><?php _e( 'Payment Successful!', 'org-ecosystem' ); ?></strong><br>
+                <small class="text-muted"><?php _e( 'Thank you for your payment. Your account/feature will be updated once the transaction is verified.', 'org-ecosystem' ); ?></small>
             </div>
         </div>
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

@@ -738,17 +738,24 @@ add_filter( 'login_redirect', 'org_ecosystem_login_redirect', 10, 3 );
  */
 function org_ecosystem_handle_membership_upgrade() {
 	if ( ! is_user_logged_in() ) return;
-	check_admin_referer( 'org_upgrade_membership_action' );
+
+    if ( isset($_POST['org_upgrade_membership_action']) ) {
+        check_admin_referer( 'org_upgrade_membership_action' );
+    }
 
 	$user_id = get_current_user_id();
 	$new_level = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : 'professional';
 
 	// Redirect to unified checkout
-    wp_redirect( add_query_arg( array(
+    $dashboard_url = org_ecosystem_get_page_url( 'page-dashboard.php' );
+
+    $redirect_url = add_query_arg( array(
         'action' => 'checkout',
         'type'   => 'membership',
         'plan'   => $new_level
-    ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    ), $dashboard_url );
+
+    wp_redirect( $redirect_url );
     exit;
 }
 add_action( 'admin_post_org_upgrade_membership', 'org_ecosystem_handle_membership_upgrade' );

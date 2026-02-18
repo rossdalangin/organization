@@ -116,19 +116,28 @@ function org_ecosystem_handle_commission( $txn_id, $amount, $product_id ) {
 function org_ajax_process_payment() {
     check_ajax_referer( 'org_payment_nonce', 'security' );
 
+    $type = sanitize_text_field( $_POST['type'] );
+    $plan = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : '';
+
+    // Determine the actual type for the ledger
+    $txn_type = $type;
+    if ( $type === 'membership' && $plan ) {
+        $txn_type = $plan;
+    }
+
     $data = array(
         'amount'  => sanitize_text_field( $_POST['amount'] ),
         'gateway' => sanitize_text_field( $_POST['gateway'] ),
-        'type'    => sanitize_text_field( $_POST['type'] ),
+        'type'    => $txn_type,
         'item_id' => intval( $_POST['item_id'] ),
     );
 
     $txn_id = org_ecosystem_process_unified_payment( $data );
 
     if ( $txn_id ) {
-        wp_send_json_success( array( 'message' => 'Payment processed!', 'txn_id' => $txn_id ) );
+        wp_send_json_success( array( 'message' => 'Payment recorded and pending verification.', 'txn_id' => $txn_id ) );
     } else {
-        wp_send_json_error( 'Failed to process payment.' );
+        wp_send_json_error( 'Failed to record transaction.' );
     }
 }
 add_action( 'wp_ajax_org_process_payment', 'org_ajax_process_payment' );

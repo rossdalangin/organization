@@ -63,8 +63,9 @@
             $txns = new WP_Query( array(
                 'post_type' => 'org_transaction',
                 'meta_query' => array(
+                    'relation' => 'AND',
                     array( 'key' => '_txn_user_id', 'value' => $user_id ),
-                    array( 'key' => '_txn_type', 'value' => array('membership', 'event_ticket', 'featured_promo'), 'compare' => 'IN' ),
+                    array( 'key' => '_txn_type', 'value' => 'commission', 'compare' => '!=' ),
                 )
             ) );
 

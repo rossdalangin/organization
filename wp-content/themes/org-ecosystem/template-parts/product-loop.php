@@ -32,7 +32,13 @@ $product_query = isset( $args['query'] ) ? $args['query'] : $GLOBALS['wp_query']
                         if ( $business_id ) : ?>
                             <p class="small text-muted mb-2"><?php _e( 'By', 'org-ecosystem' ); ?> <?php echo get_the_title( $business_id ); ?></p>
                         <?php endif; ?>
-                        <p class="card-text text-muted small"><?php echo wp_trim_words( get_the_excerpt(), 15 ); ?></p>
+                        <p class="card-text text-muted small mb-3"><?php echo wp_trim_words( get_the_excerpt(), 15 ); ?></p>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="fw-bold text-primary">₱<?php echo number_format(floatval(get_post_meta(get_the_ID(), '_product_price', true)), 2); ?></span>
+                            <?php if ( get_post_meta(get_the_ID(), '_product_stock', true) === 'outofstock' ) : ?>
+                                <span class="badge bg-danger"><?php _e( 'Sold Out', 'org-ecosystem' ); ?></span>
+                            <?php endif; ?>
+                        </div>
                         <a href="<?php the_permalink(); ?>" class="btn btn-outline-success btn-sm w-100"><?php _e( 'View Product', 'org-ecosystem' ); ?></a>
                     </div>
                 </div>
