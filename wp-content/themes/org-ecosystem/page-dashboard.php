@@ -125,6 +125,9 @@ function is_dash_active($slug, $action) {
 						case 'my-applications':
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/my-applications.php';
 							break;
+                        case 'checkout':
+							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/checkout.php';
+							break;
 						default:
 							include ORG_ECOSYSTEM_DIR . '/template-parts/dashboard/overview.php';
 							break;

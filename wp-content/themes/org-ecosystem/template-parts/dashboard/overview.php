@@ -5,6 +5,8 @@
 $user_id = get_current_user_id();
 $member_id = get_user_meta( $user_id, '_member_profile_id', true );
 $stats = org_ecosystem_get_member_stats( $member_id );
+$membership_level = get_user_meta( $user_id, '_membership_level', true );
+$balance = org_ecosystem_get_user_total_commissions( $user_id );
 
 // Ensure Referral Code
 $ref_code = get_user_meta( $user_id, '_org_referral_code', true );
@@ -18,12 +20,49 @@ if ( ! $ref_code ) {
 	<div class="text-muted small"><?php echo date( 'l, F j, Y' ); ?></div>
 </div>
 
-<?php if ( isset( $_GET['promoted'] ) ) : ?>
-	<div class="alert alert-success alert-dismissible fade show" role="alert">
-		<?php _e( 'Success! Your listing has been promoted to Featured status.', 'org-ecosystem' ); ?>
+<?php if ( isset( $_GET['promoted'] ) || (isset($_GET['payment']) && $_GET['payment'] === 'pending') ) : ?>
+	<div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm border-0 bg-white" role="alert">
+		<div class="d-flex align-items-center">
+            <i class="bi bi-check-circle-fill fs-4 text-success me-3"></i>
+            <div>
+                <strong><?php _e( 'Action Successful!', 'org-ecosystem' ); ?></strong><br>
+                <small class="text-muted"><?php _e( 'Your request has been recorded. If you chose a manual payment method, our admin will verify it shortly.', 'org-ecosystem' ); ?></small>
+            </div>
+        </div>
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	</div>
 <?php endif; ?>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-white border-start border-4 border-primary">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="text-muted text-uppercase small fw-bold mb-3"><?php _e( 'Membership Status', 'org-ecosystem' ); ?></h6>
+                    <h4 class="fw-bold mb-1"><?php echo esc_html( ucfirst($membership_level) ); ?> Plan</h4>
+                    <?php
+                    $renewal = get_post_meta( $member_id, '_member_renewal_date', true );
+                    if($renewal && $renewal !== '0000-00-00') : ?>
+                        <small class="text-muted"><?php _e( 'Renews on:', 'org-ecosystem' ); ?> <?php echo date('M d, Y', strtotime($renewal)); ?></small>
+                    <?php endif; ?>
+                </div>
+                <a href="?action=billing" class="btn btn-light btn-sm rounded-pill px-3"><?php _e( 'Manage', 'org-ecosystem' ); ?></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-white border-start border-4 border-success">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="text-muted text-uppercase small fw-bold mb-3"><?php _e( 'Wallet Balance', 'org-ecosystem' ); ?></h6>
+                    <h4 class="fw-bold mb-1 text-success">₱ <?php echo number_format($balance, 2); ?></h4>
+                    <small class="text-muted"><?php _e( 'Available for withdrawal', 'org-ecosystem' ); ?></small>
+                </div>
+                <a href="?action=payments" class="btn btn-light btn-sm rounded-pill px-3"><?php _e( 'Wallet', 'org-ecosystem' ); ?></a>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row g-4 mb-5">
 	<div class="col-md-3">

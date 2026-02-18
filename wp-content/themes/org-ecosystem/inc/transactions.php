@@ -164,3 +164,47 @@ function org_ecosystem_handle_withdrawal() {
     exit;
 }
 add_action( 'admin_post_org_withdraw_request', 'org_ecosystem_handle_withdrawal' );
+
+/**
+ * Handle Checkout Submission from Dashboard
+ */
+function org_ecosystem_handle_checkout_submission() {
+    if ( ! isset( $_POST['org_checkout_nonce'] ) || ! wp_verify_nonce( $_POST['org_checkout_nonce'], 'org_checkout_action' ) ) {
+        return;
+    }
+
+    $user_id = get_current_user_id();
+    $item_type = sanitize_text_field( $_POST['item_type'] );
+    $item_id   = intval( $_POST['item_id'] );
+    $plan      = sanitize_text_field( $_POST['plan'] );
+    $amount    = floatval( $_POST['amount'] );
+    $gateway   = sanitize_text_field( $_POST['gateway'] );
+
+    // Determine specific type for ledger
+    $type = $item_type;
+    if ( $item_type === 'membership' ) {
+        $type = $plan;
+    }
+
+    $txn_id = org_ecosystem_process_unified_payment( array(
+        'user_id' => $user_id,
+        'amount'  => $amount,
+        'gateway' => $gateway,
+        'type'    => $type,
+        'item_id' => $item_id,
+    ) );
+
+    if ( $txn_id ) {
+        // Special logic for Promotion (mark as pending promotion)
+        if ( $item_type === 'promotion' ) {
+            $meta_key = ( get_post_type($item_id) === 'member' ) ? '_member_is_featured' : '_product_is_featured';
+            update_post_meta( $item_id, $meta_key, 'pending' );
+        }
+
+        wp_redirect( add_query_arg( array( 'action' => 'overview', 'payment' => 'pending' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+        exit;
+    } else {
+        wp_die( __( 'Checkout failed. Please try again.', 'org-ecosystem' ) );
+    }
+}
+add_action( 'admin_post_org_process_checkout', 'org_ecosystem_handle_checkout_submission' );

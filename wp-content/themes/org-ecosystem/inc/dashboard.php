@@ -327,20 +327,16 @@ function org_ecosystem_handle_promote_listing() {
 
     $user_id = get_current_user_id();
     if ( (int) get_post_field( 'post_author', $item_id ) === (int) $user_id ) {
-        // Mark as featured
-        $meta_key = ($type === 'member') ? '_member_is_featured' : '_product_is_featured';
-        update_post_meta( $item_id, $meta_key, '1' );
-
-        // Record Transaction
-        org_ecosystem_process_unified_payment( array(
-            'amount'  => get_theme_mod( 'promotion_price', '500' ),
-            'gateway' => 'offline',
-            'type'    => $type . '_promotion',
+        // Redirect to unified checkout
+        wp_redirect( add_query_arg( array(
+            'action'  => 'checkout',
+            'type'    => 'promotion',
             'item_id' => $item_id
-        ) );
+        ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+        exit;
     }
 
-    wp_redirect( add_query_arg( array( 'action' => 'overview', 'promoted' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    wp_redirect( add_query_arg( array( 'action' => 'overview', 'error' => 'unauthorized' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
     exit;
 }
 add_action( 'admin_post_org_promote_listing', 'org_ecosystem_handle_promote_listing' );

@@ -254,7 +254,16 @@ function org_ecosystem_handle_registration() {
 
 		wp_mail( $email, $subject, $message );
 
-		wp_redirect( add_query_arg( 'registered', 'true', org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+		if ( $plan !== 'free' && $plan !== 'community' ) {
+            wp_redirect( add_query_arg( array(
+                'registered' => 'true',
+                'action'     => 'checkout',
+                'type'       => 'membership',
+                'plan'       => $plan
+            ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+        } else {
+		    wp_redirect( add_query_arg( 'registered', 'true', org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+        }
 		exit;
 	}
 }
@@ -362,6 +371,12 @@ function org_ecosystem_register_roles() {
 	);
 
 	foreach ( $capabilities as $cap => $assigned_roles ) {
+        // Also give these caps to standard administrators
+        $admin_role = get_role( 'administrator' );
+        if ( $admin_role ) {
+            $admin_role->add_cap( $cap );
+        }
+
 		foreach ( $assigned_roles as $role_slug ) {
 			$role = get_role( $role_slug );
 			if ( $role ) {
@@ -660,11 +675,13 @@ function org_ecosystem_handle_membership_upgrade() {
 	$user_id = get_current_user_id();
 	$new_level = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : 'professional';
 
-	// Process Payment (Yearly Fee)
-	if ( org_ecosystem_process_payment( $user_id, $new_level, 'unified_gateway' ) ) {
-		wp_redirect( add_query_arg( array( 'action' => 'billing', 'upgraded' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
-		exit;
-	}
+	// Redirect to unified checkout
+    wp_redirect( add_query_arg( array(
+        'action' => 'checkout',
+        'type'   => 'membership',
+        'plan'   => $new_level
+    ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    exit;
 }
 add_action( 'admin_post_org_upgrade_membership', 'org_ecosystem_handle_membership_upgrade' );
 
