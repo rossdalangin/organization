@@ -139,27 +139,27 @@ function org_ecosystem_customize_register( $wp_customize ) {
 		) );
 
 		// Background
-		$wp_customize->add_setting( $sec_id . '_bg_color', array( 'default' => '', 'sanitize_callback' => 'sanitize_hex_color', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_bg_color', array( 'default' => ( in_array($sec_id, array('header', 'hero', 'footer')) ? '#ffffff' : '#f8fafc' ), 'sanitize_callback' => 'sanitize_hex_color', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $sec_id . '_bg_color', array( 'label' => 'Background Color', 'section' => $section_key ) ) );
 
 		$wp_customize->add_setting( $sec_id . '_bg_image', array( 'default' => '', 'sanitize_callback' => 'esc_url_raw' ) );
 		$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, $sec_id . '_bg_image', array( 'label' => 'Background Image', 'section' => $section_key ) ) );
 
 		// Text & Headings
-		$wp_customize->add_setting( $sec_id . '_text_color', array( 'default' => '', 'sanitize_callback' => 'sanitize_hex_color', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_text_color', array( 'default' => '#334155', 'sanitize_callback' => 'sanitize_hex_color', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $sec_id . '_text_color', array( 'label' => 'Text Color', 'section' => $section_key ) ) );
 
-		$wp_customize->add_setting( $sec_id . '_h_color', array( 'default' => '', 'sanitize_callback' => 'sanitize_hex_color', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_h_color', array( 'default' => '#1e293b', 'sanitize_callback' => 'sanitize_hex_color', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $sec_id . '_h_color', array( 'label' => 'Heading Color', 'section' => $section_key ) ) );
 
 		// Typography
-		$wp_customize->add_setting( $sec_id . '_font_size', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_font_size', array( 'default' => '16', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_font_size', array( 'label' => 'Base Font Size (px)', 'section' => $section_key, 'type' => 'number' ) );
 
-		$wp_customize->add_setting( $sec_id . '_h_font_size', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_h_font_size', array( 'default' => '32', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_h_font_size', array( 'label' => 'Heading Font Size (px)', 'section' => $section_key, 'type' => 'number' ) );
 
-		$wp_customize->add_setting( $sec_id . '_line_height', array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_line_height', array( 'default' => '1.6', 'sanitize_callback' => 'sanitize_text_field', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_line_height', array( 'label' => 'Line Height', 'section' => $section_key, 'type' => 'text' ) );
 
 		// Spacing
@@ -169,20 +169,20 @@ function org_ecosystem_customize_register( $wp_customize ) {
 		$wp_customize->add_setting( $sec_id . '_padding_bottom', array( 'default' => '80', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_padding_bottom', array( 'label' => 'Padding Bottom (px)', 'section' => $section_key, 'type' => 'number' ) );
 
-		$wp_customize->add_setting( $sec_id . '_margin_top', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_margin_top', array( 'default' => '0', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_margin_top', array( 'label' => 'Margin Top (px)', 'section' => $section_key, 'type' => 'number' ) );
 
-		$wp_customize->add_setting( $sec_id . '_margin_bottom', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_margin_bottom', array( 'default' => '0', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_margin_bottom', array( 'label' => 'Margin Bottom (px)', 'section' => $section_key, 'type' => 'number' ) );
 
 		// Borders
-		$wp_customize->add_setting( $sec_id . '_border_width', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_border_width', array( 'default' => '0', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_border_width', array( 'label' => 'Border Width (px)', 'section' => $section_key, 'type' => 'number' ) );
 
-		$wp_customize->add_setting( $sec_id . '_border_color', array( 'default' => '', 'sanitize_callback' => 'sanitize_hex_color', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_border_color', array( 'default' => '#e2e8f0', 'sanitize_callback' => 'sanitize_hex_color', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $sec_id . '_border_color', array( 'label' => 'Border Color', 'section' => $section_key ) ) );
 
-		$wp_customize->add_setting( $sec_id . '_border_radius', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_border_radius', array( 'default' => '0', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_border_radius', array( 'label' => 'Border Radius (px)', 'section' => $section_key, 'type' => 'number' ) );
 	}
 

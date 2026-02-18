@@ -64,6 +64,9 @@ function is_dash_active($slug, $action) {
 							<a href="?action=resources" class="list-group-item list-group-item-action <?php echo is_dash_active('resources', $action); ?> border-0"><i class="bi bi-file-earmark-arrow-down me-3"></i> <?php _e( 'Downloads', 'org-ecosystem' ); ?></a>
 							<a href="?action=support" class="list-group-item list-group-item-action <?php echo is_dash_active('support', $action); ?> border-0"><i class="bi bi-life-preserver me-3"></i> <?php _e( 'Support Tickets', 'org-ecosystem' ); ?></a>
 
+                            <div class="px-4 py-3 small text-muted text-uppercase fw-bold bg-light border-bottom border-top"><?php _e( 'Support Our Mission', 'org-ecosystem' ); ?></div>
+                            <a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-donation.php' ) ); ?>" class="list-group-item list-group-item-action border-0"><i class="bi bi-heart-fill me-3 text-danger"></i> <?php _e( 'Make a Donation', 'org-ecosystem' ); ?></a>
+
                             <div class="px-4 py-3 bg-light border-top">
 							    <a href="<?php echo wp_logout_url( home_url() ); ?>" class="list-group-item list-group-item-action text-danger bg-transparent border-0 p-0"><i class="bi bi-box-arrow-right me-3"></i> Logout</a>
                             </div>

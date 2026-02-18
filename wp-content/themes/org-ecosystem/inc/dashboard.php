@@ -229,6 +229,23 @@ function org_ecosystem_handle_product_save() {
 add_action( 'admin_post_org_save_product', 'org_ecosystem_handle_product_save' );
 
 /**
+ * Handle Product Delete
+ */
+function org_ecosystem_handle_product_delete() {
+    $product_id = isset( $_GET['product_id'] ) ? intval( $_GET['product_id'] ) : 0;
+    if ( ! $product_id || ! check_admin_referer( 'org_delete_product_action' ) ) return;
+
+    $user_id = get_current_user_id();
+    if ( (int) get_post_field( 'post_author', $product_id ) === (int) $user_id ) {
+        wp_delete_post( $product_id, true );
+    }
+
+    wp_redirect( add_query_arg( array( 'action' => 'my-products', 'deleted' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    exit;
+}
+add_action( 'admin_post_org_delete_product', 'org_ecosystem_handle_product_delete' );
+
+/**
  * Handle Job Save
  */
 function org_ecosystem_handle_job_save() {

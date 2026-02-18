@@ -40,6 +40,21 @@
                     <div class="message-content border-top pt-4">
                         <?php echo wpautop(esc_html($msg->post_content)); ?>
                     </div>
+
+                    <div class="reply-form mt-5">
+                        <h5 class="fw-bold mb-3"><?php _e( 'Send a Reply', 'org-ecosystem' ); ?></h5>
+                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
+                            <input type="hidden" name="action" value="org_send_message">
+                            <?php
+                            $receiver_id = ($msg->post_author == get_current_user_id()) ? get_post_meta($view_id, '_msg_receiver_id', true) : $msg->post_author;
+                            ?>
+                            <input type="hidden" name="receiver_id" value="<?php echo esc_attr($receiver_id); ?>">
+                            <input type="hidden" name="msg_subject" value="Re: <?php echo esc_attr($msg->post_title); ?>">
+                            <?php wp_nonce_field( 'org_send_message', 'org_message_nonce' ); ?>
+                            <textarea name="msg_content" class="form-control bg-light border-0 py-3 mb-3" rows="4" placeholder="<?php _e( 'Type your reply here...', 'org-ecosystem' ); ?>" required></textarea>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold"><?php _e( 'Send Reply', 'org-ecosystem' ); ?></button>
+                        </form>
+                    </div>
                 </div>
             <?php else : ?>
                 <div class="alert alert-danger">Message not found or access denied.</div>

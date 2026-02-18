@@ -667,3 +667,15 @@ function org_ecosystem_handle_membership_upgrade() {
 	}
 }
 add_action( 'admin_post_org_upgrade_membership', 'org_ecosystem_handle_membership_upgrade' );
+
+
+/**
+ * Restrict wp-admin access for standard members
+ */
+function org_ecosystem_restrict_admin_access() {
+    if ( is_admin() && ! current_user_can( 'edit_posts' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+        wp_redirect( org_ecosystem_get_page_url( 'templates/dashboard.php' ) );
+        exit;
+    }
+}
+add_action( 'admin_init', 'org_ecosystem_restrict_admin_access' );

@@ -87,7 +87,7 @@ if ( $product_to_edit && (int) $product_to_edit->post_author !== (int) $user_id 
 			<div class="mb-3 text-muted display-4"><i class="bi bi-box"></i></div>
 			<h5><?php _e( 'No products yet', 'org-ecosystem' ); ?></h5>
 			<p class="text-muted"><?php _e( 'Start showcasing your products and services to other members.', 'org-ecosystem' ); ?></p>
-			<a href="#" class="btn btn-primary"><?php _e( 'Add Your First Product', 'org-ecosystem' ); ?></a>
+			<a href="?action=my-products&add_new=1" class="btn btn-primary"><?php _e( 'Add Your First Product', 'org-ecosystem' ); ?></a>
 		</div>
 	<?php endif; ?>
 </div>

@@ -71,6 +71,18 @@ get_header();
 		<?php get_template_part( 'template-parts/homepage/latest-news' ); ?>
 	<?php endif; ?>
 
+	<section class="donation-cta py-5 bg-white">
+		<div class="container py-4 text-center">
+			<div class="row justify-content-center">
+				<div class="col-md-8">
+					<h2 class="display-6 fw-bold mb-3"><?php _e( 'Support Our Collective Growth', 'org-ecosystem' ); ?></h2>
+					<p class="text-muted mb-5"><?php _e( 'Your contributions help us expand our resources and advocacy for the entire professional community.', 'org-ecosystem' ); ?></p>
+					<?php echo do_shortcode('[org_donation_form]'); ?>
+				</div>
+			</div>
+		</div>
+	</section>
+
 	<?php if ( get_theme_mod( 'show_partners', true ) ) : ?>
 	<section class="section-partners py-5 bg-light border-top">
 		<div class="container text-center">

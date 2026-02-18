@@ -11,8 +11,8 @@
 function org_ecosystem_admin_menu() {
 	// Main Parent
 	add_menu_page(
-		__( 'Org Plugin Settings', 'org-ecosystem' ),
-		__( 'Org Plugin', 'org-ecosystem' ),
+		__( 'Org Ecosystem', 'org-ecosystem' ),
+		__( 'Org Ecosystem', 'org-ecosystem' ),
 		'manage_options',
 		'org-settings',
 		'org_ecosystem_settings_page',
@@ -78,6 +78,15 @@ function org_ecosystem_admin_menu() {
 		'org_ecosystem_tickets_page'
 	);
 
+    add_submenu_page(
+		'org-settings',
+		__( 'Internal Messages', 'org-ecosystem' ),
+		__( 'Internal Messages', 'org-ecosystem' ),
+		'manage_options',
+		'org-messages',
+		'org_ecosystem_internal_messages_page'
+	);
+
 	add_submenu_page(
 		'org-settings',
 		__( 'Email Templates', 'org-ecosystem' ),
@@ -104,6 +113,22 @@ function org_ecosystem_admin_menu() {
 		'manage_options',
 		'org-directory',
 		'org_ecosystem_directory_settings_page'
+	);
+
+    add_submenu_page(
+		'org-settings',
+		__( 'Industries', 'org-ecosystem' ),
+		__( 'Industries', 'org-ecosystem' ),
+		'manage_options',
+		'edit-tags.php?taxonomy=industry'
+	);
+
+    add_submenu_page(
+		'org-settings',
+		__( 'Locations', 'org-ecosystem' ),
+		__( 'Locations', 'org-ecosystem' ),
+		'manage_options',
+		'edit-tags.php?taxonomy=location'
 	);
 
 	add_submenu_page(
@@ -135,11 +160,19 @@ function org_ecosystem_admin_menu() {
 
     add_submenu_page(
 		'org-settings',
-		__( 'System Setup & Tools', 'org-ecosystem' ),
-		__( 'System Setup', 'org-ecosystem' ),
+		__( 'Database Maintenance', 'org-ecosystem' ),
+		__( 'Maintenance', 'org-ecosystem' ),
 		'manage_options',
 		'org-setup',
 		'org_ecosystem_setup_page'
+	);
+
+    add_submenu_page(
+		'org-settings',
+		__( 'All Member Profiles', 'org-ecosystem' ),
+		__( 'Member Profiles', 'org-ecosystem' ),
+		'manage_options',
+		'edit.php?post_type=member'
 	);
 }
 add_action( 'admin_menu', 'org_ecosystem_admin_menu' );
@@ -185,7 +218,7 @@ function org_ecosystem_settings_page() {
                     <p class="description" style="font-size: 16px; margin-top: 5px;"><?php _e( 'Real-time performance metrics for your organization.', 'org-ecosystem' ); ?></p>
                 </div>
                 <div class="dashboard-actions">
-                    <a href="<?php echo admin_url('admin.php?page=org-setup'); ?>" class="button button-primary button-hero"><?php _e( 'System Setup', 'org-ecosystem' ); ?></a>
+                    <a href="<?php echo admin_url('admin.php?page=org-membership&view=upgraded'); ?>" class="button button-primary button-hero"><?php _e( 'Upgraded Accounts', 'org-ecosystem' ); ?></a>
                 </div>
             </div>
 
@@ -215,6 +248,34 @@ function org_ecosystem_settings_page() {
 
 		<div class="grid-container" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-top: 30px;">
 			<div class="card-main">
+                <div class="card p-5 mb-4" style="background: #1e293b; color: #fff; border-radius: 12px; border: none; position: relative; overflow: hidden;">
+                    <div style="position: relative; z-index: 2;">
+                        <h2 style="color: #fff; margin-top: 0; font-size: 24px;"><?php _e( 'Quick Start: Your Ecosystem Onboarding', 'org-ecosystem' ); ?></h2>
+                        <p style="color: #cbd5e1; font-size: 15px;"><?php _e( 'Follow these steps to launch your organization digital platform effectively:', 'org-ecosystem' ); ?></p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px;">
+                            <div>
+                                <h4 style="color: #38bdf8; margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase;"><?php _e( 'Step 1: Core Setup', 'org-ecosystem' ); ?></h4>
+                                <p style="font-size: 13px; line-height: 1.6;"><?php _e( 'Go to <strong>Maintenance</strong> and click "Auto-Create Required Pages". This sets up your Dashboard, Join, and Directory pages instantly.', 'org-ecosystem' ); ?></p>
+                            </div>
+                            <div>
+                                <h4 style="color: #38bdf8; margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase;"><?php _e( 'Step 2: Financials', 'org-ecosystem' ); ?></h4>
+                                <p style="font-size: 13px; line-height: 1.6;"><?php _e( 'Navigate to <strong>Payments</strong> to connect Stripe or PayPal. This enables automated dues collection.', 'org-ecosystem' ); ?></p>
+                            </div>
+                            <div>
+                                <h4 style="color: #38bdf8; margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase;"><?php _e( 'Step 3: Define Tiers', 'org-ecosystem' ); ?></h4>
+                                <p style="font-size: 13px; line-height: 1.6;"><?php _e( 'Open the <strong>WordPress Customizer</strong> to set prices for Free, Basic, and Premium tiers.', 'org-ecosystem' ); ?></p>
+                            </div>
+                            <div>
+                                <h4 style="color: #38bdf8; margin: 0 0 10px 0; font-size: 14px; text-transform: uppercase;"><?php _e( 'Step 4: Seed Data', 'org-ecosystem' ); ?></h4>
+                                <p style="font-size: 13px; line-height: 1.6;"><?php _e( 'Use the <strong>"Import Sample Records"</strong> button below to see the ecosystem in action with fictional members.', 'org-ecosystem' ); ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="position: absolute; bottom: -50px; right: -50px; opacity: 0.1;">
+                        <span class="dashicons dashicons-lightbulb" style="font-size: 200px; width: 200px; height: 200px;"></span>
+                    </div>
+                </div>
+
                 <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
                     <h3 style="margin-top: 0; display: flex; align-items: center; gap: 10px;"><span class="dashicons dashicons-chart-area" style="color: #0d6efd;"></span> <?php _e( 'Growth Analytics (Last 30 Days)', 'org-ecosystem' ); ?></h3>
                     <div style="height: 200px; display: flex; align-items: flex-end; gap: 10px; padding: 20px 0; border-bottom: 1px solid #f1f5f9;">
@@ -312,6 +373,28 @@ function org_ecosystem_settings_page() {
  * Transaction Manager Page
  */
 function org_ecosystem_transactions_page() {
+    if ( isset( $_GET['txn_id'] ) && isset( $_GET['status'] ) ) {
+        check_admin_referer( 'org_update_txn' );
+        $txn_id = intval( $_GET['txn_id'] );
+        $status = sanitize_text_field( $_GET['status'] );
+        update_post_meta( $txn_id, '_txn_status', $status );
+
+        if ( $status === 'completed' ) {
+            $type = get_post_meta( $txn_id, '_txn_type', true );
+            $user_id = get_post_meta( $txn_id, '_txn_user_id', true );
+            $item_id = get_post_meta( $txn_id, '_txn_item_id', true );
+            $amount = get_post_meta( $txn_id, '_txn_amount', true );
+
+            if ( $type === 'membership' || $type === 'professional' || $type === 'vendor' || $type === 'corporate' ) {
+                org_ecosystem_process_payment( $user_id, $type, 'manual_approval' );
+            }
+            if ( $type === 'product_sale' ) {
+                org_ecosystem_handle_commission( $txn_id, $amount, $item_id );
+            }
+        }
+        echo '<div class="updated"><p>Transaction updated.</p></div>';
+    }
+
     $transactions = new WP_Query( array(
         'post_type' => 'org_transaction',
         'posts_per_page' => -1,
@@ -329,13 +412,14 @@ function org_ecosystem_transactions_page() {
                         <th>Amount</th>
                         <th>Gateway</th>
                         <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ( $transactions->have_posts() ) : ?>
                         <?php while ( $transactions->have_posts() ) : $transactions->the_post();
                             $status = get_post_meta( get_the_ID(), '_txn_status', true );
-                            $color = $status === 'completed' ? '#198754' : '#f59e0b';
+                            $color = $status === 'completed' ? '#198754' : ($status === 'pending' ? '#f59e0b' : '#dc3545');
                         ?>
                             <tr>
                                 <td><?php echo get_the_date(); ?></td>
@@ -344,10 +428,16 @@ function org_ecosystem_transactions_page() {
                                 <td><strong>₱ <?php echo number_format( get_post_meta( get_the_ID(), '_txn_amount', true ), 2 ); ?></strong></td>
                                 <td><?php echo esc_html( strtoupper( get_post_meta( get_the_ID(), '_txn_gateway', true ) ) ); ?></td>
                                 <td><span class="badge" style="background: <?php echo $color; ?>; color: #fff; padding: 4px 8px; border-radius: 4px;"><?php echo esc_html( ucfirst( $status ) ); ?></span></td>
+                                <td>
+                                    <?php if ( $status === 'pending' ) : ?>
+                                        <a href="<?php echo wp_nonce_url( add_query_arg( array( 'txn_id' => get_the_ID(), 'status' => 'completed' ) ), 'org_update_txn' ); ?>" class="button button-small"><?php _e( 'Complete', 'org-ecosystem' ); ?></a>
+                                        <a href="<?php echo wp_nonce_url( add_query_arg( array( 'txn_id' => get_the_ID(), 'status' => 'cancelled' ) ), 'org_update_txn' ); ?>" class="button button-small"><?php _e( 'Cancel', 'org-ecosystem' ); ?></a>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
                         <?php endwhile; wp_reset_postdata(); ?>
                     <?php else : ?>
-                        <tr><td colspan="6">No transactions found.</td></tr>
+                        <tr><td colspan="7">No transactions found.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -740,6 +830,56 @@ function org_ecosystem_directory_settings_page() {
 /**
  * Support Tickets Page Callback
  */
+/**
+ * Internal Messages Page Callback
+ */
+function org_ecosystem_internal_messages_page() {
+    $messages = new WP_Query( array(
+        'post_type' => 'org_message',
+        'meta_query' => array(
+            array( 'key' => '_msg_receiver_id', 'value' => 0 ), // 0 = Admin
+        ),
+        'posts_per_page' => -1,
+    ) );
+    ?>
+    <div class="wrap">
+        <h1><?php _e( 'Internal Communication Hub (Admin Inbox)', 'org-ecosystem' ); ?></h1>
+        <p class="description"><?php _e( 'Direct messages sent to the organization from members.', 'org-ecosystem' ); ?></p>
+
+        <div class="card p-4 mt-4" style="border-radius: 12px; background: #fff; border: 1px solid #e2e8f0;">
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Sender</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ( $messages->have_posts() ) : ?>
+                        <?php while ( $messages->have_posts() ) : $messages->the_post(); ?>
+                            <tr>
+                                <td><?php echo get_the_date(); ?></td>
+                                <td><?php the_author(); ?></td>
+                                <td><strong><?php the_title(); ?></strong></td>
+                                <td><?php echo wp_trim_words( get_the_content(), 20 ); ?></td>
+                                <td>
+                                    <a href="<?php echo admin_url('post.php?post='.get_the_ID().'&action=edit'); ?>" class="button button-small">View & Reply</a>
+                                </td>
+                            </tr>
+                        <?php endwhile; wp_reset_postdata(); ?>
+                    <?php else : ?>
+                        <tr><td colspan="5">No internal messages found.</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php
+}
+
 function org_ecosystem_tickets_page() {
 	if ( isset( $_GET['ticket_id'] ) && isset( $_GET['new_status'] ) ) {
 		check_admin_referer( 'org_update_ticket' );
