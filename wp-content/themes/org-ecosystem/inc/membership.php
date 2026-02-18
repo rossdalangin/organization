@@ -634,3 +634,36 @@ function org_ecosystem_handle_receipt_download() {
 	}
 }
 add_action( 'template_redirect', 'org_ecosystem_handle_receipt_download' );
+
+/**
+ * Handle Login Redirection
+ */
+function org_ecosystem_login_redirect( $redirect_to, $request, $user ) {
+	if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+		if ( in_array( 'administrator', $user->roles ) || in_array( 'super_admin', $user->roles ) || in_array( 'org_admin', $user->roles ) ) {
+			return admin_url( 'admin.php?page=org-settings' );
+		} else {
+			return org_ecosystem_get_page_url( 'templates/dashboard.php' );
+		}
+	}
+	return $redirect_to;
+}
+add_filter( 'login_redirect', 'org_ecosystem_login_redirect', 10, 3 );
+
+/**
+ * Handle Membership Upgrade Action
+ */
+function org_ecosystem_handle_membership_upgrade() {
+	if ( ! is_user_logged_in() ) return;
+	check_admin_referer( 'org_upgrade_membership_action' );
+
+	$user_id = get_current_user_id();
+	$new_level = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : 'professional';
+
+	// Process Payment (Yearly Fee)
+	if ( org_ecosystem_process_payment( $user_id, $new_level, 'unified_gateway' ) ) {
+		wp_redirect( add_query_arg( array( 'action' => 'billing', 'upgraded' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+		exit;
+	}
+}
+add_action( 'admin_post_org_upgrade_membership', 'org_ecosystem_handle_membership_upgrade' );

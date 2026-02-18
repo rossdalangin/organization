@@ -193,7 +193,7 @@ function org_ecosystem_settings_page() {
                 <div class="stat-card" style="padding: 25px; background: #f0f7ff; border-radius: 15px; border-left: 5px solid #0d6efd;">
                     <div style="color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;"><?php _e( 'Active Base', 'org-ecosystem' ); ?></div>
                     <div style="font-size: 32px; font-weight: 800; color: #1e293b; margin: 10px 0;"><?php echo number_format($active_members); ?></div>
-                    <div style="font-size: 13px; color: #0d6efd; font-weight: 600;"><span class="dashicons dashicons-groups" style="font-size: 16px; width: 16px; height: 16px;"></span> <?php _e( 'Verified Professionals', 'org-ecosystem' ); ?></div>
+                    <div style="font-size: 13px; color: #0d6efd; font-weight: 600;"><a href="<?php echo admin_url('admin.php?page=org-membership&view=upgraded'); ?>" style="color: inherit; text-decoration: none;"><span class="dashicons dashicons-groups" style="font-size: 16px; width: 16px; height: 16px;"></span> <?php _e( 'View Upgraded Accounts', 'org-ecosystem' ); ?></a></div>
                 </div>
                 <div class="stat-card" style="padding: 25px; background: #f0fff4; border-radius: 15px; border-left: 5px solid #16a34a;">
                     <div style="color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;"><?php _e( 'Gross Revenue', 'org-ecosystem' ); ?></div>
@@ -799,55 +799,105 @@ function org_ecosystem_tickets_page() {
  * Membership Page Callback
  */
 function org_ecosystem_membership_page() {
+    $view = isset( $_GET['view'] ) ? sanitize_text_field( $_GET['view'] ) : 'all';
 	?>
 	<div class="wrap">
-		<h1><?php _e( 'Member Growth & Tiers', 'org-ecosystem' ); ?></h1>
+		<h1><?php echo $view === 'upgraded' ? __( 'Upgraded (Active) Accounts', 'org-ecosystem' ) : __( 'Member Growth & Tiers', 'org-ecosystem' ); ?></h1>
 		<p class="description"><?php _e( 'Manage registration approvals and monitor your membership base.', 'org-ecosystem' ); ?></p>
 
 		<?php if ( isset( $_GET['approved'] ) ) : ?>
 			<div class="updated settings-error notice is-dismissible"><p><strong><?php _e( 'Member approved successfully!', 'org-ecosystem' ); ?></strong></p></div>
 		<?php endif; ?>
 
-		<div class="card p-5 mb-4 bg-white border" style="border-radius: 15px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-			<h3 class="mt-0" style="color: #1e293b; display: flex; align-items: center; gap: 10px;"><span class="dashicons dashicons-clock" style="color: #f59e0b;"></span> <?php _e( 'Pending Applications', 'org-ecosystem' ); ?></h3>
-			<p class="description mb-4"><?php _e( 'These professionals have requested to join. Approve them to publish their profiles to the public directory.', 'org-ecosystem' ); ?></p>
-			<?php
-			$pending_members = new WP_Query( array(
-				'post_type' => 'member',
-				'post_status' => 'pending',
-				'posts_per_page' => -1,
-			) );
+        <?php if ( $view === 'upgraded' ) : ?>
+            <div class="card p-5 mb-4 bg-white border" style="border-radius: 15px; border: 1px solid #e2e8f0;">
+                <h3 class="mt-0"><?php _e( 'Active Professional Network', 'org-ecosystem' ); ?></h3>
+                <p class="description"><?php _e( 'These members have upgraded their accounts and are visible in the directory.', 'org-ecosystem' ); ?></p>
+                <?php
+                $active_members_query = new WP_Query( array(
+                    'post_type' => 'member',
+                    'post_status' => 'publish',
+                    'meta_key' => '_member_status',
+                    'meta_value' => 'active',
+                    'posts_per_page' => -1,
+                ) );
 
-			if ( $pending_members->have_posts() ) : ?>
-				<table class="wp-list-table widefat fixed striped mt-4" style="border: none;">
-					<thead>
-						<tr>
-							<th style="padding: 12px; font-weight: 700; background: #f8fafc;">Applicant Name</th>
-							<th style="padding: 12px; font-weight: 700; background: #f8fafc;">Email Address</th>
-							<th style="padding: 12px; font-weight: 700; background: #f8fafc;">Date Joined</th>
-							<th style="padding: 12px; font-weight: 700; background: #f8fafc;">Review</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php while ( $pending_members->have_posts() ) : $pending_members->the_post(); ?>
-							<tr>
-								<td style="padding: 12px;"><strong><?php the_title(); ?></strong></td>
-								<td style="padding: 12px;"><?php echo get_the_author_meta( 'user_email' ); ?></td>
-								<td style="padding: 12px;"><?php echo get_the_date(); ?></td>
-								<td style="padding: 12px;">
-									<a href="<?php echo wp_nonce_url( admin_url( 'admin-post.php?action=org_approve_member&member_id=' . get_the_ID() ), 'org_approve_member_action' ); ?>" class="button button-primary"><?php _e( 'Approve & Activate', 'org-ecosystem' ); ?></a>
-								</td>
-							</tr>
-						<?php endwhile; wp_reset_postdata(); ?>
-					</tbody>
-				</table>
-			<?php else : ?>
-				<div style="background: #f8fafc; padding: 40px; border-radius: 12px; text-align: center; border: 1px dashed #cbd5e1;">
-					<span class="dashicons dashicons-yes-alt" style="font-size: 40px; width: 40px; height: 40px; color: #10b981; margin-bottom: 10px;"></span>
-					<p class="text-muted" style="font-size: 16px; margin: 0;"><?php _e( 'All applications have been processed.', 'org-ecosystem' ); ?></p>
-				</div>
-			<?php endif; ?>
-		</div>
+                if ( $active_members_query->have_posts() ) : ?>
+                    <table class="wp-list-table widefat fixed striped mt-4">
+                        <thead>
+                            <tr>
+                                <th>Member Name</th>
+                                <th>Membership Level</th>
+                                <th>Joined Date</th>
+                                <th>Renewal Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ( $active_members_query->have_posts() ) : $active_members_query->the_post();
+                                $user_id = get_post_field( 'post_author', get_the_ID() );
+                                $level = get_user_meta( $user_id, '_membership_level', true );
+                                $renewal = get_post_meta( get_the_ID(), '_member_renewal_date', true );
+                            ?>
+                                <tr>
+                                    <td><strong><?php the_title(); ?></strong></td>
+                                    <td><span class="badge bg-primary" style="background: #2563eb; color: #fff; padding: 3px 8px; border-radius: 4px;"><?php echo esc_html( ucfirst( $level ) ); ?></span></td>
+                                    <td><?php echo get_the_date(); ?></td>
+                                    <td><?php echo $renewal ?: 'N/A'; ?></td>
+                                    <td><span class="text-success fw-bold"><span class="dashicons dashicons-yes"></span> Upgraded</span></td>
+                                </tr>
+                            <?php endwhile; wp_reset_postdata(); ?>
+                        </tbody>
+                    </table>
+                <?php else : ?>
+                    <p class="text-muted"><?php _e( 'No upgraded members found.', 'org-ecosystem' ); ?></p>
+                <?php endif; ?>
+                <div class="mt-4">
+                    <a href="<?php echo admin_url('admin.php?page=org-membership'); ?>" class="button"><?php _e( 'Back to All Members', 'org-ecosystem' ); ?></a>
+                </div>
+            </div>
+        <?php else : ?>
+            <div class="card p-5 mb-4 bg-white border" style="border-radius: 15px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                <h3 class="mt-0" style="color: #1e293b; display: flex; align-items: center; gap: 10px;"><span class="dashicons dashicons-clock" style="color: #f59e0b;"></span> <?php _e( 'Pending Applications', 'org-ecosystem' ); ?></h3>
+                <p class="description mb-4"><?php _e( 'These professionals have requested to join. Approve them to publish their profiles to the public directory.', 'org-ecosystem' ); ?></p>
+                <?php
+                $pending_members = new WP_Query( array(
+                    'post_type' => 'member',
+                    'post_status' => 'pending',
+                    'posts_per_page' => -1,
+                ) );
+
+                if ( $pending_members->have_posts() ) : ?>
+                    <table class="wp-list-table widefat fixed striped mt-4" style="border: none;">
+                        <thead>
+                            <tr>
+                                <th style="padding: 12px; font-weight: 700; background: #f8fafc;">Applicant Name</th>
+                                <th style="padding: 12px; font-weight: 700; background: #f8fafc;">Email Address</th>
+                                <th style="padding: 12px; font-weight: 700; background: #f8fafc;">Date Joined</th>
+                                <th style="padding: 12px; font-weight: 700; background: #f8fafc;">Review</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ( $pending_members->have_posts() ) : $pending_members->the_post(); ?>
+                                <tr>
+                                    <td style="padding: 12px;"><strong><?php the_title(); ?></strong></td>
+                                    <td style="padding: 12px;"><?php echo get_the_author_meta( 'user_email' ); ?></td>
+                                    <td style="padding: 12px;"><?php echo get_the_date(); ?></td>
+                                    <td style="padding: 12px;">
+                                        <a href="<?php echo wp_nonce_url( admin_url( 'admin-post.php?action=org_approve_member&member_id=' . get_the_ID() ), 'org_approve_member_action' ); ?>" class="button button-primary"><?php _e( 'Approve & Activate', 'org-ecosystem' ); ?></a>
+                                    </td>
+                                </tr>
+                            <?php endwhile; wp_reset_postdata(); ?>
+                        </tbody>
+                    </table>
+                <?php else : ?>
+                    <div style="background: #f8fafc; padding: 40px; border-radius: 12px; text-align: center; border: 1px dashed #cbd5e1;">
+                        <span class="dashicons dashicons-yes-alt" style="font-size: 40px; width: 40px; height: 40px; color: #10b981; margin-bottom: 10px;"></span>
+                        <p class="text-muted" style="font-size: 16px; margin: 0;"><?php _e( 'All applications have been processed.', 'org-ecosystem' ); ?></p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
 		<div class="card p-5" style="background: #fff; border: 1px solid #e2e8f0; margin-bottom: 20px; border-radius: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
 			<h3 style="margin-top: 0; color: #1e293b;"><span class="dashicons dashicons-money" style="color: #10b981; margin-right: 10px;"></span> <?php _e( 'Tiered Membership Performance', 'org-ecosystem' ); ?></h3>

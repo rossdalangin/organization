@@ -15,6 +15,12 @@ function org_shortcode_directory( $atts ) {
         'posts_per_page' => get_option( 'org_directory_per_page', 12 ),
         'post_status' => 'publish',
         'paged' => $paged,
+        'meta_query' => array(
+            array(
+                'key' => '_member_status',
+                'value' => 'active',
+            ),
+        ),
     ) );
 
     ob_start();
@@ -92,6 +98,12 @@ function org_shortcode_product_grid( $atts ) {
     $args = array(
         'post_type' => 'product',
         'posts_per_page' => $a['count'],
+        'meta_query' => array(
+            array(
+                'key' => '_member_status', // Linked status check
+                'value' => 'active',
+            ),
+        ),
     );
     if ( $a['featured'] ) {
         $args['meta_query'] = array(
@@ -125,6 +137,12 @@ function org_shortcode_business_grid( $atts ) {
         'post_type' => 'business',
         'posts_per_page' => $a['count'],
         'paged' => $paged,
+        'meta_query' => array(
+            array(
+                'key' => '_member_status', // Inherited status logic or manual assignment
+                'value' => 'active',
+            ),
+        ),
     ) );
 
     ob_start();

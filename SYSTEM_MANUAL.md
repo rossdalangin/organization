@@ -28,14 +28,14 @@ Most page content is managed through the **Org Plugin Settings > Page Content** 
 
 ---
 
-## 3. Shortcode Library
-The theme provides powerful shortcodes for building custom ecosystem sections.
+## 3. Shortcode Library (Strict Visibility)
+The theme provides powerful shortcodes for building custom ecosystem sections. **Note:** Members, Businesses, and Products only appear if the member status is **Active** (Upgraded).
 
 | Shortcode | Purpose | Renders |
 |---|---|---|
-| `[org_directory]` | Main member directory | Searchable AJAX list of members. |
-| `[org_business_grid]`| Business directory | Grid of all member-owned businesses. |
-| `[org_product_grid]` | Product marketplace | Grid of member products/services. |
+| `[org_directory]` | Main member directory | Searchable AJAX list of active members. |
+| `[org_business_grid]`| Business directory | Grid of all active member-owned businesses. |
+| `[org_product_grid]` | Product marketplace | Grid of active member products/services. |
 | `[org_event_grid]` | Upcoming events | Chronological grid of organization events. |
 | `[org_resource_grid]`| Resource library | Grid of downloadable member resources. |
 | `[org_job_list]` | Job board | Structured list of active job openings. |
@@ -46,38 +46,28 @@ The theme provides powerful shortcodes for building custom ecosystem sections.
 ---
 
 ## 4. Ecosystem Automation (Setup Tool)
-The **Org Plugin Settings > System Setup** tool automates the creation and configuration of 19 essential pages:
-1.  **Member Dashboard** (Template: `page-dashboard.php`)
-2.  **Contact Us** (Template: `page-contact.php`)
-3.  **Join Us** (Template: `page-join.php`)
-4.  **Support Our Mission** (Shortcode: `[org_donation_form]`)
-5.  **About Us** (Template: `page-about.php`)
-6.  **Our Mission** (Template: `page-mission.php`)
-7.  **Membership Plans** (Shortcode: `[org_pricing_table]`)
-8.  **Referral Program** (Template: `page-referrals.php`)
-9.  **FAQ** (Template: `page-faq.php`)
-10. **Member Directory** (Shortcode: `[org_directory]`)
-11. **Governance & Leadership** (Template: `page-governance.php`)
-12. **Partner With Us** (Template: `page-partners.php`)
-13. **Privacy Policy** (Template: `page-privacy.php`)
-14. **Terms & Conditions** (Template: `page-terms.php`)
-15. **Business Showcase** (Shortcode: `[org_business_grid]`)
-16. **Upcoming Events** (Shortcode: `[org_event_grid]`)
-17. **Member Resources** (Shortcode: `[org_resource_grid]`)
-18. **Product Marketplace** (Shortcode: `[org_product_grid]`)
-19. **Job Board** (Shortcode: `[org_job_list]`)
+The **Org Plugin Settings > System Setup** tool automates the creation and configuration of 19 essential pages.
 
 ---
 
-## 5. Forms and Data Submission
-Forms are handled by `admin-post.php` hooks in `inc/template-functions.php` and `inc/membership.php`.
-*   **Redirects:** Successful submissions typically redirect back with a `?success=true` or similar query parameter.
-*   **Permalinks:** The theme uses `org_ecosystem_get_page_url()` to resolve template paths to live permalinks dynamically.
+## 5. Membership & Payment Process
+
+### Step 1: Registration
+A user fills the form at `/join`. This creates:
+1.  A standard WordPress **User** (Role: Subscriber).
+2.  A **Member** Custom Post Type record (Status: Pending).
+
+### Step 2: Payment & Upgrade
+Members can choose a plan. Payments are currently processed through a unified ledger.
+*   **Upgrade Action:** Logged-in users can initiate a yearly upgrade via the Dashboard > Billing tab.
+*   **Admin Review:** Go to **Org Plugin Settings > Transactions** to view and approve payments.
+*   **Upgraded Status:** Once a payment is marked "Completed", the member's meta `_member_status` is set to **Active**.
+
+### Step 3: Visibility
+Only **Active** members are visible in the public directory and marketplace grids.
 
 ---
 
-## 6. Troubleshooting 404s
-If you see 404 errors on any page or button:
-1.  Go to **Org Plugin Settings > System Setup**.
-2.  Click **Auto-Create Required Pages** (to ensure pages exist).
-3.  Go to **Settings > Permalinks** and click **Save Changes** (to flush rules).
+## 6. Login Redirection
+*   **Administrators/Admins:** Redirected to `wp-admin` Command Center.
+*   **Standard Members:** Redirected to their frontend Member Dashboard.

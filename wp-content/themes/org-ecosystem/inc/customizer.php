@@ -22,9 +22,9 @@ function org_ecosystem_customize_register( $wp_customize ) {
 	) );
 
 	$global_colors = array(
-		'primary_color'    => array( 'label' => __( 'Primary Brand Color', 'org-ecosystem' ), 'default' => '#0d6efd' ),
-		'secondary_color'  => array( 'label' => __( 'Secondary Color', 'org-ecosystem' ), 'default' => '#6c757d' ),
-		'accent_color'     => array( 'label' => __( 'Accent Color', 'org-ecosystem' ), 'default' => '#0dcaf0' ),
+		'primary_color'    => array( 'label' => __( 'Primary Brand Color', 'org-ecosystem' ), 'default' => '#2563eb' ),
+		'secondary_color'  => array( 'label' => __( 'Secondary Color', 'org-ecosystem' ), 'default' => '#475569' ),
+		'accent_color'     => array( 'label' => __( 'Accent Color', 'org-ecosystem' ), 'default' => '#38bdf8' ),
 	);
 
 	foreach ( $global_colors as $id => $data ) {
@@ -163,10 +163,10 @@ function org_ecosystem_customize_register( $wp_customize ) {
 		$wp_customize->add_control( $sec_id . '_line_height', array( 'label' => 'Line Height', 'section' => $section_key, 'type' => 'text' ) );
 
 		// Spacing
-		$wp_customize->add_setting( $sec_id . '_padding_top', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_padding_top', array( 'default' => '80', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_padding_top', array( 'label' => 'Padding Top (px)', 'section' => $section_key, 'type' => 'number' ) );
 
-		$wp_customize->add_setting( $sec_id . '_padding_bottom', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
+		$wp_customize->add_setting( $sec_id . '_padding_bottom', array( 'default' => '80', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );
 		$wp_customize->add_control( $sec_id . '_padding_bottom', array( 'label' => 'Padding Bottom (px)', 'section' => $section_key, 'type' => 'number' ) );
 
 		$wp_customize->add_setting( $sec_id . '_margin_top', array( 'default' => '', 'sanitize_callback' => 'absint', 'transport' => 'postMessage' ) );

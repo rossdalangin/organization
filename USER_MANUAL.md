@@ -9,13 +9,12 @@ Welcome to the Organization Ecosystem. This manual will guide you through config
 ### Step 1: Branding and Identity
 1. Go to **Appearance > Customize**.
 2. Navigate to **Brand Identity & Colors**.
-3. Upload your organization's logo and select your primary brand colors.
-4. Set your typography in the **Typography & Fonts** section.
+   - *Default values have been set to professional Slate Blue and White for a clean SaaS look.*
+3. Set your typography in the **Typography & Fonts** section.
 
-### Step 2: Instant Ecosystem Deployment (Crucial)
+### Step 2: Instant Ecosystem Deployment
 1. Go to **Org Plugin Settings > System Setup**.
 2. Click **Auto-Create Required Pages**.
-3. This creates all 19 essential pages (Directory, Dashboard, Jobs, Partners, etc.) pre-configured with the correct modern templates and shortcodes.
 
 ### Step 3: Setting Up Payments
 1. Go to **Org Plugin Settings > Payments**.
@@ -25,46 +24,28 @@ Welcome to the Organization Ecosystem. This manual will guide you through config
 
 ---
 
-## 2. Managing Content and Ecosystem
+## 2. Membership & Upgrades
 
-### Using Shortcodes
-You can easily build custom pages by pasting these shortcodes into any Gutenberg block:
-*   `[org_directory]` - The primary searchable member list.
-*   `[org_business_grid]` - A directory of all member businesses.
-*   `[org_event_grid]` - Your organization's upcoming event schedule.
-*   `[org_job_list]` - A professional job board for your members.
-*   `[org_resource_grid]` - A library of downloadable PDFs and guides.
+### For Members: How to Upgrade
+1. Log in to your account.
+2. Go to your **Member Dashboard**.
+3. Click the **Billing & Subscription** tab.
+4. Click **Upgrade Membership**.
+5. Select your plan (yearly fee) and complete the payment.
+6. **Benefit:** Once upgraded (status becomes 'Active'), your profile will automatically appear in the public **Member Directory**.
 
-### Governance and Partners
-*   **Governance Page:** Showcases your leadership. Edit the content in **Pages > Governance & Leadership**.
-*   **Partners Page:** Attract sponsors. Edit in **Pages > Partner With Us**. These pages use specialized layouts designed for professional appeal.
-
----
-
-## 3. Increasing Revenue (Profitability Features)
-
-### Lead Gating (The #1 Revenue Driver)
-1. Navigate to **Appearance > Customize > Revenue & Lead Protection**.
-2. Check **Enable Lead Gating**.
-3. This hides member contact details from guests, forcing them to join to see phone numbers and emails.
-
-### Featured Listing Promotions
-Members can promote their profile to the top of the directory directly from their dashboard.
-- **Admin Review:** Payments appear in **Org Plugin Settings > Transactions**.
-- **Payouts:** Referrals earn 10% on member sales. Manage payouts in **Org Plugin Settings > Withdrawals**.
+### For Admins: Managing Upgraded Accounts
+1. Go to the **Org Plugin Settings** (Command Center).
+2. Click the **View Upgraded Accounts** link in the "Active Base" card.
+3. This displays a filtered list of all members who have paid and are currently active in the directory.
+4. You can check the **Renewal Date** to see when their next payment is due.
 
 ---
 
-## 4. Member Dashboard Features
-
-Members can log in to their dashboard to:
-*   **Edit Profile:** Update their mini-website/profile.
-*   **Manage Products:** List items for sale in the marketplace.
-*   **Community Chat:** Engage in the real-time group messaging area.
-*   **Referral Center:** Get their unique referral code to earn commissions.
-*   **Billing History:** Download professional receipts and view invoices.
+## 3. Standard Operating Procedures (SOPs)
+For detailed step-by-step instructions for each specific role (Admin, Manager, Member), please refer to the `SOP_USER_LEVELS.md` file included in this theme.
 
 ---
 
-## 5. Modern UI & Animations
-The homepage and directories feature **Intersection Observer** scroll animations. Elements will smoothly fade in as the user scrolls down, creating a high-end SaaS experience. No configuration is required; it's built into the theme's core CSS.
+## 4. Modern UI & Animations
+The theme uses generous 80px section padding and professional blue accents. Scroll animations are handled automatically by the Intersection Observer logic—no complex setup required.
