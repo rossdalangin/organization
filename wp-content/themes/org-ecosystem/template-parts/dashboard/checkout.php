@@ -36,6 +36,22 @@ if ( $type === 'membership' ) {
         $amount = get_post_meta( $item_id, '_product_price', true ) ?: 0;
         $description = __( 'Product/Service Purchase', 'org-ecosystem' );
     }
+} elseif ( $type === 'job_listing' ) {
+    $job = get_post( $item_id );
+    if ( $job ) {
+        $item_name = $job->post_title;
+        $amount = get_theme_mod( 'job_listing_price', '1000' );
+        $description = __( 'Job Board Listing Fee (Vendor)', 'org-ecosystem' );
+    }
+} elseif ( $type === 'job_listing_promoted' ) {
+    $job = get_post( $item_id );
+    if ( $job ) {
+        $item_name = $job->post_title;
+        $listing_fee = get_theme_mod( 'job_listing_price', '1000' );
+        $promo_fee = get_theme_mod( 'promotion_price', '500' );
+        $amount = floatval($listing_fee) + floatval($promo_fee);
+        $description = __( 'Job Listing Fee + Featured Promotion', 'org-ecosystem' );
+    }
 }
 
 if ( ! $item_name ) {

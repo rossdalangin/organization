@@ -297,6 +297,16 @@ add_action( 'init', 'org_ecosystem_handle_email_verification' );
 /**
  * Auto-approve or Manual Approval Logic
  */
+function org_ecosystem_update_linked_content_status( $user_id, $status ) {
+    $types = array( 'business', 'product' );
+    foreach ( $types as $type ) {
+        $items = get_posts( array( 'post_type' => $type, 'author' => $user_id, 'posts_per_page' => -1, 'post_status' => 'any' ) );
+        foreach ( $items as $item ) {
+            update_post_meta( $item->ID, '_member_status', $status );
+        }
+    }
+}
+
 function org_ecosystem_approve_member( $member_id ) {
 	$member = get_post( $member_id );
 	if ( ! $member || $member->post_type !== 'member' ) return;
@@ -309,8 +319,12 @@ function org_ecosystem_approve_member( $member_id ) {
 	update_post_meta( $member_id, '_member_status', 'active' );
 
 	$user_id = $member->post_author;
+    org_ecosystem_update_linked_content_status( $user_id, 'active' );
+
 	$user = new WP_User( $user_id );
-	$user->set_role( 'member' ); // Assign the 'member' role upon approval
+    if ( ! in_array( 'administrator', $user->roles ) ) {
+	    $user->set_role( 'member' ); // Assign the 'member' role upon approval
+    }
 
 	// Notify member
 	// wp_mail( get_the_author_meta('user_email', $user_id), 'Welcome!', 'Your membership has been approved.' );
@@ -559,6 +573,7 @@ function org_ecosystem_check_expirations() {
 			if ( $renewal_date <= $today && $renewal_date !== '0000-00-00' ) {
 				// Expired
 				update_post_meta( $member_id, '_member_status', 'expired' );
+                org_ecosystem_update_linked_content_status( $user_id, 'expired' );
 
 				$subject = get_option( 'org_expiry_email_subject', 'Your Membership has Expired' );
 				$body = get_option( 'org_expiry_email_body', 'Hi {user_name}, your membership at {site_name} has expired. Please renew to keep your benefits.' );

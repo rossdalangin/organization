@@ -159,15 +159,14 @@ function org_ecosystem_handle_event_registration() {
 	$registrations = get_user_meta( $user_id, '_registered_events', true ) ?: array();
 	if ( ! in_array( $event_id, $registrations ) ) {
 
-		// Use Unified Payment for paid events
+		// Redirect to Checkout for paid events
 		if ( $is_paid ) {
-            org_ecosystem_process_unified_payment( array(
-                'amount'  => $price,
-                'gateway' => 'offline', // Default for dashboard
-                'type'    => 'event_ticket',
-                'item_id' => $event_id,
-                'user_id' => $user_id
-            ) );
+             wp_redirect( add_query_arg( array(
+                'action'  => 'checkout',
+                'type'    => 'event',
+                'item_id' => $event_id
+            ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+            exit;
 		}
 
 		$registrations[] = $event_id;
@@ -258,6 +257,8 @@ function org_ecosystem_handle_job_save() {
 	$title = sanitize_text_field( $_POST['job_title'] );
 	$description = sanitize_textarea_field( $_POST['job_description'] );
 	$location = intval( $_POST['job_location'] );
+    $salary = sanitize_text_field( $_POST['job_salary'] );
+    $type = sanitize_text_field( $_POST['job_type'] );
     $promote = isset( $_POST['job_promote'] ) ? '1' : '0';
 
 	if ( $job_id ) {
@@ -278,19 +279,36 @@ function org_ecosystem_handle_job_save() {
 		) );
 	}
 
+    if ( $job_id ) {
+        update_post_meta( $job_id, '_job_salary', $salary );
+        update_post_meta( $job_id, '_job_type', $type );
+    }
+
 	if ( $job_id ) {
 		if ( $location ) {
 			wp_set_post_terms( $job_id, array( $location ), 'location' );
 		}
-        update_post_meta( $job_id, '_job_is_featured', $promote );
 
-        if ( $promote === '1' ) {
-            org_ecosystem_process_unified_payment( array(
-                'amount'  => get_theme_mod( 'promotion_price', '500' ),
-                'gateway' => 'offline',
-                'type'    => 'job_promotion',
+        $is_vendor = current_user_can( 'vendor' );
+        $job_id_existing = isset( $_POST['job_id'] ) ? intval( $_POST['job_id'] ) : 0;
+
+        $checkout_type = '';
+        if ( ! $job_id_existing && $is_vendor ) {
+            $checkout_type = ( $promote === '1' ) ? 'job_listing_promoted' : 'job_listing';
+        } elseif ( $promote === '1' ) {
+            $checkout_type = 'promotion';
+        }
+
+        if ( $checkout_type ) {
+             if ( $promote === '1' ) {
+                 update_post_meta( $job_id, '_job_is_featured', 'pending' );
+             }
+             wp_redirect( add_query_arg( array(
+                'action'  => 'checkout',
+                'type'    => $checkout_type,
                 'item_id' => $job_id
-            ) );
+            ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+            exit;
         }
 	}
 

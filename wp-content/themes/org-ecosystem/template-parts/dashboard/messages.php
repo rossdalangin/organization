@@ -67,6 +67,7 @@
             $user_id = get_current_user_id();
             $inbox = new WP_Query( array(
                 'post_type' => 'org_message',
+                'post_status' => 'publish',
                 'meta_query' => array(
                     array( 'key' => '_msg_receiver_id', 'value' => $user_id ),
                 )
@@ -106,6 +107,7 @@
             <?php
             $sent = new WP_Query( array(
                 'post_type' => 'org_message',
+                'post_status' => 'publish',
                 'author'    => $user_id,
             ) );
 

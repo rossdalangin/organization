@@ -7,7 +7,7 @@
 
 function org_ecosystem_register_taxonomies() {
 	// Industry
-	register_taxonomy( 'industry', array( 'member', 'business' ), array(
+	register_taxonomy( 'industry', array( 'member', 'business', 'job' ), array(
 		'labels' => array(
 			'name' => __( 'Industries', 'org-ecosystem' ),
 			'singular_name' => __( 'Industry', 'org-ecosystem' ),
@@ -27,7 +27,7 @@ function org_ecosystem_register_taxonomies() {
 	) );
 
 	// Location
-	register_taxonomy( 'location', array( 'member', 'business', 'event' ), array(
+	register_taxonomy( 'location', array( 'member', 'business', 'event', 'job' ), array(
 		'labels' => array(
 			'name' => __( 'Locations', 'org-ecosystem' ),
 			'singular_name' => __( 'Location', 'org-ecosystem' ),

@@ -391,11 +391,33 @@ function org_ecosystem_transactions_page() {
             $item_id = get_post_meta( $txn_id, '_txn_item_id', true );
             $amount = get_post_meta( $txn_id, '_txn_amount', true );
 
-            if ( $type === 'membership' || $type === 'professional' || $type === 'vendor' || $type === 'corporate' ) {
+            if ( $type === 'membership' || $type === 'professional' || $type === 'vendor' || $type === 'corporate' || $type === 'lifetime' ) {
                 org_ecosystem_process_payment( $user_id, $type, 'manual_approval' );
             }
             if ( $type === 'product_sale' ) {
                 org_ecosystem_handle_commission( $txn_id, $amount, $item_id );
+            }
+            if ( $type === 'promotion' ) {
+                $item_post_type = get_post_type($item_id);
+                $meta_key = ($item_post_type === 'member') ? '_member_is_featured' : ($item_post_type === 'job' ? '_job_is_featured' : '_product_is_featured');
+                update_post_meta( $item_id, $meta_key, '1' );
+            }
+            if ( $type === 'job_listing' ) {
+                wp_update_post( array( 'ID' => $item_id, 'post_status' => 'publish' ) );
+            }
+            if ( $type === 'job_listing_promoted' ) {
+                wp_update_post( array( 'ID' => $item_id, 'post_status' => 'publish' ) );
+                update_post_meta( $item_id, '_job_is_featured', '1' );
+            }
+            if ( $type === 'event' ) {
+                $registrations = get_user_meta( $user_id, '_registered_events', true ) ?: array();
+                if ( ! in_array( $item_id, $registrations ) ) {
+                    $registrations[] = $item_id;
+                    update_user_meta( $user_id, '_registered_events', $registrations );
+                    $attendees = get_post_meta( $item_id, '_event_attendees', true ) ?: array();
+                    $attendees[] = $user_id;
+                    update_post_meta( $item_id, '_event_attendees', $attendees );
+                }
             }
         }
         echo '<div class="updated"><p>Transaction updated.</p></div>';

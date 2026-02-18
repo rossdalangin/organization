@@ -71,13 +71,27 @@ $listing_fee = get_theme_mod( 'job_listing_price', '1000' );
 					) );
 					?>
 				</div>
-				<div class="col-md-6 mb-4">
-					<label class="form-label d-block fw-bold small">
-						<input type="checkbox" name="job_promote" value="1" <?php checked( $job_to_edit ? get_post_meta($job_to_edit->ID, '_job_is_featured', true) : false, '1' ); ?>>
-						<?php printf( __( 'Feature this job (+ ₱ %s)', 'org-ecosystem' ), get_theme_mod( 'promotion_price', '500' ) ); ?>
-					</label>
-				</div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold small"><?php _e( 'Job Type', 'org-ecosystem' ); ?></label>
+                    <select name="job_type" class="form-select">
+                        <option value="full-time" <?php selected($job_to_edit ? get_post_meta($job_to_edit->ID, '_job_type', true) : 'full-time', 'full-time'); ?>>Full-time</option>
+                        <option value="part-time" <?php selected($job_to_edit ? get_post_meta($job_to_edit->ID, '_job_type', true) : '', 'part-time'); ?>>Part-time</option>
+                        <option value="contract" <?php selected($job_to_edit ? get_post_meta($job_to_edit->ID, '_job_type', true) : '', 'contract'); ?>>Contract</option>
+                        <option value="remote" <?php selected($job_to_edit ? get_post_meta($job_to_edit->ID, '_job_type', true) : '', 'remote'); ?>>Remote</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-bold small"><?php _e( 'Salary Range', 'org-ecosystem' ); ?></label>
+                    <input type="text" name="job_salary" class="form-control" value="<?php echo $job_to_edit ? esc_attr( get_post_meta($job_to_edit->ID, '_job_salary', true) ) : ''; ?>" placeholder="e.g. 50k - 80k">
+                </div>
 			</div>
+
+            <div class="mb-4">
+                <label class="form-label d-block fw-bold small">
+                    <input type="checkbox" name="job_promote" value="1" <?php checked( $job_to_edit ? get_post_meta($job_to_edit->ID, '_job_is_featured', true) : false, '1' ); ?>>
+                    <?php printf( __( 'Feature this job (+ ₱ %s)', 'org-ecosystem' ), get_theme_mod( 'promotion_price', '500' ) ); ?>
+                </label>
+            </div>
 
 			<button type="submit" class="btn btn-primary px-4 fw-bold">
 				<?php echo $job_to_edit ? __( 'Update Job', 'org-ecosystem' ) : ( $is_vendor ? __( 'Pay & Post Job', 'org-ecosystem' ) : __( 'Post Job', 'org-ecosystem' ) ); ?>

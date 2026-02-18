@@ -22,7 +22,10 @@ $job_query = isset( $args['query'] ) ? $args['query'] : $GLOBALS['wp_query'];
                         <div class="col-md-8">
                             <div class="d-flex align-items-center mb-2">
                                 <h5 class="fw-bold mb-0 me-3"><?php the_title(); ?></h5>
-                                <span class="badge bg-success-subtle text-success"><?php echo esc_html( ucfirst($type) ); ?></span>
+                                <span class="badge bg-success-subtle text-success me-2"><?php echo esc_html( ucfirst($type) ); ?></span>
+                                <?php if ( get_post_meta( get_the_ID(), '_job_is_featured', true ) === '1' ) : ?>
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i> <?php _e( 'Featured', 'org-ecosystem' ); ?></span>
+                                <?php endif; ?>
                             </div>
                             <p class="text-muted small mb-0"><i class="bi bi-building me-1"></i><?php echo get_the_author(); ?> &bull; <i class="bi bi-geo-alt me-1"></i><?php echo esc_html( get_post_meta( get_the_ID(), '_job_location', true ) ?: 'Remote' ); ?></p>
                         </div>
