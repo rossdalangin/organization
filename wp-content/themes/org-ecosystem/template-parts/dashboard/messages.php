@@ -80,18 +80,14 @@
 
             $inbox_args = array(
                 'post_type'   => 'org_message',
-                'post_status' => 'publish',
+                'post_status' => array('publish', 'pending', 'private'),
                 'orderby'     => 'date',
                 'order'       => 'DESC'
             );
 
             if ( $is_admin ) {
-                // Admins see messages sent to 'Admin' (0) or themselves
-                $inbox_args['meta_query'] = array(
-                    'relation' => 'OR',
-                    array( 'key' => '_msg_receiver_id', 'value' => 0 ),
-                    array( 'key' => '_msg_receiver_id', 'value' => $user_id ),
-                );
+                // Admins see ALL messages in their "Management Inbox"
+                // No meta_query needed if they see everything
             } else {
                 $inbox_args['meta_query'] = array(
                     array( 'key' => '_msg_receiver_id', 'value' => $user_id ),
@@ -140,7 +136,7 @@
             <?php
             $sent = new WP_Query( array(
                 'post_type' => 'org_message',
-                'post_status' => 'publish',
+                'post_status' => array('publish', 'pending', 'private'),
                 'author'    => $user_id,
             ) );
 

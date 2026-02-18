@@ -260,9 +260,9 @@ function org_ecosystem_handle_registration() {
                 'action'     => 'checkout',
                 'type'       => 'membership',
                 'plan'       => $plan
-            ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+            ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
         } else {
-		    wp_redirect( add_query_arg( 'registered', 'true', org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+		    wp_redirect( add_query_arg( 'registered', 'true', org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
         }
 		exit;
 	}
@@ -285,7 +285,7 @@ function org_ecosystem_handle_email_verification() {
 			// Optional: Auto-approve on email verify if configured
 			// org_ecosystem_approve_member( get_user_meta( $user_id, '_member_profile_id', true ) );
 
-			wp_redirect( add_query_arg( 'verified', 'true', org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+			wp_redirect( add_query_arg( 'verified', 'true', org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
 			exit;
 		} else {
 			wp_die( __( 'Invalid or expired verification token.', 'org-ecosystem' ) );
@@ -293,6 +293,26 @@ function org_ecosystem_handle_email_verification() {
 	}
 }
 add_action( 'init', 'org_ecosystem_handle_email_verification' );
+
+/**
+ * Sync Member Profile on User Registration
+ */
+function org_ecosystem_sync_member_profile( $user_id ) {
+    $member_id = get_user_meta( $user_id, '_member_profile_id', true );
+    if ( ! $member_id ) {
+        $user = get_userdata( $user_id );
+        $member_id = wp_insert_post( array(
+            'post_title' => $user->display_name,
+            'post_type' => 'member',
+            'post_status' => 'pending',
+            'post_author' => $user_id,
+        ) );
+        update_user_meta( $user_id, '_member_profile_id', $member_id );
+        update_post_meta( $member_id, '_member_status', 'pending' );
+        update_post_meta( $member_id, '_member_join_date', date( 'Y-m-d' ) );
+    }
+}
+add_action( 'user_register', 'org_ecosystem_sync_member_profile' );
 
 /**
  * Auto-approve or Manual Approval Logic
@@ -357,11 +377,21 @@ function org_ecosystem_register_roles() {
 		),
 		'member' => array(
 			'name' => __( 'Member', 'org-ecosystem' ),
-			'capabilities' => array( 'read' => true ),
+			'capabilities' => array(
+                'read' => true,
+                'upload_files' => true,
+                'edit_posts' => true, // Allowed for their own CPT items
+                'publish_posts' => true,
+            ),
 		),
 		'vendor' => array(
 			'name' => __( 'Vendor', 'org-ecosystem' ),
-			'capabilities' => array( 'read' => true ),
+			'capabilities' => array(
+                'read' => true,
+                'upload_files' => true,
+                'edit_posts' => true,
+                'publish_posts' => true,
+            ),
 		),
 		'volunteer' => array(
 			'name' => __( 'Volunteer', 'org-ecosystem' ),
@@ -498,6 +528,18 @@ function org_ecosystem_process_payment( $user_id, $level, $gateway ) {
 		$renewal_date = ( $duration === 'annual' ) ? date( 'Y-m-d', strtotime( '+1 year' ) ) : '0000-00-00';
 
 		$member_id = get_user_meta( $user_id, '_member_profile_id', true );
+		if ( ! $member_id ) {
+             // Fallback sync if Member CPT missing
+             $user = get_userdata($user_id);
+             $member_id = wp_insert_post( array(
+                'post_title' => $user->display_name,
+                'post_type' => 'member',
+                'post_status' => 'publish',
+                'post_author' => $user_id,
+            ) );
+            update_user_meta( $user_id, '_member_profile_id', $member_id );
+        }
+
 		if ( $member_id ) {
 			update_post_meta( $member_id, '_member_renewal_date', $renewal_date );
 			org_ecosystem_approve_member( $member_id );

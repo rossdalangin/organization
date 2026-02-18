@@ -47,7 +47,7 @@ function org_ecosystem_handle_profile_update() {
         update_user_meta( $user_id, '_member_gcash', sanitize_text_field( $_POST['member_gcash'] ) );
     }
 
-	wp_redirect( add_query_arg( array( 'action' => 'edit-profile', 'updated' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+	wp_redirect( add_query_arg( array( 'action' => 'edit-profile', 'updated' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_update_profile', 'org_ecosystem_handle_profile_update' );
@@ -78,7 +78,7 @@ function org_ecosystem_handle_send_message() {
         update_post_meta( $msg_id, '_msg_read', '0' );
     }
 
-    wp_redirect( add_query_arg( array( 'action' => 'messages', 'sent' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    wp_redirect( add_query_arg( array( 'action' => 'messages', 'sent' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
     exit;
 }
 add_action( 'admin_post_org_send_message', 'org_ecosystem_handle_send_message' );
@@ -107,7 +107,7 @@ function org_ecosystem_handle_ticket_submission() {
 		update_post_meta( $ticket_id, '_ticket_status', 'open' );
 	}
 
-	wp_redirect( add_query_arg( array( 'action' => 'support', 'submitted' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+	wp_redirect( add_query_arg( array( 'action' => 'support', 'submitted' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_submit_ticket', 'org_ecosystem_handle_ticket_submission' );
@@ -133,7 +133,7 @@ function org_ecosystem_handle_ticket_reply() {
             'comment_author_email' => wp_get_current_user()->user_email,
             'comment_approved'     => 1,
         ) );
-        wp_redirect( add_query_arg( array( 'action' => 'support', 'view_ticket' => $ticket_id, 'replied' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+        wp_redirect( add_query_arg( array( 'action' => 'support', 'view_ticket' => $ticket_id, 'replied' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
         exit;
     }
 }
@@ -177,7 +177,7 @@ function org_ecosystem_handle_event_registration() {
 		update_post_meta( $event_id, '_event_attendees', $attendees );
 	}
 
-	wp_redirect( add_query_arg( array( 'action' => 'my-events', 'registered' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+	wp_redirect( add_query_arg( array( 'action' => 'my-events', 'registered' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_event_register', 'org_ecosystem_handle_event_registration' );
@@ -222,7 +222,7 @@ function org_ecosystem_handle_product_save() {
 		}
 	}
 
-	wp_redirect( add_query_arg( array( 'action' => 'my-products', 'saved' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+	wp_redirect( add_query_arg( array( 'action' => 'my-products', 'saved' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_save_product', 'org_ecosystem_handle_product_save' );
@@ -239,7 +239,7 @@ function org_ecosystem_handle_product_delete() {
         wp_delete_post( $product_id, true );
     }
 
-    wp_redirect( add_query_arg( array( 'action' => 'my-products', 'deleted' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    wp_redirect( add_query_arg( array( 'action' => 'my-products', 'deleted' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
     exit;
 }
 add_action( 'admin_post_org_delete_product', 'org_ecosystem_handle_product_delete' );
@@ -270,11 +270,12 @@ function org_ecosystem_handle_job_save() {
 			) );
 		}
 	} else {
+        $is_vendor = current_user_can( 'vendor' );
 		$job_id = wp_insert_post( array(
 			'post_title'   => $title,
 			'post_content' => $description,
 			'post_type'    => 'job',
-			'post_status'  => current_user_can('publish_posts') ? 'publish' : 'pending',
+			'post_status'  => ( $is_vendor ) ? 'pending' : (current_user_can('publish_posts') ? 'publish' : 'pending'),
 			'post_author'  => $user_id,
 		) );
 	}
@@ -312,7 +313,7 @@ function org_ecosystem_handle_job_save() {
         }
 	}
 
-	wp_redirect( add_query_arg( array( 'action' => 'my-jobs', 'saved' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+	wp_redirect( add_query_arg( array( 'action' => 'my-jobs', 'saved' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
 	exit;
 }
 add_action( 'admin_post_org_save_job', 'org_ecosystem_handle_job_save' );
@@ -329,7 +330,7 @@ function org_ecosystem_handle_job_delete() {
         wp_delete_post( $job_id, true );
     }
 
-    wp_redirect( add_query_arg( array( 'action' => 'my-jobs', 'deleted' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    wp_redirect( add_query_arg( array( 'action' => 'my-jobs', 'deleted' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
     exit;
 }
 add_action( 'admin_post_org_delete_job', 'org_ecosystem_handle_job_delete' );
@@ -350,7 +351,7 @@ function org_ecosystem_handle_promote_listing() {
             'action'  => 'checkout',
             'type'    => 'promotion',
             'item_id' => $item_id
-        ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+        ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
         exit;
     }
 

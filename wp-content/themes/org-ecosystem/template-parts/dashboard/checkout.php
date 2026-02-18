@@ -184,9 +184,43 @@ if ( ! $item_name ) {
             if (gateway === 'stripe' || gateway === 'paypal') {
                 e.preventDefault();
                 const btn = $(this).find('button[type="submit"]');
-                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Redirecting to ' + gateway.toUpperCase() + '...');
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Connecting to ' + gateway.toUpperCase() + '...');
 
-                // Simulate gateway redirect
+                // Construct Real PayPal Redirect if applicable
+                if (gateway === 'paypal') {
+                    const business = '<?php echo esc_js( get_option("org_paypal_email") ); ?>';
+                    if (business) {
+                        const paypalUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+                        const params = {
+                            cmd: '_xclick',
+                            business: business,
+                            item_name: '<?php echo esc_js($item_name); ?>',
+                            amount: '<?php echo $amount; ?>',
+                            currency_code: 'PHP',
+                            return: window.location.href + '&payment=success',
+                            cancel_return: window.location.href + '&payment=cancel'
+                        };
+
+                        const form = $('<form>', { action: paypalUrl, method: 'post' });
+                        $.each(params, (k, v) => form.append($('<input>', { type: 'hidden', name: k, value: v })));
+                        $('body').append(form);
+
+                        // Still record the transaction in our DB first
+                        $.post(org_ajax.ajaxurl, {
+                            action: 'org_process_payment',
+                            amount: params.amount,
+                            gateway: 'paypal',
+                            type: '<?php echo $type; ?>',
+                            item_id: '<?php echo $item_id; ?>',
+                            security: '<?php echo wp_create_nonce("org_payment_nonce"); ?>'
+                        }, () => {
+                            form.submit();
+                        });
+                        return;
+                    }
+                }
+
+                // Default fallback
                 setTimeout(() => {
                     this.submit();
                 }, 1500);
