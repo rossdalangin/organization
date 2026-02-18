@@ -1522,7 +1522,15 @@ function org_ecosystem_handle_reset_db() {
     if ( ! current_user_can( 'manage_options' ) ) return;
     check_admin_referer( 'org_reset_db', 'org_reset_nonce' );
 
-    $types = array( 'member', 'business', 'product', 'event', 'job', 'program', 'resource', 'donation', 'announcement', 'org_message', 'org_transaction', 'support_ticket' );
+    // 1. Delete all demo users
+    $demo_users = get_users( array( 'meta_key' => '_is_demo_user', 'meta_value' => '1' ) );
+    require_once( ABSPATH . 'wp-admin/includes/user.php' );
+    foreach ( $demo_users as $u ) {
+        wp_delete_user( $u->ID );
+    }
+
+    // 2. Delete all ecosystem posts
+    $types = array( 'member', 'business', 'product', 'event', 'job', 'program', 'resource', 'donation', 'announcement', 'org_message', 'org_transaction', 'support_ticket', 'org_group_msg' );
     foreach ( $types as $type ) {
         $posts = get_posts( array( 'post_type' => $type, 'posts_per_page' => -1, 'post_status' => 'any' ) );
         foreach ( $posts as $p ) {
@@ -1570,19 +1578,40 @@ function org_ecosystem_handle_demo_import() {
     $members = array();
     $businesses = array();
 
-    // 1. Create Members (25)
+    // 1. Create Members (25) - Including WP Users
     for ( $i = 1; $i <= 25; $i++ ) {
-        $id = wp_insert_post( array(
-            'post_title' => "Sample Professional #$i",
-            'post_type'  => 'member',
-            'post_status'=> 'publish',
-            'post_content'=> "Bio for professional $i. Expert in their field with years of experience."
-        ) );
-        update_post_meta( $id, '_member_status', 'active' );
-        update_post_meta( $id, '_member_view_count', rand(100, 1500) );
-        update_post_meta( $id, '_member_is_featured', ( $i % 5 === 0 ) ? '1' : '0' );
-        update_post_meta( $id, '_member_is_verified', ( $i % 3 === 0 ) ? '1' : '0' );
-        $members[] = $id;
+        $username = "member$i";
+        $email = "member$i@example.com";
+
+        $user_id = username_exists( $username );
+        if ( ! $user_id && false == email_exists($email) ) {
+            $user_id = wp_create_user( $username, 'password123', $email );
+            if ( ! is_wp_error( $user_id ) ) {
+                wp_update_user( array(
+                    'ID' => $user_id,
+                    'display_name' => "Professional Member #$i",
+                    'role' => 'member'
+                ) );
+                update_user_meta( $user_id, '_is_demo_user', '1' );
+                update_user_meta( $user_id, '_membership_level', ($i % 3 === 0) ? 'professional' : (($i % 5 === 0) ? 'vendor' : 'community') );
+            }
+        }
+
+        if ( $user_id ) {
+            $id = wp_insert_post( array(
+                'post_title' => "Professional Member #$i",
+                'post_type'  => 'member',
+                'post_status'=> 'publish',
+                'post_author'=> $user_id,
+                'post_content'=> "Bio for professional $i. Expert in their field with years of experience."
+            ) );
+            update_post_meta( $id, '_member_status', 'active' );
+            update_post_meta( $id, '_member_view_count', rand(100, 1500) );
+            update_post_meta( $id, '_member_is_featured', ( $i % 5 === 0 ) ? '1' : '0' );
+            update_post_meta( $id, '_member_is_verified', ( $i % 3 === 0 ) ? '1' : '0' );
+            update_user_meta( $user_id, '_member_profile_id', $id );
+            $members[] = $id;
+        }
     }
 
     // 2. Create Businesses (20)

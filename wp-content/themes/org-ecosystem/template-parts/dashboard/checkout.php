@@ -178,6 +178,20 @@ if ( ! $item_name ) {
 
         // Trigger change on load to show initial instructions if any
         $('input[name="gateway"]:checked').trigger('change');
+
+        $('#checkout-form').on('submit', function(e) {
+            const gateway = $('input[name="gateway"]:checked').val();
+            if (gateway === 'stripe' || gateway === 'paypal') {
+                e.preventDefault();
+                const btn = $(this).find('button[type="submit"]');
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Redirecting to ' + gateway.toUpperCase() + '...');
+
+                // Simulate gateway redirect
+                setTimeout(() => {
+                    this.submit();
+                }, 1500);
+            }
+        });
     });
 </script>
 

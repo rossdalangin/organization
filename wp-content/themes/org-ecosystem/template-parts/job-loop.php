@@ -27,7 +27,10 @@ $job_query = isset( $args['query'] ) ? $args['query'] : $GLOBALS['wp_query'];
                                     <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i> <?php _e( 'Featured', 'org-ecosystem' ); ?></span>
                                 <?php endif; ?>
                             </div>
-                            <p class="text-muted small mb-0"><i class="bi bi-building me-1"></i><?php echo get_the_author(); ?> &bull; <i class="bi bi-geo-alt me-1"></i><?php echo esc_html( get_post_meta( get_the_ID(), '_job_location', true ) ?: 'Remote' ); ?></p>
+                            <p class="text-muted small mb-0"><i class="bi bi-building me-1"></i><?php echo get_the_author(); ?> &bull; <i class="bi bi-geo-alt me-1"></i><?php
+                                $locations = get_the_terms( get_the_ID(), 'location' );
+                                echo ( $locations && ! is_wp_error( $locations ) ) ? esc_html( $locations[0]->name ) : 'Remote';
+                            ?></p>
                         </div>
                         <div class="col-md-4 text-md-end mt-3 mt-md-0">
                             <?php if ( $salary ) : ?>

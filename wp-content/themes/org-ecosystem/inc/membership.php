@@ -222,7 +222,7 @@ function org_ecosystem_handle_registration() {
 			'ID' => $user_id,
 			'first_name' => $first_name,
 			'last_name' => $last_name,
-			'role' => 'subscriber', // Initial role, will be updated upon approval/payment
+			'role' => 'member', // Default role for ecosystem
 		) );
 
 		// Create Member CPT profile

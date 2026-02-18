@@ -25,7 +25,14 @@
         $view_id = isset($_GET['view_msg']) ? intval($_GET['view_msg']) : 0;
         if ( $view_id ) :
             $msg = get_post($view_id);
-            if ( $msg && ($msg->post_author == get_current_user_id() || get_post_meta($view_id, '_msg_receiver_id', true) == get_current_user_id()) ) :
+            $is_admin = current_user_can('manage_options');
+            $msg_rec_id = get_post_meta($view_id, '_msg_receiver_id', true);
+
+            if ( $msg && (
+                $msg->post_author == get_current_user_id() ||
+                $msg_rec_id == get_current_user_id() ||
+                ($is_admin && $msg_rec_id == 0)
+            ) ) :
                 update_post_meta($view_id, '_msg_read', '1');
             ?>
                 <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
@@ -35,6 +42,10 @@
                     </div>
                     <div class="mb-4 text-muted small">
                         <strong>From:</strong> <?php echo get_the_author_meta('display_name', $msg->post_author); ?><br>
+                        <strong>To:</strong> <?php
+                            $to_id = get_post_meta($view_id, '_msg_receiver_id', true);
+                            echo ($to_id == 0) ? 'Organization Admin' : get_userdata($to_id)->display_name;
+                        ?><br>
                         <strong>Date:</strong> <?php echo get_the_date('', $view_id); ?>
                     </div>
                     <div class="message-content border-top pt-4">
@@ -65,13 +76,29 @@
         <div class="tab-pane fade <?php echo !$view_id ? 'show active' : ''; ?>" id="inbox">
             <?php
             $user_id = get_current_user_id();
-            $inbox = new WP_Query( array(
-                'post_type' => 'org_message',
+            $is_admin = current_user_can('manage_options');
+
+            $inbox_args = array(
+                'post_type'   => 'org_message',
                 'post_status' => 'publish',
-                'meta_query' => array(
+                'orderby'     => 'date',
+                'order'       => 'DESC'
+            );
+
+            if ( $is_admin ) {
+                // Admins see messages sent to 'Admin' (0) or themselves
+                $inbox_args['meta_query'] = array(
+                    'relation' => 'OR',
+                    array( 'key' => '_msg_receiver_id', 'value' => 0 ),
                     array( 'key' => '_msg_receiver_id', 'value' => $user_id ),
-                )
-            ) );
+                );
+            } else {
+                $inbox_args['meta_query'] = array(
+                    array( 'key' => '_msg_receiver_id', 'value' => $user_id ),
+                );
+            }
+
+            $inbox = new WP_Query( $inbox_args );
 
             if ( $inbox->have_posts() ) : ?>
                 <div class="list-group list-group-flush shadow-sm rounded-4 overflow-hidden border">
@@ -88,8 +115,14 @@
                                 <div class="d-flex align-items-center gap-2">
                                     <?php echo get_avatar( get_the_author_meta('ID'), 24, '', '', array('class' => 'rounded-circle') ); ?>
                                     <span class="small">From: <strong><?php echo get_the_author(); ?></strong></span>
+                                    <?php if($is_admin) :
+                                        $to_id = get_post_meta(get_the_ID(), '_msg_receiver_id', true);
+                                        $to_name = ($to_id == 0) ? 'Organization' : get_userdata($to_id)->display_name;
+                                    ?>
+                                        <span class="badge bg-secondary ms-2">To: <?php echo esc_html($to_name); ?></span>
+                                    <?php endif; ?>
                                 </div>
-                                <a href="?action=messages&view_msg=<?php the_ID(); ?>" class="btn btn-sm btn-primary">View</a>
+                                <a href="?action=messages&view_msg=<?php the_ID(); ?>" class="btn btn-sm btn-primary">View & Reply</a>
                             </div>
                         </div>
                     <?php endwhile; wp_reset_postdata(); ?>
@@ -150,9 +183,15 @@
         <div class="mb-3">
             <label class="form-label small fw-bold text-uppercase"><?php _e( 'Recipient', 'org-ecosystem' ); ?></label>
             <select name="receiver_id" class="form-select bg-light border-0 py-2">
-                <option value="0"><?php _e( 'Organization Admin', 'org-ecosystem' ); ?></option>
+                <?php if ( ! current_user_can('manage_options') ) : ?>
+                    <option value="0"><?php _e( 'Organization Admin', 'org-ecosystem' ); ?></option>
+                <?php endif; ?>
                 <?php
-                $members = get_users( array( 'role__in' => array('member', 'vendor') ) );
+                $user_args = array( 'fields' => array('ID', 'display_name') );
+                if ( ! current_user_can('manage_options') ) {
+                    $user_args['role__in'] = array('member', 'vendor');
+                }
+                $members = get_users( $user_args );
                 foreach ( $members as $m ) : if($m->ID == $user_id) continue; ?>
                     <option value="<?php echo $m->ID; ?>"><?php echo esc_html( $m->display_name ); ?></option>
                 <?php endforeach; ?>
