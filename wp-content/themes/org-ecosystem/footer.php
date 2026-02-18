@@ -19,7 +19,7 @@
 								'youtube'   => 'youtube',
 							);
 							foreach ( $socials as $key => $icon ) :
-								$url = get_theme_mod( 'org_social_' . $key );
+								$url = get_theme_mod( 'social_' . $key );
 								if ( $url ) : ?>
 									<a href="<?php echo esc_url( $url ); ?>" class="text-white h5" target="_blank"><i class="bi bi-<?php echo $icon; ?>"></i></a>
 								<?php endif;

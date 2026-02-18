@@ -60,10 +60,20 @@ function org_ecosystem_handle_send_message() {
         return;
     }
 
+    if ( ! is_user_logged_in() ) {
+        wp_die( __( 'You must be logged in to send messages.', 'org-ecosystem' ) );
+    }
+
     $sender_id = get_current_user_id();
     $receiver_id = intval( $_POST['receiver_id'] ); // 0 for admin
     $subject = sanitize_text_field( $_POST['msg_subject'] );
     $content = sanitize_textarea_field( $_POST['msg_content'] );
+
+    // Permission check: Community members can only message Admin
+    if ( ! org_ecosystem_can_user_do( 'send_messages' ) && $receiver_id !== 0 ) {
+        wp_redirect( add_query_arg( array( 'action' => 'messages', 'error' => 'upgrade_required' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+        exit;
+    }
 
     $msg_id = wp_insert_post( array(
         'post_title'   => $subject,
@@ -73,12 +83,14 @@ function org_ecosystem_handle_send_message() {
         'post_author'  => $sender_id,
     ) );
 
-    if ( $msg_id ) {
+    if ( $msg_id && ! is_wp_error( $msg_id ) ) {
         update_post_meta( $msg_id, '_msg_receiver_id', $receiver_id );
         update_post_meta( $msg_id, '_msg_read', '0' );
-    }
 
-    wp_redirect( add_query_arg( array( 'action' => 'messages', 'sent' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+        wp_redirect( add_query_arg( array( 'action' => 'messages', 'sent' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+    } else {
+        wp_redirect( add_query_arg( array( 'action' => 'messages', 'error' => 'failed' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+    }
     exit;
 }
 add_action( 'admin_post_org_send_message', 'org_ecosystem_handle_send_message' );

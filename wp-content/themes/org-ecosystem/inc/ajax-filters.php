@@ -20,6 +20,14 @@ function org_ecosystem_directory_filter() {
 		's' => $search,
 		'paged' => $paged,
 		'tax_query' => array( 'relation' => 'AND' ),
+		'meta_query' => array(
+			'relation' => 'AND',
+			array(
+				'key' => '_member_status',
+				'value' => 'active',
+				'compare' => '=',
+			)
+		),
 	);
 
 	if ( $industry && $industry !== '0' ) {
@@ -121,7 +129,13 @@ function org_ecosystem_directory_filter() {
 
 		// Return Pagination
 		echo '<div class="pagination-area mt-5">';
+		$base = isset($_POST['base_url']) ? esc_url_raw($_POST['base_url']) : '#';
+		if ($base !== '#' && strpos($base, '?') === false) {
+			$base = trailingslashit($base);
+		}
+
 		echo paginate_links( array(
+			'base'    => $base . '%_%',
 			'total'   => $query->max_num_pages,
 			'current' => $paged,
 			'format'  => '?paged=%#%',

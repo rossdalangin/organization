@@ -21,6 +21,13 @@
     </ul>
 
     <div class="tab-content" id="msgTabContent">
+        <?php if ( isset($_GET['error']) && $_GET['error'] === 'upgrade_required' ) : ?>
+            <div class="alert alert-warning border-0 shadow-sm rounded-4 mb-4">
+                <i class="bi bi-lock-fill me-2"></i> <?php _e( 'Direct messaging between members is a Professional feature. You can still message the Organization Admin.', 'org-ecosystem' ); ?>
+                <a href="?action=billing" class="alert-link ms-2"><?php _e( 'Upgrade Now', 'org-ecosystem' ); ?></a>
+            </div>
+        <?php endif; ?>
+
         <?php
         $view_id = isset($_GET['view_msg']) ? intval($_GET['view_msg']) : 0;
         if ( $view_id ) :
@@ -183,14 +190,16 @@
                     <option value="0"><?php _e( 'Organization Admin', 'org-ecosystem' ); ?></option>
                 <?php endif; ?>
                 <?php
-                $user_args = array( 'fields' => array('ID', 'display_name') );
-                if ( ! current_user_can('manage_options') ) {
-                    $user_args['role__in'] = array('member', 'vendor');
-                }
-                $members = get_users( $user_args );
-                foreach ( $members as $m ) : if($m->ID == $user_id) continue; ?>
-                    <option value="<?php echo $m->ID; ?>"><?php echo esc_html( $m->display_name ); ?></option>
-                <?php endforeach; ?>
+                if ( org_ecosystem_can_user_do( 'send_messages' ) ) :
+                    $user_args = array( 'fields' => array('ID', 'display_name') );
+                    if ( ! current_user_can('manage_options') ) {
+                        $user_args['role__in'] = array('member', 'vendor');
+                    }
+                    $members = get_users( $user_args );
+                    foreach ( $members as $m ) : if($m->ID == $user_id) continue; ?>
+                        <option value="<?php echo $m->ID; ?>"><?php echo esc_html( $m->display_name ); ?></option>
+                    <?php endforeach;
+                endif; ?>
             </select>
         </div>
         <div class="mb-3">

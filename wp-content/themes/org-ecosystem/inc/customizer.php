@@ -66,6 +66,33 @@ function org_ecosystem_customize_register( $wp_customize ) {
 	$wp_customize->add_setting( 'heading_font_family', array( 'default' => 'Plus Jakarta Sans', 'sanitize_callback' => 'sanitize_text_field' ) );
 	$wp_customize->add_control( 'heading_font_family', array( 'label' => __( 'Heading Font Family', 'org-ecosystem' ), 'section' => 'org_typography', 'type' => 'select', 'choices' => $font_choices ) );
 
+	// Section: Social Links
+	$wp_customize->add_section( 'org_social', array(
+		'title' => __( 'Social Links', 'org-ecosystem' ),
+		'panel' => 'org_panel_global_styles',
+	) );
+
+	$socials = array( 'facebook', 'twitter', 'linkedin', 'instagram', 'youtube' );
+	foreach ( $socials as $social ) {
+		$wp_customize->add_setting( 'social_' . $social, array( 'default' => '', 'sanitize_callback' => 'esc_url_raw' ) );
+		$wp_customize->add_control( 'social_' . $social, array( 'label' => ucfirst( $social ) . ' URL', 'section' => 'org_social' ) );
+	}
+
+	// Section: Contact Info
+	$wp_customize->add_section( 'org_contact_footer', array(
+		'title' => __( 'Footer Contact Info', 'org-ecosystem' ),
+		'panel' => 'org_panel_global_styles',
+	) );
+
+	$wp_customize->add_setting( 'org_address', array( 'default' => '123 Org St, City, Country', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'org_address', array( 'label' => 'Address', 'section' => 'org_contact_footer' ) );
+
+	$wp_customize->add_setting( 'org_phone', array( 'default' => '+1 234 567 890', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'org_phone', array( 'label' => 'Phone', 'section' => 'org_contact_footer' ) );
+
+	$wp_customize->add_setting( 'org_email', array( 'default' => 'info@example.org', 'sanitize_callback' => 'sanitize_email' ) );
+	$wp_customize->add_control( 'org_email', array( 'label' => 'Email', 'section' => 'org_contact_footer' ) );
+
 	// =========================================================================
 	// PANEL: HOMEPAGE & LAYOUT
 	// =========================================================================
@@ -108,6 +135,78 @@ function org_ecosystem_customize_register( $wp_customize ) {
 
 	$wp_customize->add_setting( 'hero_subtitle', array( 'default' => 'Join our professional network.', 'sanitize_callback' => 'sanitize_textarea_field', 'transport' => 'postMessage' ) );
 	$wp_customize->add_control( 'hero_subtitle', array( 'label' => 'Hero Subtitle', 'section' => 'org_hero_content', 'type' => 'textarea' ) );
+
+	$wp_customize->add_setting( 'hero_primary_cta_text', array( 'default' => 'Join Now', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'hero_primary_cta_text', array( 'label' => 'Primary CTA Text', 'section' => 'org_hero_content' ) );
+
+	$wp_customize->add_setting( 'hero_secondary_cta_text', array( 'default' => 'Explore Members', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'hero_secondary_cta_text', array( 'label' => 'Secondary CTA Text', 'section' => 'org_hero_content' ) );
+
+	$wp_customize->add_setting( 'hero_image', array( 'default' => '', 'sanitize_callback' => 'esc_url_raw' ) );
+	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'hero_image', array( 'label' => 'Hero Side Image', 'section' => 'org_hero_content' ) ) );
+
+	// Section: About Section Content
+	$wp_customize->add_section( 'org_about_content', array(
+		'title' => __( 'About Section Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'about_title', array( 'default' => 'About Our Organization', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'about_title', array( 'label' => 'About Title', 'section' => 'org_about_content' ) );
+
+	$wp_customize->add_setting( 'about_subtitle', array( 'default' => 'We are dedicated to fostering growth...', 'sanitize_callback' => 'sanitize_textarea_field' ) );
+	$wp_customize->add_control( 'about_subtitle', array( 'label' => 'About Subtitle', 'section' => 'org_about_content', 'type' => 'textarea' ) );
+
+	$wp_customize->add_setting( 'about_text', array( 'default' => 'Our mission is to provide a platform...', 'sanitize_callback' => 'wp_kses_post' ) );
+	$wp_customize->add_control( 'about_text', array( 'label' => 'About Text', 'section' => 'org_about_content', 'type' => 'textarea' ) );
+
+	$wp_customize->add_setting( 'about_image', array( 'default' => '', 'sanitize_callback' => 'esc_url_raw' ) );
+	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'about_image', array( 'label' => 'About Image', 'section' => 'org_about_content' ) ) );
+
+	// Section: CTA Content
+	$wp_customize->add_section( 'org_cta_content', array(
+		'title' => __( 'Membership CTA Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+    $wp_customize->add_setting( 'cta_title', array( 'default' => 'Ready to Grow Your Business?', 'sanitize_callback' => 'sanitize_text_field' ) );
+    $wp_customize->add_control( 'cta_title', array( 'label' => 'CTA Title', 'section' => 'org_cta_content' ) );
+
+    $wp_customize->add_setting( 'cta_text', array( 'default' => 'Join hundreds of professionals who are already benefiting from our exclusive network, tools, and community support.', 'sanitize_callback' => 'sanitize_textarea_field' ) );
+    $wp_customize->add_control( 'cta_text', array( 'label' => 'CTA Text', 'section' => 'org_cta_content', 'type' => 'textarea' ) );
+
+    $wp_customize->add_setting( 'cta_btn_text', array( 'default' => 'Become a Member Today', 'sanitize_callback' => 'sanitize_text_field' ) );
+    $wp_customize->add_control( 'cta_btn_text', array( 'label' => 'CTA Button Text', 'section' => 'org_cta_content' ) );
+
+	// Section: Mission/Vision Content
+	$wp_customize->add_section( 'org_mission_content', array(
+		'title' => __( 'Mission & Vision Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'mission_text', array( 'default' => 'To empower organizations and professionals by providing a robust digital ecosystem that fosters collaboration, growth, and community engagement.', 'sanitize_callback' => 'wp_kses_post' ) );
+	$wp_customize->add_control( 'mission_text', array( 'label' => 'Mission Statement', 'section' => 'org_mission_content', 'type' => 'textarea' ) );
+
+	$wp_customize->add_setting( 'vision_text', array( 'default' => 'To become the global standard for organizational networking, enabling seamless member interactions and sustainable growth for all partners.', 'sanitize_callback' => 'wp_kses_post' ) );
+	$wp_customize->add_control( 'vision_text', array( 'label' => 'Vision Statement', 'section' => 'org_mission_content', 'type' => 'textarea' ) );
+
+	// Section: News Content
+	$wp_customize->add_section( 'org_news_content', array(
+		'title' => __( 'News & Announcements Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+    $wp_customize->add_setting( 'news_title', array( 'default' => 'Inside Our Community', 'sanitize_callback' => 'sanitize_text_field' ) );
+    $wp_customize->add_control( 'news_title', array( 'label' => 'News Title', 'section' => 'org_news_content' ) );
+
+	$wp_customize->add_setting( 'news_subtitle', array( 'default' => 'The latest stories, news, and insights from our members.', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'news_subtitle', array( 'label' => 'News Subtitle', 'section' => 'org_news_content' ) );
+
+    $wp_customize->add_setting( 'announcements_title', array( 'default' => 'Important Announcements', 'sanitize_callback' => 'sanitize_text_field' ) );
+    $wp_customize->add_control( 'announcements_title', array( 'label' => 'Announcements Title', 'section' => 'org_news_content' ) );
+
+	$wp_customize->add_setting( 'announcements_subtitle', array( 'default' => 'Stay updated with the latest news and updates from the organization.', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'announcements_subtitle', array( 'label' => 'Announcements Subtitle', 'section' => 'org_news_content' ) );
 
 	// =========================================================================
 	// GRANULAR STYLING (Inside individual sections for better UX)

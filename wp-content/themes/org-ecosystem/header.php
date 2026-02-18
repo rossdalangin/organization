@@ -102,9 +102,9 @@
 
 		<div class="social-links d-flex gap-3 justify-content-center mt-auto pt-4">
 			<?php
-			$socials = array( 'facebook', 'twitter', 'instagram', 'linkedin' );
+			$socials = array( 'facebook', 'twitter', 'instagram', 'linkedin', 'youtube' );
 			foreach ( $socials as $soc ) :
-				$url = get_theme_mod( $soc . '_url' );
+				$url = get_theme_mod( 'social_' . $soc );
 				if ( $url ) : ?>
 					<a href="<?php echo esc_url( $url ); ?>" class="btn btn-light btn-sm rounded-circle shadow-sm" style="width: 35px; height: 35px; padding: 5px;"><i class="bi bi-<?php echo $soc; ?>"></i></a>
 				<?php endif;

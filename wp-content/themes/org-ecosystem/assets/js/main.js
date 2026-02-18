@@ -19,6 +19,7 @@
 
             var formData = form.serialize();
             formData += '&action=directory_filter&paged=' + paged;
+            formData += '&base_url=' + window.location.href.split('?')[0];
 
             $.ajax({
                 url: org_ajax.ajaxurl,

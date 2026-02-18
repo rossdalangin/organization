@@ -6,8 +6,8 @@
 <section class="section-announcements latest-announcements py-5 bg-light">
 	<div class="container">
 		<div class="section-header text-center mb-5 animate-on-scroll">
-			<h2 class="fw-bold"><?php _e( 'Announcements', 'org-ecosystem' ); ?></h2>
-			<p class="text-muted"><?php _e( 'Important updates and notices from the organization.', 'org-ecosystem' ); ?></p>
+			<h2 class="fw-bold"><?php echo esc_html( get_theme_mod( 'announcements_title', __( 'Important Announcements', 'org-ecosystem' ) ) ); ?></h2>
+			<p class="text-muted"><?php echo esc_html( get_theme_mod( 'announcements_subtitle', __( 'Stay updated with the latest news and updates from the organization.', 'org-ecosystem' ) ) ); ?></p>
 		</div>
 
 		<div class="row g-4">

@@ -6,8 +6,8 @@
 <section class="section-news latest-news py-5 bg-white">
 	<div class="container">
 		<div class="section-header text-center mb-5 animate-on-scroll">
-			<h2 class="fw-bold"><?php _e( 'Inside Our Community', 'org-ecosystem' ); ?></h2>
-			<p class="text-muted"><?php _e( 'The latest stories, news, and insights from our members.', 'org-ecosystem' ); ?></p>
+			<h2 class="fw-bold"><?php echo esc_html( get_theme_mod( 'news_title', __( 'Inside Our Community', 'org-ecosystem' ) ) ); ?></h2>
+			<p class="text-muted"><?php echo esc_html( get_theme_mod( 'news_subtitle', __( 'The latest stories, news, and insights from our members.', 'org-ecosystem' ) ) ); ?></p>
 		</div>
 
 		<div class="row g-4">

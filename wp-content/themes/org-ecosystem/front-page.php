@@ -49,9 +49,9 @@ get_header();
 
 	<section class="membership-cta py-5 bg-primary text-white text-center overflow-hidden">
 		<div class="container py-4 animate-on-scroll">
-			<h2 class="display-5 fw-bold mb-4"><?php _e( 'Ready to Grow Your Business?', 'org-ecosystem' ); ?></h2>
-			<p class="lead mb-5 px-lg-5"><?php _e( 'Join hundreds of professionals who are already benefiting from our exclusive network, tools, and community support.', 'org-ecosystem' ); ?></p>
-			<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-join.php' ) ); ?>" class="btn btn-light btn-lg px-5 fw-bold shadow-sm"><?php _e( 'Become a Member Today', 'org-ecosystem' ); ?></a>
+			<h2 class="display-5 fw-bold mb-4"><?php echo esc_html( get_theme_mod( 'cta_title', __( 'Ready to Grow Your Business?', 'org-ecosystem' ) ) ); ?></h2>
+			<p class="lead mb-5 px-lg-5"><?php echo esc_html( get_theme_mod( 'cta_text', __( 'Join hundreds of professionals who are already benefiting from our exclusive network, tools, and community support.', 'org-ecosystem' ) ) ); ?></p>
+			<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-join.php' ) ); ?>" class="btn btn-light btn-lg px-5 fw-bold shadow-sm"><?php echo esc_html( get_theme_mod( 'cta_btn_text', __( 'Become a Member Today', 'org-ecosystem' ) ) ); ?></a>
 		</div>
 	</section>
 
