@@ -32,9 +32,19 @@ $levels = org_ecosystem_get_membership_levels();
                     </ul>
 
                     <div class="d-grid">
-                        <a href="<?php echo esc_url( add_query_arg( 'plan', $key, org_ecosystem_get_page_url( 'page-join.php' ) ) ); ?>" class="btn btn-<?php echo ($key === 'vendor' || $key === 'professional') ? 'primary' : 'outline-primary'; ?> btn-lg fw-bold">
-                            <?php _e( 'Select Plan', 'org-ecosystem' ); ?>
-                        </a>
+                        <?php if ( is_user_logged_in() ) : ?>
+                            <?php if ( $level['price'] > 0 ) : ?>
+                                <a href="<?php echo esc_url( add_query_arg( array( 'action' => 'checkout', 'type' => 'membership', 'plan' => $key ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) ); ?>" class="btn btn-primary btn-lg fw-bold">
+                                    <?php _e( 'Upgrade Now', 'org-ecosystem' ); ?>
+                                </a>
+                            <?php else : ?>
+                                <button class="btn btn-outline-secondary btn-lg fw-bold" disabled><?php _e( 'Current Plan', 'org-ecosystem' ); ?></button>
+                            <?php endif; ?>
+                        <?php else : ?>
+                            <a href="<?php echo esc_url( add_query_arg( 'plan', $key, org_ecosystem_get_page_url( 'page-join.php' ) ) ); ?>" class="btn btn-<?php echo ($key === 'vendor' || $key === 'professional') ? 'primary' : 'outline-primary'; ?> btn-lg fw-bold">
+                                <?php _e( 'Select Plan', 'org-ecosystem' ); ?>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

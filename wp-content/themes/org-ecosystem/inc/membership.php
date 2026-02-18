@@ -421,27 +421,27 @@ function org_ecosystem_get_membership_levels() {
 		),
 		'professional' => array(
 			'name' => 'Professional (with Profile)',
-			'price' => get_theme_mod( 'basic_plan_price', '1500' ),
+			'price' => get_option( 'org_rate_professional', get_theme_mod( 'basic_plan_price', '1500' ) ),
 			'duration' => 'annual',
             'features' => array( 'Public Member Profile', 'Business Listing', 'Internal Messaging', 'Direct Inquiries' ),
             'caps' => array( 'publish_profile', 'send_messages' )
 		),
 		'vendor' => array(
 			'name' => 'Vendor (with Products)',
-			'price' => get_theme_mod( 'premium_plan_price', '5000' ),
+			'price' => get_option( 'org_rate_vendor', get_theme_mod( 'premium_plan_price', '5000' ) ),
 			'duration' => 'annual',
             'features' => array( 'Product Showcase (unlimited)', 'Featured Spotlight', 'Receive Payments', 'Sales Analytics' ),
             'caps' => array( 'publish_profile', 'send_messages', 'manage_products', 'featured_listing' )
 		),
 		'corporate' => array(
 			'name' => 'Corporate Partner',
-			'price' => 25000,
+			'price' => get_option( 'org_rate_corporate', 25000 ),
 			'duration' => 'annual',
             'features' => array( 'Multiple Staff Accounts', 'Homepage Logo Placement', 'Dedicated Support', 'White-label Tools' )
 		),
 		'lifetime' => array(
 			'name' => 'Lifetime Elite',
-			'price' => 100000,
+			'price' => get_option( 'org_rate_lifetime', 100000 ),
 			'duration' => 'lifetime',
             'features' => array( 'All Features Included', 'No Recurring Fees', 'Founder\'s Badge', 'Governance Voting' )
 		),

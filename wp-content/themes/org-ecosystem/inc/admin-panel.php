@@ -344,6 +344,12 @@ function org_ecosystem_settings_page() {
                             <?php wp_nonce_field( 'org_reset_db', 'org_reset_nonce' ); ?>
                             <button type="submit" class="button button-link text-danger w-100" style="color: #dc3545; border: 1px solid #fee2e2; border-radius: 6px; padding: 10px;"><?php _e( 'Wipe Database (Reset)', 'org-ecosystem' ); ?></button>
                         </form>
+
+                        <form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post" class="mt-3">
+                            <input type="hidden" name="action" value="org_refresh_roles">
+                            <?php wp_nonce_field( 'org_refresh_roles_action' ); ?>
+                            <button type="submit" class="button button-secondary w-100"><?php _e( 'Repair Permissions (Refresh Roles)', 'org-ecosystem' ); ?></button>
+                        </form>
                     </div>
 
                     <hr style="margin: 25px 0;">
@@ -940,6 +946,16 @@ function org_ecosystem_tickets_page() {
  */
 function org_ecosystem_membership_page() {
     $view = isset( $_GET['view'] ) ? sanitize_text_field( $_GET['view'] ) : 'all';
+
+    if ( isset( $_POST['org_save_membership_rates'] ) ) {
+        check_admin_referer( 'org_save_membership_rates_action' );
+        update_option( 'org_rate_professional', floatval( $_POST['rate_professional'] ) );
+        update_option( 'org_rate_vendor', floatval( $_POST['rate_vendor'] ) );
+        update_option( 'org_rate_corporate', floatval( $_POST['rate_corporate'] ) );
+        update_option( 'org_rate_lifetime', floatval( $_POST['rate_lifetime'] ) );
+        echo '<div class="updated"><p>' . __( 'Membership rates updated.', 'org-ecosystem' ) . '</p></div>';
+    }
+
 	?>
 	<div class="wrap">
 		<h1><?php echo $view === 'upgraded' ? __( 'Upgraded (Active) Accounts', 'org-ecosystem' ) : __( 'Member Growth & Tiers', 'org-ecosystem' ); ?></h1>
@@ -1040,9 +1056,11 @@ function org_ecosystem_membership_page() {
         <?php endif; ?>
 
 		<div class="card p-5" style="background: #fff; border: 1px solid #e2e8f0; margin-bottom: 20px; border-radius: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-			<h3 style="margin-top: 0; color: #1e293b;"><span class="dashicons dashicons-money" style="color: #10b981; margin-right: 10px;"></span> <?php _e( 'Tiered Membership Performance', 'org-ecosystem' ); ?></h3>
-			<p class="description mb-4"><?php _e( 'Total active users per tier. Configure individual pricing in the Customizer.', 'org-ecosystem' ); ?></p>
+			<h3 style="margin-top: 0; color: #1e293b;"><span class="dashicons dashicons-money" style="color: #10b981; margin-right: 10px;"></span> <?php _e( 'Tiered Membership Performance & Rates', 'org-ecosystem' ); ?></h3>
+			<p class="description mb-4"><?php _e( 'Total active users per tier and global annual rates.', 'org-ecosystem' ); ?></p>
 
+            <form method="post" action="">
+            <?php wp_nonce_field( 'org_save_membership_rates_action' ); ?>
 			<table class="wp-list-table widefat fixed striped" style="border: none;">
 				<thead>
 					<tr>
@@ -1058,7 +1076,16 @@ function org_ecosystem_membership_page() {
 					foreach ( $levels as $key => $level ) : ?>
 						<tr>
 							<td style="padding: 12px;"><strong><?php echo esc_html( $level['name'] ); ?></strong></td>
-							<td style="padding: 12px; font-weight: 600;">₱ <?php echo number_format( $level['price'], 2 ); ?></td>
+							<td style="padding: 12px; font-weight: 600;">
+                                <?php if ($key === 'community') : ?>
+                                    ₱ 0.00
+                                <?php else : ?>
+                                    <div style="display: flex; align-items: center; gap: 5px;">
+                                        <span>₱</span>
+                                        <input type="number" name="rate_<?php echo $key; ?>" value="<?php echo esc_attr( $level['price'] ); ?>" step="0.01" style="width: 100px; padding: 4px;">
+                                    </div>
+                                <?php endif; ?>
+                            </td>
 							<td style="padding: 12px;"><?php echo esc_html( ucfirst( $level['duration'] ) ); ?></td>
 							<td style="padding: 12px;">
 								<span class="badge" style="background: #f1f5f9; color: #475569; padding: 6px 12px; border-radius: 8px; font-weight: 700;">
@@ -1072,6 +1099,10 @@ function org_ecosystem_membership_page() {
 					<?php endforeach; ?>
 				</tbody>
 			</table>
+            <div class="mt-4">
+                <input type="submit" name="org_save_membership_rates" class="button button-primary" value="Save All Rates">
+            </div>
+            </form>
 		</div>
 	</div>
 	<?php
@@ -1481,6 +1512,17 @@ function org_ecosystem_handle_reset_db() {
     exit;
 }
 add_action( 'admin_post_org_reset_db', 'org_ecosystem_handle_reset_db' );
+
+function org_ecosystem_handle_refresh_roles() {
+    if ( ! current_user_can( 'manage_options' ) ) return;
+    check_admin_referer( 'org_refresh_roles_action' );
+
+    org_ecosystem_register_roles();
+
+    wp_redirect( admin_url( 'admin.php?page=org-settings&roles_refreshed=1' ) );
+    exit;
+}
+add_action( 'admin_post_org_refresh_roles', 'org_ecosystem_handle_refresh_roles' );
 
 /**
  * Handle Demo Data Import

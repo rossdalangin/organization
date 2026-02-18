@@ -21,12 +21,25 @@ if ( ! $ref_code ) {
 </div>
 
 <?php if ( isset( $_GET['promoted'] ) || (isset($_GET['payment']) && $_GET['payment'] === 'pending') ) : ?>
-	<div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm border-0 bg-white" role="alert">
+	<div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm border-0 bg-white mb-4" role="alert">
 		<div class="d-flex align-items-center">
             <i class="bi bi-check-circle-fill fs-4 text-success me-3"></i>
             <div>
                 <strong><?php _e( 'Action Successful!', 'org-ecosystem' ); ?></strong><br>
                 <small class="text-muted"><?php _e( 'Your request has been recorded. If you chose a manual payment method, our admin will verify it shortly.', 'org-ecosystem' ); ?></small>
+            </div>
+        </div>
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+<?php endif; ?>
+
+<?php if ( isset( $_GET['error'] ) ) : ?>
+	<div class="alert alert-danger alert-dismissible fade show rounded-4 shadow-sm border-0 bg-white mb-4" role="alert">
+		<div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill fs-4 text-danger me-3"></i>
+            <div>
+                <strong><?php _e( 'Wait a second...', 'org-ecosystem' ); ?></strong><br>
+                <small class="text-muted"><?php echo esc_html( $_GET['error'] ); ?></small>
             </div>
         </div>
 		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
