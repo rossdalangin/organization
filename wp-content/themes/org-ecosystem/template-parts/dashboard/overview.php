@@ -133,7 +133,7 @@ if ( ! $ref_code ) {
                 <?php
                 $is_featured = get_post_meta( $member_id, '_member_is_featured', true );
                 if ( ! $is_featured && $member_id ) : ?>
-                    <a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_promote_listing', 'item_id' => $member_id, 'type' => 'member' ), admin_url( 'admin-post.php' ) ), 'org_promote_listing_action' ); ?>" class="btn btn-primary w-100 py-2 fw-bold">
+                    <a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_promote_listing', 'checkout_item_id' => $member_id, 'checkout_type' => 'promotion' ), admin_url( 'admin-post.php' ) ), 'org_promote_listing_action' ); ?>" class="btn btn-primary w-100 py-2 fw-bold">
                         <?php printf( __( 'Promote Profile - ₱ %s', 'org-ecosystem' ), get_theme_mod( 'promotion_price', '500' ) ); ?>
                     </a>
                 <?php elseif ( $is_featured ) : ?>

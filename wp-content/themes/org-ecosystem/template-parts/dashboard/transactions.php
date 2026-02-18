@@ -11,7 +11,7 @@
                 <small class="d-block opacity-75"><?php _e( 'Total Earnings', 'org-ecosystem' ); ?></small>
                 <span class="h4 fw-bold mb-0">₱ <?php echo number_format( org_ecosystem_get_user_total_commissions( get_current_user_id() ), 2 ); ?></span>
             </div>
-            <button class="btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#withdrawModal"><i class="bi bi-bank me-2"></i> Withdraw</button>
+            <button class="btn btn-outline-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#withdrawModal"><i class="bi bi-bank me-2"></i> <?php _e( 'Withdraw', 'org-ecosystem' ); ?></button>
         </div>
     </div>
 

@@ -102,7 +102,7 @@ while ( have_posts() ) :
 					<?php endif; ?>
 
 					<div class="d-grid gap-3 mb-5">
-                        <a href="<?php echo esc_url( add_query_arg( array('action' => 'checkout', 'type' => 'product', 'item_id' => get_the_ID()), org_ecosystem_get_page_url('page-dashboard.php') ) ); ?>" class="btn btn-primary btn-lg py-3 fw-bold rounded-pill shadow">
+                        <a href="<?php echo esc_url( add_query_arg( array('dash_page' => 'checkout', 'checkout_type' => 'product', 'checkout_item_id' => get_the_ID()), org_ecosystem_get_page_url('page-dashboard.php') ) ); ?>" class="btn btn-primary btn-lg py-3 fw-bold rounded-pill shadow">
                             <i class="bi bi-cart-check me-2"></i> <?php _e( 'Purchase Now', 'org-ecosystem' ); ?>
                         </a>
                         <?php if ( is_user_logged_in() ) : ?>

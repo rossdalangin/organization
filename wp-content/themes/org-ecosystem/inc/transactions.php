@@ -169,7 +169,7 @@ function org_ecosystem_handle_withdrawal() {
     update_post_meta( $txn_id, '_txn_user_id', $user_id );
     update_post_meta( $txn_id, '_txn_status', 'pending' );
 
-    wp_redirect( add_query_arg( array( 'action' => 'transactions', 'requested' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+    wp_redirect( add_query_arg( array( 'dash_page' => 'transactions', 'requested' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
     exit;
 }
 add_action( 'admin_post_org_withdraw_request', 'org_ecosystem_handle_withdrawal' );
@@ -206,11 +206,11 @@ function org_ecosystem_handle_checkout_submission() {
     if ( $txn_id ) {
         // Special logic for Promotion (mark as pending promotion)
         if ( $item_type === 'promotion' ) {
-            $meta_key = ( get_post_type($item_id) === 'member' ) ? '_member_is_featured' : '_product_is_featured';
+            $meta_key = ( get_post_type($item_id) === 'member' ) ? '_member_is_featured' : ($item_id && get_post_type($item_id) === 'job' ? '_job_is_featured' : '_product_is_featured');
             update_post_meta( $item_id, $meta_key, 'pending' );
         }
 
-        wp_redirect( add_query_arg( array( 'action' => 'overview', 'payment' => 'pending' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+        wp_redirect( add_query_arg( array( 'dash_page' => 'overview', 'payment' => 'pending', 'txn' => $txn_id ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
         exit;
     } else {
         wp_die( __( 'Checkout failed. Please try again.', 'org-ecosystem' ) );

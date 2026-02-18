@@ -23,7 +23,7 @@ $history = get_user_meta( $user_id, '_payment_history', true ) ?: array();
 					<a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_renew_membership' ), admin_url( 'admin-post.php' ) ), 'org_renew_membership_action' ); ?>" class="btn btn-warning fw-bold"><i class="bi bi-arrow-repeat me-1"></i> <?php _e( 'Renew Now', 'org-ecosystem' ); ?></a>
 				<?php elseif ( $membership_level === 'community' ) : ?>
                     <form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
-                        <?php wp_nonce_field( 'org_upgrade_membership_action' ); ?>
+                        <?php wp_nonce_field( 'org_upgrade_membership_action', 'org_upgrade_membership_nonce' ); ?>
                         <input type="hidden" name="action" value="org_upgrade_membership">
                         <input type="hidden" name="plan" value="professional">
                         <button type="submit" class="btn btn-success fw-bold"><i class="bi bi-rocket-takeoff me-1"></i> <?php _e( 'Upgrade Membership', 'org-ecosystem' ); ?></button>
@@ -57,7 +57,7 @@ $history = get_user_meta( $user_id, '_payment_history', true ) ?: array();
 					<td>₱ <?php echo number_format( $item['amount'] ); ?></td>
 					<td><span class="badge bg-success"><?php echo esc_html( $item['status'] ); ?></span></td>
 					<td>
-						<a href="<?php echo esc_url( add_query_arg( array( 'txn_id' => $item['txn_id'], 'action' => 'download_receipt' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) ); ?>" class="btn btn-sm btn-outline-secondary">
+						<a href="<?php echo esc_url( add_query_arg( array( 'txn_id' => $item['txn_id'], 'action' => 'download_receipt' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) ); ?>" class="btn btn-sm btn-outline-secondary">
 							<i class="bi bi-download"></i>
 						</a>
 					</td>

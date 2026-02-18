@@ -45,7 +45,7 @@
                 <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 class="fw-bold mb-0"><?php echo get_the_title($view_id); ?></h4>
-                        <a href="?action=messages" class="btn btn-sm btn-outline-secondary">Back to Inbox</a>
+                        <a href="?dash_page=messages" class="btn btn-sm btn-outline-secondary">Back to Inbox</a>
                     </div>
                     <div class="mb-4 text-muted small">
                         <strong>From:</strong> <?php echo get_the_author_meta('display_name', $msg->post_author); ?><br>
@@ -125,7 +125,7 @@
                                         <span class="badge bg-secondary ms-2">To: <?php echo esc_html($to_name); ?></span>
                                     <?php endif; ?>
                                 </div>
-                                <a href="?action=messages&view_msg=<?php the_ID(); ?>" class="btn btn-sm btn-primary">View & Reply</a>
+                                <a href="?dash_page=messages&view_msg=<?php the_ID(); ?>" class="btn btn-sm btn-primary">View & Reply</a>
                             </div>
                         </div>
                     <?php endwhile; wp_reset_postdata(); ?>

@@ -3,9 +3,9 @@
  * Dashboard Checkout Template Part
  */
 $user_id = get_current_user_id();
-$type = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : '';
-$item_id = isset( $_GET['item_id'] ) ? intval( $_GET['item_id'] ) : 0;
-$plan = isset( $_GET['plan'] ) ? sanitize_text_field( $_GET['plan'] ) : '';
+$type = isset( $_GET['checkout_type'] ) ? sanitize_text_field( $_GET['checkout_type'] ) : '';
+$item_id = isset( $_GET['checkout_item_id'] ) ? intval( $_GET['checkout_item_id'] ) : 0;
+$plan = isset( $_GET['plan_id'] ) ? sanitize_text_field( $_GET['plan_id'] ) : '';
 
 $item_name = '';
 $amount = 0;
@@ -212,8 +212,8 @@ if ( ! $item_name ) {
                                 amount: '<?php echo $amount; ?>',
                                 currency_code: 'PHP',
                                 custom: response.data.txn_id,
-                                return: '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?action=overview&payment=pending&txn=' + response.data.txn_id,
-                                cancel_return: '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?action=checkout&type=<?php echo $type; ?>&error=cancelled'
+                                        return: '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?dash_page=overview&payment=pending&txn=' + response.data.txn_id,
+                                        cancel_return: '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?dash_page=checkout&checkout_type=<?php echo $type; ?>&error=cancelled'
                             };
 
                             const form = $('<form>', { action: paypalUrl, method: 'post' });
@@ -224,7 +224,7 @@ if ( ! $item_name ) {
                             // In a real implementation, we would call Stripe Checkout here.
                             // For this ecosystem, we simulate the redirection to Stripe.
                             setTimeout(() => {
-                                window.location.href = '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?action=overview&payment=pending&txn=' + response.data.txn_id;
+                                window.location.href = '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?dash_page=overview&payment=pending&txn=' + response.data.txn_id;
                             }, 1000);
                         }
                     } else {

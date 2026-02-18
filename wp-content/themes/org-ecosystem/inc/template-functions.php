@@ -228,7 +228,7 @@ function org_ecosystem_get_page_url( $template_path ) {
         'contact'   => 'contact',
         'donate'    => 'donate',
         'plans'     => 'membership-plans',
-        'directory' => 'member-directory',
+        'directory' => 'directory',
         'about'     => 'about',
         'mission'   => 'mission',
     );
@@ -241,6 +241,10 @@ function org_ecosystem_get_page_url( $template_path ) {
             // Try alternative slug
             $page = get_page_by_path( $key );
             if ( $page ) return get_permalink( $page->ID );
+
+            // Try by title
+            $page = get_page_by_title( 'Member Dashboard' );
+            if ( $page && $key === 'dashboard' ) return get_permalink( $page->ID );
         }
     }
 

@@ -174,10 +174,10 @@ function org_ecosystem_handle_event_registration() {
 		// Redirect to Checkout for paid events
 		if ( $is_paid ) {
              wp_redirect( add_query_arg( array(
-                'action'  => 'checkout',
-                'type'    => 'event',
-                'item_id' => $event_id
-            ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+                'dash_page'        => 'checkout',
+                'checkout_type'    => 'event',
+                'checkout_item_id' => $event_id
+            ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
             exit;
 		}
 
@@ -343,9 +343,9 @@ function org_ecosystem_handle_job_save() {
                  update_post_meta( $job_id, '_job_is_featured', 'pending' );
              }
              wp_redirect( add_query_arg( array(
-                'action'  => 'checkout',
-                'type'    => $checkout_type,
-                'item_id' => $job_id
+                'dash_page'        => 'checkout',
+                'checkout_type'    => $checkout_type,
+                'checkout_item_id' => $job_id
             ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
             exit;
         }
@@ -377,8 +377,8 @@ add_action( 'admin_post_org_delete_job', 'org_ecosystem_handle_job_delete' );
  * Handle Listing Promotion
  */
 function org_ecosystem_handle_promote_listing() {
-    $item_id = isset( $_GET['item_id'] ) ? intval( $_GET['item_id'] ) : 0;
-    $type = isset( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : 'member';
+    $item_id = isset( $_GET['checkout_item_id'] ) ? intval( $_GET['checkout_item_id'] ) : (isset($_GET['item_id']) ? intval($_GET['item_id']) : 0);
+    $type = isset( $_GET['checkout_type'] ) ? sanitize_text_field( $_GET['checkout_type'] ) : 'promotion';
 
     if ( ! $item_id || ! check_admin_referer( 'org_promote_listing_action' ) ) return;
 
@@ -386,14 +386,14 @@ function org_ecosystem_handle_promote_listing() {
     if ( (int) get_post_field( 'post_author', $item_id ) === (int) $user_id ) {
         // Redirect to unified checkout
         wp_redirect( add_query_arg( array(
-            'action'  => 'checkout',
-            'type'    => 'promotion',
-            'item_id' => $item_id
+            'dash_page'        => 'checkout',
+            'checkout_type'    => $type,
+            'checkout_item_id' => $item_id
         ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
         exit;
     }
 
-    wp_redirect( add_query_arg( array( 'action' => 'overview', 'error' => 'unauthorized' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+    wp_redirect( add_query_arg( array( 'dash_page' => 'overview', 'error' => 'unauthorized' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
     exit;
 }
 add_action( 'admin_post_org_promote_listing', 'org_ecosystem_handle_promote_listing' );
