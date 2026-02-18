@@ -211,6 +211,7 @@ function org_ecosystem_handle_product_save() {
 	$sku = sanitize_text_field( $_POST['product_sku'] );
 	$external_url = esc_url_raw( $_POST['product_external_url'] );
     $cat_id = intval( $_POST['product_cat'] );
+    $features = sanitize_textarea_field( $_POST['product_features'] );
 
 	if ( $product_id ) {
 		if ( (int) get_post_field( 'post_author', $product_id ) === (int) $user_id ) {
@@ -235,6 +236,7 @@ function org_ecosystem_handle_product_save() {
 		update_post_meta( $product_id, '_product_stock', $stock );
 		update_post_meta( $product_id, '_product_sku', $sku );
 		update_post_meta( $product_id, '_product_external_url', $external_url );
+		update_post_meta( $product_id, '_product_features', $features );
 
         if ( $cat_id ) {
             wp_set_post_terms( $product_id, array( $cat_id ), 'product_cat' );

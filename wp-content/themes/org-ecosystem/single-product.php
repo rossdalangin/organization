@@ -63,9 +63,24 @@ while ( have_posts() ) :
                         <?php endif; ?>
                     </div>
 
-					<div class="product-description mb-5 fs-5 text-muted">
+					<div class="product-description mb-4 fs-5 text-muted">
 						<?php the_content(); ?>
 					</div>
+
+                    <?php
+                    $features = get_post_meta( get_the_ID(), '_product_features', true );
+                    if ( $features ) :
+                        $feature_list = explode( "\n", $features );
+                    ?>
+                        <div class="product-features mb-5">
+                            <h5 class="fw-bold mb-3"><?php _e( 'Key Features', 'org-ecosystem' ); ?></h5>
+                            <ul class="list-unstyled">
+                                <?php foreach ( $feature_list as $feature ) : if(trim($feature)) : ?>
+                                    <li class="mb-2 d-flex align-items-center"><i class="bi bi-check2-circle text-primary me-2"></i> <?php echo esc_html( $feature ); ?></li>
+                                <?php endif; endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
 
 					<?php
 					$business_id = get_post_meta( get_the_ID(), '_product_business_id', true );
@@ -87,9 +102,9 @@ while ( have_posts() ) :
 					<?php endif; ?>
 
 					<div class="d-grid gap-3 mb-5">
-						<button type="button" class="btn btn-primary btn-lg py-3 fw-bold rounded-pill shadow" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+                        <a href="<?php echo esc_url( add_query_arg( array('action' => 'checkout', 'type' => 'product', 'item_id' => get_the_ID()), org_ecosystem_get_page_url('page-dashboard.php') ) ); ?>" class="btn btn-primary btn-lg py-3 fw-bold rounded-pill shadow">
                             <i class="bi bi-cart-check me-2"></i> <?php _e( 'Purchase Now', 'org-ecosystem' ); ?>
-                        </button>
+                        </a>
                         <?php if ( is_user_logged_in() ) : ?>
                             <button type="button" class="btn btn-outline-primary btn-lg py-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#directMessageModal">
                                 <i class="bi bi-chat-dots me-2"></i> <?php _e( 'Message Seller', 'org-ecosystem' ); ?>
@@ -107,51 +122,6 @@ while ( have_posts() ) :
 		</div>
 	</article>
 
-    <!-- Checkout Modal -->
-    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <form class="modal-content border-0 rounded-4 shadow-lg" id="product-checkout-form">
-          <input type="hidden" name="amount" value="<?php echo esc_attr($price); ?>">
-          <input type="hidden" name="type" value="product_sale">
-          <input type="hidden" name="item_id" value="<?php the_ID(); ?>">
-          <?php wp_nonce_field( 'org_payment_nonce', 'security' ); ?>
-
-          <div class="modal-header border-0 p-4">
-            <h5 class="modal-title fw-bold"><?php _e( 'Secure Checkout', 'org-ecosystem' ); ?></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body p-4">
-            <div class="d-flex justify-content-between mb-4 pb-3 border-bottom">
-                <span class="text-muted"><?php the_title(); ?></span>
-                <span class="fw-bold">₱ <?php echo number_format(floatval($price), 2); ?></span>
-            </div>
-
-            <h6 class="fw-bold mb-3"><?php _e( 'Select Payment Method', 'org-ecosystem' ); ?></h6>
-            <div class="payment-options d-grid gap-2">
-                <label class="btn btn-outline-light text-dark border p-3 text-start d-flex align-items-center rounded-3">
-                    <input type="radio" name="gateway" value="stripe" class="me-3" required checked>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" height="20" class="me-auto" alt="Stripe">
-                </label>
-                <label class="btn btn-outline-light text-dark border p-3 text-start d-flex align-items-center rounded-3">
-                    <input type="radio" name="gateway" value="paypal" class="me-3" required>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" height="20" class="me-auto" alt="PayPal">
-                </label>
-                <label class="btn btn-outline-light text-dark border p-3 text-start d-flex align-items-center rounded-3">
-                    <input type="radio" name="gateway" value="gcash" class="me-3" required>
-                    <span class="fw-bold text-primary"><?php _e( 'GCash Mobile', 'org-ecosystem' ); ?></span>
-                </label>
-                <label class="btn btn-outline-light text-dark border p-3 text-start d-flex align-items-center rounded-3">
-                    <input type="radio" name="gateway" value="offline" class="me-3" required>
-                    <span class="fw-bold text-muted"><?php _e( 'Bank Transfer / Cash', 'org-ecosystem' ); ?></span>
-                </label>
-            </div>
-          </div>
-          <div class="modal-footer border-0 p-4 pt-0">
-            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 rounded-pill fw-bold" id="pay-btn"><?php _e( 'Complete Order', 'org-ecosystem' ); ?></button>
-          </div>
-        </form>
-      </div>
-    </div>
 
     <!-- Message Modal -->
     <div class="modal fade" id="directMessageModal" tabindex="-1" aria-hidden="true">
@@ -177,36 +147,6 @@ while ( have_posts() ) :
       </div>
     </div>
 
-    <script>
-    jQuery(document).ready(function($) {
-        $('#product-checkout-form').on('submit', function(e) {
-            e.preventDefault();
-            var btn = $('#pay-btn');
-            var originalText = btn.text();
-
-            btn.prop('disabled', true).text('Processing...');
-
-            var data = {
-                action: 'org_process_payment',
-                security: $('input[name="security"]').val(),
-                amount: $('input[name="amount"]').val(),
-                gateway: $('input[name="gateway"]:checked').val(),
-                type: $('input[name="type"]').val(),
-                item_id: $('input[name="item_id"]').val()
-            };
-
-            $.post(org_ajax.ajaxurl, data, function(res) {
-                if (res.success) {
-                    alert('Order Successful! Transaction ID: ' + res.data.txn_id);
-                    location.reload();
-                } else {
-                    alert('Error: ' + res.data);
-                    btn.prop('disabled', false).text(originalText);
-                }
-            });
-        });
-    });
-    </script>
 
 <?php
 endwhile;

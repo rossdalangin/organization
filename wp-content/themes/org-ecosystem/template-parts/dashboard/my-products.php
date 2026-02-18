@@ -97,6 +97,11 @@ if ( $product_to_edit && (int) $product_to_edit->post_author !== (int) $user_id 
 				</div>
 			</div>
 
+            <div class="mb-4">
+                <label class="form-label fw-bold"><?php _e( 'Key Features / Specifications (One per line)', 'org-ecosystem' ); ?></label>
+                <textarea name="product_features" class="form-control" rows="3" placeholder="<?php _e( "Example:\nHigh Quality Material\n2 Year Warranty\nFree Shipping", 'org-ecosystem' ); ?>"><?php echo $product_to_edit ? esc_textarea( get_post_meta( $product_to_edit->ID, '_product_features', true ) ) : ''; ?></textarea>
+            </div>
+
 			<div class="d-flex gap-2">
 				<button type="submit" class="btn btn-primary px-4 py-2 fw-bold"><?php echo $product_to_edit ? __( 'Update Product', 'org-ecosystem' ) : __( 'Publish Product', 'org-ecosystem' ); ?></button>
 				<?php if($product_to_edit) : ?>

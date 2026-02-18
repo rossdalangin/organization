@@ -205,47 +205,47 @@ function org_ecosystem_breadcrumbs() {
  * Get Page URL by Template
  */
 function org_ecosystem_get_page_url( $template_path ) {
-    $search_templates = array( $template_path );
+    // 1. Try to find by meta _wp_page_template
+    $basename = basename($template_path);
+    $search_templates = array( $template_path, $basename, 'templates/' . $basename );
 
-    // Normalize paths
-    if ( strpos( $template_path, 'templates/' ) === 0 ) {
-        $search_templates[] = str_replace( 'templates/', 'page-', $template_path );
-        $search_templates[] = ltrim( $template_path, 'templates/' );
-    }
-    if ( $template_path === 'templates/dashboard.php' || $template_path === 'page-dashboard.php' ) {
-        $search_templates[] = 'page-dashboard.php';
-        $search_templates[] = 'templates/dashboard.php';
-    }
-    if ( $template_path === 'templates/template-directory.php' ) {
-        $search_templates[] = 'template-directory.php';
-    }
-
-    $pages = get_pages( array(
+    $pages = get_posts( array(
+        'post_type'  => 'page',
         'meta_key'   => '_wp_page_template',
         'meta_value' => $search_templates,
-        'number'     => 1,
-        'post_status' => 'publish,private'
+        'posts_per_page' => 1,
+        'post_status' => array('publish', 'private')
     ) );
-    if ( $pages ) {
+
+    if ( ! empty($pages) ) {
         return get_permalink( $pages[0]->ID );
     }
 
-    // Fallback to slugs
-    $slug = '';
-    if ( strpos( $template_path, 'dashboard' ) !== false ) $slug = 'dashboard';
-    if ( strpos( $template_path, 'join' ) !== false ) $slug = 'join';
-    if ( strpos( $template_path, 'contact' ) !== false ) $slug = 'contact';
-    if ( strpos( $template_path, 'donate' ) !== false ) $slug = 'donate';
-    if ( strpos( $template_path, 'plans' ) !== false ) $slug = 'plans';
-    if ( strpos( $template_path, 'directory' ) !== false ) $slug = 'directory';
+    // 2. Fallback to slugs based on common keywords
+    $slug_map = array(
+        'dashboard' => 'dashboard',
+        'join'      => 'join',
+        'contact'   => 'contact',
+        'donate'    => 'donate',
+        'plans'     => 'membership-plans',
+        'directory' => 'member-directory',
+        'about'     => 'about',
+        'mission'   => 'mission',
+    );
 
-    if ( $slug ) {
-        $page = get_page_by_path( $slug );
-        if ( $page ) return get_permalink( $page->ID );
-        return home_url( '/' . $slug );
+    foreach ( $slug_map as $key => $slug ) {
+        if ( strpos( $template_path, $key ) !== false ) {
+            $page = get_page_by_path( $slug );
+            if ( $page ) return get_permalink( $page->ID );
+
+            // Try alternative slug
+            $page = get_page_by_path( $key );
+            if ( $page ) return get_permalink( $page->ID );
+        }
     }
 
-    return home_url();
+    // 3. Last resort home URL
+    return home_url('/');
 }
 
 function org_ecosystem_comment_callback( $comment, $args, $depth ) {
