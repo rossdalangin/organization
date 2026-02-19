@@ -23,8 +23,16 @@ get_header();
 						<p class="mb-0"><?php _e( 'Create your professional account and join our digital ecosystem.', 'org-ecosystem' ); ?></p>
 					</div>
 					<div class="card-body p-5 bg-white">
-						<?php if ( isset( $_GET['error'] ) && $_GET['error'] === 'exists' ) : ?>
-							<div class="alert alert-danger"><?php _e( 'Username or email already exists. Please try another.', 'org-ecosystem' ); ?></div>
+						<?php if ( isset( $_GET['error'] ) ) : ?>
+							<div class="alert alert-danger">
+                                <?php
+                                if ( $_GET['error'] === 'exists' ) {
+                                    _e( 'Username or email already exists. Please try another.', 'org-ecosystem' );
+                                } else {
+                                    printf( __( 'Registration failed: %s', 'org-ecosystem' ), esc_html($_GET['error']) );
+                                }
+                                ?>
+                            </div>
 						<?php endif; ?>
 
 						<form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">

@@ -250,22 +250,33 @@ function org_ecosystem_handle_registration() {
 		), home_url( '/' ) );
 
 		$subject = get_option( 'org_welcome_email_subject', 'Verify your email' );
-		$message = str_replace( '{verify_url}', $verify_url, get_option( 'org_welcome_email_body', 'Please verify your email: {verify_url}' ) );
+		$body_template = get_option( 'org_welcome_email_body', 'Hi {user_name}, thank you for joining {site_name}! Please verify your email here: {verify_url}' );
+
+        $message = str_replace(
+            array( '{user_name}', '{site_name}', '{verify_url}' ),
+            array( $first_name, get_bloginfo( 'name' ), $verify_url ),
+            $body_template
+        );
 
 		wp_mail( $email, $subject, $message );
 
 		if ( $plan !== 'free' && $plan !== 'community' ) {
             wp_redirect( add_query_arg( array(
                 'registered' => 'true',
-                'action'     => 'checkout',
-                'type'       => 'membership',
-                'plan'       => $plan
+                'dash_page'     => 'checkout',
+                'checkout_type' => 'membership',
+                'plan_id'       => $plan
             ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
         } else {
 		    wp_redirect( add_query_arg( 'registered', 'true', org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
         }
 		exit;
-	}
+	} else {
+        // Handle registration error
+        $error_code = is_wp_error( $user_id ) ? $user_id->get_error_code() : 'registration_failed';
+        wp_redirect( add_query_arg( 'error', $error_code, org_ecosystem_get_page_url( 'page-join.php' ) ) );
+        exit;
+    }
 }
 add_action( 'admin_post_nopriv_org_register', 'org_ecosystem_handle_registration' );
 
@@ -686,11 +697,11 @@ function org_ecosystem_handle_renewal() {
 	check_admin_referer( 'org_renew_membership_action' );
 
 	$user_id = get_current_user_id();
-	$level = get_user_meta( $user_id, '_membership_level', true ) ?: 'basic';
+	$level = get_user_meta( $user_id, '_membership_level', true ) ?: 'professional';
 
 	// Mock successful payment and renewal
 	if ( org_ecosystem_process_payment( $user_id, $level, 'mock_gateway' ) ) {
-		wp_redirect( add_query_arg( array( 'action' => 'billing', 'renewed' => 'true' ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) );
+		wp_redirect( add_query_arg( array( 'dash_page' => 'billing', 'renewed' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
 		exit;
 	}
 }
@@ -700,7 +711,7 @@ add_action( 'admin_post_org_renew_membership', 'org_ecosystem_handle_renewal' );
  * Handle Receipt Download
  */
 function org_ecosystem_handle_receipt_download() {
-	if ( isset( $_GET['action'] ) && $_GET['action'] === 'download_receipt' && isset( $_GET['txn_id'] ) ) {
+	if ( isset( $_GET['dash_page'] ) && $_GET['dash_page'] === 'download_receipt' && isset( $_GET['txn_id'] ) ) {
 		if ( ! is_user_logged_in() ) return;
 
 		$txn_id = sanitize_text_field( $_GET['txn_id'] );
@@ -722,11 +733,11 @@ add_action( 'template_redirect', 'org_ecosystem_handle_receipt_download' );
  * Handle Login Redirection
  */
 function org_ecosystem_login_redirect( $redirect_to, $request, $user ) {
-	if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+	if ( is_object( $user ) && isset( $user->roles ) && is_array( $user->roles ) ) {
 		if ( in_array( 'administrator', $user->roles ) || in_array( 'super_admin', $user->roles ) || in_array( 'org_admin', $user->roles ) ) {
 			return admin_url( 'admin.php?page=org-settings' );
 		} else {
-			return org_ecosystem_get_page_url( 'templates/dashboard.php' );
+			return org_ecosystem_get_page_url( 'page-dashboard.php' );
 		}
 	}
 	return $redirect_to;
@@ -766,7 +777,7 @@ add_action( 'admin_post_org_upgrade_membership', 'org_ecosystem_handle_membershi
  */
 function org_ecosystem_restrict_admin_access() {
     if ( is_admin() && ! current_user_can( 'edit_posts' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
-        wp_redirect( org_ecosystem_get_page_url( 'templates/dashboard.php' ) );
+        wp_redirect( org_ecosystem_get_page_url( 'page-dashboard.php' ) );
         exit;
     }
 }

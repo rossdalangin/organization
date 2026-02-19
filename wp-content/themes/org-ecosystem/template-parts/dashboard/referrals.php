@@ -65,7 +65,7 @@ wp_reset_postdata();
                     </div>
                 </div>
                 <div class="mt-3">
-                    <a href="?action=transactions" class="text-decoration-none small fw-bold text-success"><?php _e( 'View Earnings History', 'org-ecosystem' ); ?> <i class="bi bi-arrow-right"></i></a>
+                    <a href="?dash_page=transactions" class="text-decoration-none small fw-bold text-success"><?php _e( 'View Earnings History', 'org-ecosystem' ); ?> <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
         </div>

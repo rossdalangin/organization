@@ -57,7 +57,7 @@ $history = get_user_meta( $user_id, '_payment_history', true ) ?: array();
 					<td>₱ <?php echo number_format( $item['amount'] ); ?></td>
 					<td><span class="badge bg-success"><?php echo esc_html( $item['status'] ); ?></span></td>
 					<td>
-						<a href="<?php echo esc_url( add_query_arg( array( 'txn_id' => $item['txn_id'], 'action' => 'download_receipt' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) ); ?>" class="btn btn-sm btn-outline-secondary">
+						<a href="<?php echo esc_url( add_query_arg( array( 'txn_id' => $item['txn_id'], 'dash_page' => 'download_receipt' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) ); ?>" class="btn btn-sm btn-outline-secondary">
 							<i class="bi bi-download"></i>
 						</a>
 					</td>

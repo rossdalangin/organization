@@ -63,7 +63,7 @@ if ( ! $item_name ) {
 <div class="checkout-wrapper">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold mb-0"><?php _e( 'Secure Checkout', 'org-ecosystem' ); ?></h3>
-        <a href="?action=overview" class="btn btn-outline-secondary btn-sm"><?php _e( 'Cancel', 'org-ecosystem' ); ?></a>
+        <a href="?dash_page=overview" class="btn btn-outline-secondary btn-sm"><?php _e( 'Cancel', 'org-ecosystem' ); ?></a>
     </div>
 
     <div class="row">

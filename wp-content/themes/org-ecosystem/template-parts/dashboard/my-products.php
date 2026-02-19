@@ -105,7 +105,7 @@ if ( $product_to_edit && (int) $product_to_edit->post_author !== (int) $user_id 
 			<div class="d-flex gap-2">
 				<button type="submit" class="btn btn-primary px-4 py-2 fw-bold"><?php echo $product_to_edit ? __( 'Update Product', 'org-ecosystem' ) : __( 'Publish Product', 'org-ecosystem' ); ?></button>
 				<?php if($product_to_edit) : ?>
-					<a href="?action=my-products" class="btn btn-light px-4 py-2 border"><?php _e( 'Cancel', 'org-ecosystem' ); ?></a>
+					<a href="?dash_page=my-products" class="btn btn-light px-4 py-2 border"><?php _e( 'Cancel', 'org-ecosystem' ); ?></a>
 				<?php endif; ?>
 			</div>
 		</form>
