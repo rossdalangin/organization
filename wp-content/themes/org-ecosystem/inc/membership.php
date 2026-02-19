@@ -587,14 +587,14 @@ function org_ecosystem_get_membership_levels() {
 			'price' => get_option( 'org_rate_professional', get_theme_mod( 'basic_plan_price', '1500' ) ),
 			'duration' => 'annual',
             'features' => array( 'Public Member Profile', 'Business Listing', 'Internal Messaging', 'Direct Inquiries' ),
-            'caps' => array( 'publish_profile', 'send_messages' )
+            'caps' => array( 'publish_profile', 'send_messages', 'manage_events', 'manage_jobs' )
 		),
 		'vendor' => array(
 			'name' => 'Vendor (with Products)',
 			'price' => get_option( 'org_rate_vendor', get_theme_mod( 'premium_plan_price', '5000' ) ),
 			'duration' => 'annual',
             'features' => array( 'Product Showcase (unlimited)', 'Featured Spotlight', 'Receive Payments', 'Sales Analytics' ),
-            'caps' => array( 'publish_profile', 'send_messages', 'manage_products', 'featured_listing' )
+            'caps' => array( 'publish_profile', 'send_messages', 'manage_products', 'featured_listing', 'manage_events', 'manage_jobs' )
 		),
 		'corporate' => array(
 			'name' => 'Corporate Partner',
@@ -799,12 +799,15 @@ function org_ecosystem_handle_renewal() {
 	$user_id = get_current_user_id();
 	$level = get_user_meta( $user_id, '_membership_level', true ) ?: 'professional';
 
-	// Mock successful payment and renewal
-	if ( org_ecosystem_process_payment( $user_id, $level, 'mock_gateway' ) ) {
-        $redirect_url = isset($_GET['redirect_to']) ? esc_url_raw($_GET['redirect_to']) : org_ecosystem_get_page_url( 'page-dashboard.php' );
-		wp_redirect( add_query_arg( array( 'dash_page' => 'billing', 'renewed' => 'true' ), $redirect_url ) );
-		exit;
-	}
+	// Redirect to checkout for actual payment instead of mocking
+    $redirect_url = add_query_arg( array(
+        'dash_page'     => 'checkout',
+        'checkout_type' => 'membership',
+        'plan_id'       => $level
+    ), org_ecosystem_get_page_url( 'page-dashboard.php' ) );
+
+    wp_redirect( $redirect_url );
+    exit;
 }
 add_action( 'admin_post_org_renew_membership', 'org_ecosystem_handle_renewal' );
 add_action( 'admin_post_nopriv_org_renew_membership', 'org_ecosystem_handle_renewal' );

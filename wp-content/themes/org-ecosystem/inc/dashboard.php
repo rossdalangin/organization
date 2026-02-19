@@ -202,6 +202,10 @@ function org_ecosystem_handle_product_save() {
 		return;
 	}
 
+    if ( ! org_ecosystem_can_user_do( 'manage_products' ) ) {
+        wp_die( __( 'You do not have permission to manage products.', 'org-ecosystem' ) );
+    }
+
 	$user_id = get_current_user_id();
 	$product_id = isset( $_POST['product_id'] ) ? intval( $_POST['product_id'] ) : 0;
 	$name = sanitize_text_field( $_POST['product_name'] );
@@ -289,6 +293,10 @@ function org_ecosystem_handle_job_save() {
 	if ( ! isset( $_POST['org_job_nonce'] ) || ! wp_verify_nonce( $_POST['org_job_nonce'], 'org_save_job_action' ) ) {
 		return;
 	}
+
+    if ( ! org_ecosystem_can_user_do( 'manage_jobs' ) ) {
+        wp_die( __( 'You do not have permission to post jobs. Please upgrade your membership.', 'org-ecosystem' ) );
+    }
 
 	$user_id = get_current_user_id();
 	$job_id = isset( $_POST['job_id'] ) ? intval( $_POST['job_id'] ) : 0;

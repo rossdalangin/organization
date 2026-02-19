@@ -75,12 +75,20 @@ function is_dash_active($slug, $action) {
 							    <a href="?dash_page=my-products" class="list-group-item list-group-item-action <?php echo is_dash_active('my-products', $action); ?> border-0"><i class="bi bi-box-seam me-3"></i> <?php _e( 'My Offerings', 'org-ecosystem' ); ?></a>
                             <?php endif; ?>
 
-							<a href="?dash_page=my-jobs" class="list-group-item list-group-item-action <?php echo is_dash_active('my-jobs', $action); ?> border-0"><i class="bi bi-briefcase me-3"></i> <?php _e( 'My Openings', 'org-ecosystem' ); ?></a>
-							<a href="?dash_page=my-events" class="list-group-item list-group-item-action <?php echo is_dash_active('my-events', $action); ?> border-0"><i class="bi bi-calendar-check me-3"></i> <?php _e( 'Registered Events', 'org-ecosystem' ); ?></a>
+							<?php if ( org_ecosystem_can_user_do( 'manage_jobs' ) ) : ?>
+                                <a href="?dash_page=my-jobs" class="list-group-item list-group-item-action <?php echo is_dash_active('my-jobs', $action); ?> border-0"><i class="bi bi-briefcase me-3"></i> <?php _e( 'My Openings', 'org-ecosystem' ); ?></a>
+                            <?php endif; ?>
+
+                            <?php if ( org_ecosystem_can_user_do( 'manage_events' ) ) : ?>
+							    <a href="?dash_page=my-events" class="list-group-item list-group-item-action <?php echo is_dash_active('my-events', $action); ?> border-0"><i class="bi bi-calendar-check me-3"></i> <?php _e( 'Registered Events', 'org-ecosystem' ); ?></a>
+							<?php endif; ?>
 
                             <div class="px-4 py-3 small text-muted text-uppercase fw-bold bg-light border-bottom border-top"><?php _e( 'Financials & Tools', 'org-ecosystem' ); ?></div>
-                            <a href="?dash_page=transactions" class="list-group-item list-group-item-action <?php echo is_dash_active('transactions', $action); ?> border-0"><i class="bi bi-wallet2 me-3"></i> <?php _e( 'Earnings & Ledger', 'org-ecosystem' ); ?></a>
-                            <a href="?dash_page=payments" class="list-group-item list-group-item-action <?php echo is_dash_active('payments', $action); ?> border-0"><i class="bi bi-cash me-3"></i> <?php _e( 'Payments & Payouts', 'org-ecosystem' ); ?></a>
+
+                            <?php if ( org_ecosystem_can_user_do( 'manage_products' ) || org_ecosystem_can_user_do( 'featured_listing' ) ) : ?>
+                                <a href="?dash_page=transactions" class="list-group-item list-group-item-action <?php echo is_dash_active('transactions', $action); ?> border-0"><i class="bi bi-wallet2 me-3"></i> <?php _e( 'Earnings & Ledger', 'org-ecosystem' ); ?></a>
+                                <a href="?dash_page=payments" class="list-group-item list-group-item-action <?php echo is_dash_active('payments', $action); ?> border-0"><i class="bi bi-cash me-3"></i> <?php _e( 'Payments & Payouts', 'org-ecosystem' ); ?></a>
+                            <?php endif; ?>
                             <a href="?dash_page=referrals" class="list-group-item list-group-item-action <?php echo is_dash_active('referrals', $action); ?> border-0"><i class="bi bi-share me-3"></i> <?php _e( 'Referral Center', 'org-ecosystem' ); ?></a>
                             <a href="?dash_page=billing" class="list-group-item list-group-item-action <?php echo is_dash_active('billing', $action); ?> border-0"><i class="bi bi-credit-card me-3"></i> <?php _e( 'Subscription', 'org-ecosystem' ); ?></a>
 							<a href="?dash_page=resources" class="list-group-item list-group-item-action <?php echo is_dash_active('resources', $action); ?> border-0"><i class="bi bi-file-earmark-arrow-down me-3"></i> <?php _e( 'Downloads', 'org-ecosystem' ); ?></a>
