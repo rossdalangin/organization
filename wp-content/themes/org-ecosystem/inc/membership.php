@@ -257,19 +257,19 @@ function org_ecosystem_handle_registration() {
         org_ecosystem_register_roles();
     }
 
-    // Try creating user with minimum fields first to avoid validation issues
-	$user_id = wp_create_user( $username, $password, $email );
+	$userdata = array(
+        'user_login'   => $username,
+        'user_pass'    => $password,
+        'user_email'   => $email,
+        'first_name'   => $first_name,
+        'last_name'    => $last_name,
+        'display_name' => ($first_name || $last_name) ? trim($first_name . ' ' . $last_name) : $username,
+        'role'         => 'member',
+    );
+
+    $user_id = wp_insert_user( $userdata );
 
 	if ( ! is_wp_error( $user_id ) && $user_id > 0 ) {
-        // Update user with additional info
-        wp_update_user( array(
-            'ID'           => $user_id,
-            'first_name'   => $first_name,
-            'last_name'    => $last_name,
-            'display_name' => ($first_name || $last_name) ? trim($first_name . ' ' . $last_name) : $username,
-            'role'         => 'member',
-        ) );
-
 		// Sync Member CPT profile (if not already created by user_register hook)
 		$member_id = get_user_meta( $user_id, '_member_profile_id', true );
 
@@ -285,7 +285,6 @@ function org_ecosystem_handle_registration() {
                 update_user_meta( $user_id, '_member_profile_id', $member_id );
             }
         } else {
-            // Update existing profile title
             wp_update_post( array(
                 'ID'         => $member_id,
                 'post_title' => ($first_name || $last_name) ? trim($first_name . ' ' . $last_name) : $username,
@@ -338,9 +337,6 @@ function org_ecosystem_handle_registration() {
         // Handle registration error
         $error_code = is_wp_error( $user_id ) ? $user_id->get_error_code() : 'creation_failed';
         $error_msg = is_wp_error( $user_id ) ? $user_id->get_error_message() : 'Unknown error';
-
-        // For debugging, we can log it
-        error_log("Registration failed for $username: $error_msg");
 
         wp_redirect( add_query_arg( array(
             'error' => $error_code,
@@ -869,6 +865,13 @@ add_action( 'admin_post_org_upgrade_membership', 'org_ecosystem_handle_membershi
  * Restrict wp-admin access for standard members
  */
 function org_ecosystem_restrict_admin_access() {
+    global $pagenow;
+
+    // Allow admin-post.php for registration and other actions
+    if ( $pagenow === 'admin-post.php' ) {
+        return;
+    }
+
     if ( is_admin() && ! current_user_can( 'edit_posts' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
         wp_redirect( org_ecosystem_get_page_url( 'page-dashboard.php' ) );
         exit;
