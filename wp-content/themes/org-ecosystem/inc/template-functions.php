@@ -207,7 +207,13 @@ function org_ecosystem_breadcrumbs() {
 function org_ecosystem_get_page_url( $template_path ) {
     // 1. Try to find by meta _wp_page_template
     $basename = basename($template_path);
-    $search_templates = array( $template_path, $basename, 'templates/' . $basename );
+    $search_templates = array(
+        $template_path,
+        $basename,
+        'templates/' . $basename,
+        '/' . $template_path,
+        '/' . $basename
+    );
 
     $pages = get_posts( array(
         'post_type'  => 'page',

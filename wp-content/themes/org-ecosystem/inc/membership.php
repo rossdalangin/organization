@@ -228,7 +228,7 @@ add_action( 'init', 'org_ecosystem_register_rest_meta' );
  */
 function org_ecosystem_handle_registration() {
 	if ( ! isset( $_POST['org_registration_nonce'] ) || ! wp_verify_nonce( $_POST['org_registration_nonce'], 'org_user_registration' ) ) {
-		return;
+		wp_die( __( 'Security check failed. Please refresh the page and try again.', 'org-ecosystem' ) );
 	}
 
 	$username = sanitize_user( $_POST['username'] );
@@ -236,32 +236,54 @@ function org_ecosystem_handle_registration() {
 	$password = $_POST['password'];
 	$first_name = sanitize_text_field( $_POST['first_name'] );
 	$last_name = sanitize_text_field( $_POST['last_name'] );
-	$plan = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : 'free';
+	$plan = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : 'community';
+
+    // Basic Validation
+    if ( empty( $username ) || empty( $email ) || empty( $password ) ) {
+        wp_redirect( add_query_arg( 'error', 'missing_fields', org_ecosystem_get_page_url( 'page-join.php' ) ) );
+		exit;
+    }
 
 	if ( username_exists( $username ) || email_exists( $email ) ) {
 		wp_redirect( add_query_arg( 'error', 'exists', org_ecosystem_get_page_url( 'page-join.php' ) ) );
 		exit;
 	}
 
-	$user_id = wp_create_user( $username, $password, $email );
+    // Ensure Role Exists
+    if ( ! get_role( 'member' ) ) {
+        org_ecosystem_register_roles();
+    }
+
+	$user_id = wp_insert_user( array(
+        'user_login'   => $username,
+        'user_pass'    => $password,
+        'user_email'   => $email,
+        'first_name'   => $first_name,
+        'last_name'    => $last_name,
+        'display_name' => $first_name . ' ' . $last_name,
+        'role'         => 'member',
+    ) );
 
 	if ( ! is_wp_error( $user_id ) ) {
-		wp_update_user( array(
-			'ID' => $user_id,
-			'first_name' => $first_name,
-			'last_name' => $last_name,
-			'role' => 'member', // Default role for ecosystem
-		) );
+		// Sync Member CPT profile (if not already created by user_register hook)
+		$member_id = get_user_meta( $user_id, '_member_profile_id', true );
 
-		// Create Member CPT profile
-		$member_id = wp_insert_post( array(
-			'post_title' => $first_name . ' ' . $last_name,
-			'post_type' => 'member',
-			'post_status' => 'pending',
-			'post_author' => $user_id,
-		) );
+        if ( ! $member_id ) {
+            $member_id = wp_insert_post( array(
+                'post_title'  => $first_name . ' ' . $last_name,
+                'post_type'   => 'member',
+                'post_status' => 'pending',
+                'post_author' => $user_id,
+            ) );
+            update_user_meta( $user_id, '_member_profile_id', $member_id );
+        } else {
+            // Update existing profile title
+            wp_update_post( array(
+                'ID'         => $member_id,
+                'post_title' => $first_name . ' ' . $last_name,
+            ) );
+        }
 
-		update_user_meta( $user_id, '_member_profile_id', $member_id );
 		update_user_meta( $user_id, '_membership_level', $plan );
 		update_post_meta( $member_id, '_member_status', 'pending' );
 		update_post_meta( $member_id, '_member_join_date', date( 'Y-m-d' ) );
@@ -306,12 +328,13 @@ function org_ecosystem_handle_registration() {
 		exit;
 	} else {
         // Handle registration error
-        $error_code = is_wp_error( $user_id ) ? $user_id->get_error_code() : 'registration_failed';
+        $error_code = $user_id->get_error_code();
         wp_redirect( add_query_arg( 'error', $error_code, org_ecosystem_get_page_url( 'page-join.php' ) ) );
         exit;
     }
 }
 add_action( 'admin_post_nopriv_org_register', 'org_ecosystem_handle_registration' );
+add_action( 'admin_post_org_register', 'org_ecosystem_handle_registration' );
 
 /**
  * Handle Email Verification Link
@@ -342,18 +365,39 @@ add_action( 'init', 'org_ecosystem_handle_email_verification' );
  * Sync Member Profile on User Registration
  */
 function org_ecosystem_sync_member_profile( $user_id ) {
+    // Check if profile ID already associated
     $member_id = get_user_meta( $user_id, '_member_profile_id', true );
+
+    // Also check if a post of type 'member' already exists for this author
+    if ( ! $member_id ) {
+        $existing_posts = get_posts( array(
+            'post_type'   => 'member',
+            'author'      => $user_id,
+            'post_status' => 'any',
+            'numberposts' => 1,
+        ) );
+        if ( ! empty( $existing_posts ) ) {
+            $member_id = $existing_posts[0]->ID;
+            update_user_meta( $user_id, '_member_profile_id', $member_id );
+        }
+    }
+
     if ( ! $member_id ) {
         $user = get_userdata( $user_id );
+        if ( ! $user ) return;
+
         $member_id = wp_insert_post( array(
-            'post_title' => $user->display_name,
-            'post_type' => 'member',
+            'post_title'  => $user->display_name ?: $user->user_login,
+            'post_type'   => 'member',
             'post_status' => 'pending',
             'post_author' => $user_id,
         ) );
-        update_user_meta( $user_id, '_member_profile_id', $member_id );
-        update_post_meta( $member_id, '_member_status', 'pending' );
-        update_post_meta( $member_id, '_member_join_date', date( 'Y-m-d' ) );
+
+        if ( ! is_wp_error( $member_id ) ) {
+            update_user_meta( $user_id, '_member_profile_id', $member_id );
+            update_post_meta( $member_id, '_member_status', 'pending' );
+            update_post_meta( $member_id, '_member_join_date', date( 'Y-m-d' ) );
+        }
     }
 }
 add_action( 'user_register', 'org_ecosystem_sync_member_profile' );

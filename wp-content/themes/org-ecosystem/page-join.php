@@ -26,10 +26,21 @@ get_header();
 						<?php if ( isset( $_GET['error'] ) ) : ?>
 							<div class="alert alert-danger">
                                 <?php
-                                if ( $_GET['error'] === 'exists' ) {
-                                    _e( 'Username or email already exists. Please try another.', 'org-ecosystem' );
-                                } else {
-                                    printf( __( 'Registration failed: %s', 'org-ecosystem' ), esc_html($_GET['error']) );
+                                switch ( $_GET['error'] ) {
+                                    case 'exists':
+                                        _e( 'Username or email already exists. Please try another.', 'org-ecosystem' );
+                                        break;
+                                    case 'missing_fields':
+                                        _e( 'Please fill in all required fields.', 'org-ecosystem' );
+                                        break;
+                                    case 'existing_user_login':
+                                        _e( 'This username is already taken.', 'org-ecosystem' );
+                                        break;
+                                    case 'existing_user_email':
+                                        _e( 'This email address is already registered.', 'org-ecosystem' );
+                                        break;
+                                    default:
+                                        printf( __( 'Registration failed: %s. Please contact support.', 'org-ecosystem' ), esc_html($_GET['error']) );
                                 }
                                 ?>
                             </div>
