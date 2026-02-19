@@ -100,8 +100,17 @@ function org_ecosystem_scripts() {
 
 	wp_enqueue_script( 'org-ecosystem-navigation', ORG_ECOSYSTEM_URI . '/assets/js/navigation.js', array( 'jquery', 'bootstrap-bundle' ), ORG_ECOSYSTEM_VERSION, true );
 	wp_enqueue_script( 'org-ecosystem-main', ORG_ECOSYSTEM_URI . '/assets/js/main.js', array( 'jquery' ), ORG_ECOSYSTEM_VERSION, true );
+
+	if ( get_option( 'org_stripe_enabled' ) ) {
+		wp_enqueue_script( 'stripe-js', 'https://js.stripe.com/v3/', array(), null, true );
+	}
+
 	wp_localize_script( 'jquery', 'org_ajax', array(
-		'ajaxurl' => admin_url( 'admin-ajax.php' ),
+		'ajaxurl'        => admin_url( 'admin-ajax.php' ),
+		'stripe_pub_key' => get_option( 'org_stripe_pub_key' ),
+		'stripe_mode'    => get_option( 'org_stripe_mode', 'test' ),
+		'paypal_mode'    => get_option( 'org_paypal_mode', 'test' ),
+		'is_localhost'   => ( $_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['REMOTE_ADDR'] === '::1' || (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) ),
 	) );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {

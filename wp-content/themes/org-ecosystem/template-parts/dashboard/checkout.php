@@ -67,8 +67,24 @@ if ( ! $item_name ) {
 
 <div class="checkout-wrapper">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold mb-0"><?php _e( 'Secure Checkout', 'org-ecosystem' ); ?></h3>
+        <h3 class="fw-bold mb-0">
+            <?php _e( 'Secure Checkout', 'org-ecosystem' ); ?>
+            <span id="test-mode-badge" class="badge bg-warning text-dark ms-2 d-none" style="font-size: 0.5em; vertical-align: middle;">TEST MODE</span>
+        </h3>
         <a href="?dash_page=overview" class="btn btn-outline-secondary btn-sm"><?php _e( 'Cancel', 'org-ecosystem' ); ?></a>
+    </div>
+
+    <div id="localhost-dev-alert" class="alert alert-warning border-0 shadow-sm mb-4 d-none">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-cpu fs-3 me-3"></i>
+            <div>
+                <h6 class="fw-bold mb-1"><?php _e( 'Localhost Developer detected', 'org-ecosystem' ); ?></h6>
+                <p class="small mb-2"><?php _e( 'Real gateway redirections might behave differently on localhost. You can use the bypass tool below to simulate a successful payment for testing.', 'org-ecosystem' ); ?></p>
+                <button type="button" id="btn-bypass-payment" class="btn btn-dark btn-sm fw-bold">
+                    <i class="bi bi-magic me-1"></i> <?php _e( 'Bypass Payment (Simulate Success)', 'org-ecosystem' ); ?>
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -172,6 +188,11 @@ if ( ! $item_name ) {
             'offline': '<?php echo esc_js( get_option("org_offline_instructions") ); ?>'
         };
 
+        // Localhost awareness
+        if (org_ajax.is_localhost) {
+            $('#localhost-dev-alert').removeClass('d-none');
+        }
+
         $('input[name="gateway"]').on('change', function() {
             const val = $(this).val();
             if (instructions[val]) {
@@ -179,6 +200,13 @@ if ( ! $item_name ) {
                 $('#payment-instructions').removeClass('d-none');
             } else {
                 $('#payment-instructions').addClass('d-none');
+            }
+
+            // Show test mode badge if selected gateway is in test mode
+            if ((val === 'stripe' && org_ajax.stripe_mode === 'test') || (val === 'paypal' && org_ajax.paypal_mode === 'test')) {
+                $('#test-mode-badge').removeClass('d-none');
+            } else {
+                $('#test-mode-badge').addClass('d-none');
             }
         });
 
@@ -195,6 +223,35 @@ if ( ! $item_name ) {
                 return url + separator + key + "=" + value;
             }
         }
+
+        $('#btn-bypass-payment').on('click', function() {
+            if (!confirm('This will simulate a successful payment. Continue?')) return;
+
+            const btn = $(this);
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Bypassing...');
+
+            const ajaxData = {
+                action: 'org_bypass_payment',
+                amount: '<?php echo $amount; ?>',
+                gateway: 'bypass',
+                type: '<?php echo $type; ?>',
+                item_id: '<?php echo $item_id; ?>',
+                plan: '<?php echo $plan; ?>',
+                security: '<?php echo wp_create_nonce("org_payment_nonce"); ?>'
+            };
+
+            $.post(org_ajax.ajaxurl, ajaxData, (response) => {
+                if (response.success) {
+                    const dashUrlBase = '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>';
+                    var successUrl = addQueryParam(dashUrlBase, 'dash_page', 'overview');
+                    successUrl = addQueryParam(successUrl, 'payment', 'success');
+                    window.location.href = successUrl;
+                } else {
+                    alert('Bypass Error: ' + response.data);
+                    btn.prop('disabled', false).html('<i class="bi bi-magic me-1"></i> Bypass Payment');
+                }
+            });
+        });
 
         $('#checkout-form').on('submit', function(e) {
             const gateway = $('input[name="gateway"]:checked').val();
@@ -221,7 +278,7 @@ if ( ! $item_name ) {
 
                         if (gateway === 'paypal') {
                             const business = '<?php echo esc_js( get_option("org_paypal_email") ); ?>';
-                            const mode = '<?php echo get_option("org_paypal_mode", "test"); ?>';
+                            const mode = org_ajax.paypal_mode;
                             const paypalUrl = (mode === 'live') ? 'https://www.paypal.com/cgi-bin/webscr' : 'https://www.sandbox.paypal.com/cgi-bin/webscr';
 
                             var returnUrl = addQueryParam(dashUrlBase, 'dash_page', 'overview');
@@ -248,8 +305,16 @@ if ( ! $item_name ) {
                             $('body').append(form);
                             form.submit();
                         } else if (gateway === 'stripe') {
-                            // In a real implementation, we would call Stripe Checkout here.
-                            // For this ecosystem, we simulate the redirection to Stripe.
+                            if (typeof Stripe !== 'undefined' && org_ajax.stripe_pub_key) {
+                                // In a real implementation with a proper backend session creation:
+                                // const stripe = Stripe(org_ajax.stripe_pub_key);
+                                // stripe.redirectToCheckout({ sessionId: response.data.stripe_session_id });
+
+                                // For now, since we don't have the Stripe PHP SDK installed,
+                                // we simulate the redirection but inform the user.
+                                alert('Stripe keys detected. In a production environment, this would redirect to Stripe Checkout.');
+                            }
+
                             var successUrl = addQueryParam(dashUrlBase, 'dash_page', 'overview');
                             successUrl = addQueryParam(successUrl, 'payment', 'pending');
                             successUrl = addQueryParam(successUrl, 'txn', response.data.txn_id);

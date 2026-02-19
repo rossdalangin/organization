@@ -71,15 +71,64 @@ function org_ecosystem_process_unified_payment( $data ) {
     // Status Logic
     // In production, Stripe/PayPal should be 'pending' until IPN/Webhook verification.
     // For this ecosystem, we default to 'pending' to ensure administrative review or API confirmation.
-    $status = 'pending';
+    $status = isset($data['status']) ? $data['status'] : 'pending';
     update_post_meta( $txn_id, '_txn_status', $status );
 
     // Handle Commissions/Referrals if product sale
-    if ( $type === 'product_sale' && $status === 'completed' ) {
+    if ( ( $type === 'product_sale' || $type === 'product' ) && $status === 'completed' ) {
         org_ecosystem_handle_commission( $txn_id, $amount, $item_id );
     }
 
     return $txn_id;
+}
+
+/**
+ * Helper to Complete a Transaction and trigger side effects
+ */
+function org_ecosystem_complete_transaction( $txn_id ) {
+    $status = get_post_meta( $txn_id, '_txn_status', true );
+    if ( $status === 'completed' ) return; // Already done
+
+    update_post_meta( $txn_id, '_txn_status', 'completed' );
+
+    $type = get_post_meta( $txn_id, '_txn_type', true );
+    $user_id = get_post_meta( $txn_id, '_txn_user_id', true );
+    $item_id = get_post_meta( $txn_id, '_txn_item_id', true );
+    $amount = get_post_meta( $txn_id, '_txn_amount', true );
+
+    // Membership Logic
+    $levels = org_ecosystem_get_membership_levels();
+    if ( isset( $levels[$type] ) || $type === 'membership' ) {
+        $level = isset( $levels[$type] ) ? $type : 'professional';
+        org_ecosystem_process_payment( $user_id, $level, 'automated' );
+    }
+
+    // Promotion Logic
+    if ( $type === 'promotion' || $type === 'job_listing_promoted' ) {
+        $item_post_type = get_post_type($item_id);
+        $meta_key = ($item_post_type === 'member') ? '_member_is_featured' : ($item_post_type === 'job' ? '_job_is_featured' : '_product_is_featured');
+        update_post_meta( $item_id, $meta_key, '1' );
+    }
+
+    // Job/Event Logic
+    if ( $type === 'job_listing' || $type === 'job_listing_promoted' ) {
+        wp_update_post( array( 'ID' => $item_id, 'post_status' => 'publish' ) );
+    }
+
+    if ( $type === 'event' ) {
+        $registrations = get_user_meta( $user_id, '_registered_events', true ) ?: array();
+        if ( ! in_array( $item_id, $registrations ) ) {
+            $registrations[] = $item_id;
+            update_user_meta( $user_id, '_registered_events', $registrations );
+            $attendees = get_post_meta( $item_id, '_event_attendees', true ) ?: array();
+            $attendees[] = $user_id;
+            update_post_meta( $item_id, '_event_attendees', $attendees );
+        }
+    }
+
+    if ( $type === 'product_sale' || $type === 'product' ) {
+        org_ecosystem_handle_commission( $txn_id, $amount, $item_id );
+    }
 }
 
 /**
@@ -143,6 +192,43 @@ function org_ajax_process_payment() {
 }
 add_action( 'wp_ajax_org_process_payment', 'org_ajax_process_payment' );
 add_action( 'wp_ajax_nopriv_org_process_payment', 'org_ajax_process_payment' );
+
+/**
+ * AJAX Handler to Bypass Payment (Localhost/Admin only)
+ */
+function org_ajax_bypass_payment() {
+    check_ajax_referer( 'org_payment_nonce', 'security' );
+
+    if ( ! is_user_logged_in() ) wp_send_json_error('Login required');
+
+    $is_localhost = ( $_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['REMOTE_ADDR'] === '::1' || (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) );
+
+    if ( ! $is_localhost && ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error('Unauthorized');
+    }
+
+    $type = sanitize_text_field( $_POST['type'] );
+    $plan = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : '';
+    $txn_type = ($type === 'membership' && $plan) ? $plan : $type;
+
+    $data = array(
+        'amount'  => sanitize_text_field( $_POST['amount'] ),
+        'gateway' => 'bypass',
+        'type'    => $txn_type,
+        'item_id' => intval( $_POST['item_id'] ),
+        'status'  => 'completed' // Immediate completion
+    );
+
+    $txn_id = org_ecosystem_process_unified_payment( $data );
+
+    if ( $txn_id ) {
+        org_ecosystem_complete_transaction( $txn_id );
+        wp_send_json_success( array( 'txn_id' => $txn_id ) );
+    } else {
+        wp_send_json_error('Failed to create transaction');
+    }
+}
+add_action( 'wp_ajax_org_bypass_payment', 'org_ajax_bypass_payment' );
 
 /**
  * Handle Withdrawal Request
