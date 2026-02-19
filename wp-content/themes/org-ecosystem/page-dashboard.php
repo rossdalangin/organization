@@ -100,6 +100,10 @@ function is_dash_active($slug, $action) {
 			<!-- Dashboard Content -->
 			<div class="col-lg-9">
 				<div class="dashboard-content card shadow-sm border-0 p-4 rounded-4 min-vh-70">
+                    <?php if ( isset( $_GET['debug'] ) ) : ?>
+                        <div class="alert alert-info small">Debug: Action is [<?php echo esc_html($action); ?>]</div>
+                    <?php endif; ?>
+
 					<?php
 					switch ( $action ) {
 						case 'edit-profile':

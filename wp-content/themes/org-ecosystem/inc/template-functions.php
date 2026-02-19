@@ -216,11 +216,16 @@ function org_ecosystem_get_page_url( $template_path ) {
     );
 
     $pages = get_posts( array(
-        'post_type'  => 'page',
-        'meta_key'   => '_wp_page_template',
-        'meta_value' => $search_templates,
+        'post_type'      => 'page',
+        'meta_query'     => array(
+            array(
+                'key'     => '_wp_page_template',
+                'value'   => $search_templates,
+                'compare' => 'IN',
+            ),
+        ),
         'posts_per_page' => 1,
-        'post_status' => array('publish', 'private')
+        'post_status'    => array( 'publish', 'private' ),
     ) );
 
     if ( ! empty($pages) ) {
@@ -229,32 +234,36 @@ function org_ecosystem_get_page_url( $template_path ) {
 
     // 2. Fallback to slugs based on common keywords
     $slug_map = array(
-        'dashboard' => 'dashboard',
-        'join'      => 'join',
-        'contact'   => 'contact',
-        'donate'    => 'donate',
-        'plans'     => 'membership-plans',
-        'directory' => 'directory',
-        'about'     => 'about',
-        'mission'   => 'mission',
+        'dashboard' => array('dashboard', 'member-dashboard', 'my-account'),
+        'join'      => array('join', 'register', 'become-a-member', 'join-us'),
+        'contact'   => array('contact', 'contact-us', 'get-in-touch'),
+        'donate'    => array('donate', 'support-us', 'donation'),
+        'plans'     => array('membership-plans', 'plans', 'pricing'),
+        'directory' => array('directory', 'members', 'member-directory'),
+        'about'     => array('about', 'about-us', 'our-story'),
+        'mission'   => array('mission', 'our-mission', 'vision'),
     );
 
-    foreach ( $slug_map as $key => $slug ) {
+    foreach ( $slug_map as $key => $slugs ) {
         if ( strpos( $template_path, $key ) !== false ) {
-            $page = get_page_by_path( $slug );
-            if ( $page ) return get_permalink( $page->ID );
+            foreach ( (array) $slugs as $slug ) {
+                $page = get_page_by_path( $slug );
+                if ( $page ) return get_permalink( $page->ID );
+            }
+        }
+    }
 
-            // Try alternative slug
-            $page = get_page_by_path( $key );
-            if ( $page ) return get_permalink( $page->ID );
-
+    foreach ( $slug_map as $key => $slugs ) {
+        if ( strpos( $template_path, $key ) !== false ) {
             // Try search by title for various keywords
-            $titles = array( 'Dashboard', 'Member Dashboard', 'Register', 'Join Us', 'Directory', 'Member Directory' );
+            $titles = array( 'Dashboard', 'Member Dashboard', 'Register', 'Join Us', 'Directory', 'Member Directory', 'Become a Member', 'Become a Pro' );
             foreach ( $titles as $title ) {
-                $page = get_page_by_title( $title );
+                $page = get_page_by_title( $title, OBJECT, 'page' );
                 if ( $page ) {
-                    // Check if title matches key
-                    if ( strpos( strtolower($title), $key ) !== false ) return get_permalink( $page->ID );
+                    // Check if title matches key or slug
+                    if ( strpos( strtolower($page->post_title), $key ) !== false || strpos( strtolower($page->post_name), $key ) !== false ) {
+                        return get_permalink( $page->ID );
+                    }
                 }
             }
         }

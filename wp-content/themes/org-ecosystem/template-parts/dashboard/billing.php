@@ -43,14 +43,11 @@ $status_color = isset($status_colors[$status]) ? $status_colors[$status] : 'seco
 			<div class="col-md-4 text-md-end mt-3 mt-md-0">
 				<?php
 				if ( $status === 'expired' ) : ?>
-					<a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_renew_membership' ), admin_url( 'admin-post.php' ) ), 'org_renew_membership_action' ); ?>" class="btn btn-warning fw-bold"><i class="bi bi-arrow-repeat me-1"></i> <?php _e( 'Renew Now', 'org-ecosystem' ); ?></a>
+					<a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_renew_membership', 'redirect_to' => get_permalink() ), admin_url( 'admin-post.php' ) ), 'org_renew_membership_action' ); ?>" class="btn btn-warning fw-bold"><i class="bi bi-arrow-repeat me-1"></i> <?php _e( 'Renew Now', 'org-ecosystem' ); ?></a>
 				<?php elseif ( $membership_level === 'community' || $membership_level === 'free' ) : ?>
-                    <form action="<?php echo admin_url( 'admin-post.php' ); ?>" method="post">
-                        <?php wp_nonce_field( 'org_upgrade_membership_action', 'org_upgrade_membership_nonce' ); ?>
-                        <input type="hidden" name="action" value="org_upgrade_membership">
-                        <input type="hidden" name="plan" value="professional">
-                        <button type="submit" class="btn btn-success fw-bold"><i class="bi bi-rocket-takeoff me-1"></i> <?php _e( 'Upgrade Membership', 'org-ecosystem' ); ?></button>
-                    </form>
+                    <a href="<?php echo esc_url( add_query_arg( array( 'dash_page' => 'checkout', 'checkout_type' => 'membership', 'plan_id' => 'professional' ), get_permalink() ) ); ?>" class="btn btn-success fw-bold shadow-sm">
+                        <i class="bi bi-rocket-takeoff me-1"></i> <?php _e( 'Upgrade Membership', 'org-ecosystem' ); ?>
+                    </a>
 				<?php else : ?>
 					<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-plans.php' ) ); ?>" class="btn btn-primary"><?php _e( 'Change Plan', 'org-ecosystem' ); ?></a>
 				<?php endif; ?>

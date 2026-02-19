@@ -82,6 +82,7 @@ if ( ! $item_name ) {
                     <input type="hidden" name="item_id" value="<?php echo esc_attr( $item_id ); ?>">
                     <input type="hidden" name="plan" value="<?php echo esc_attr( $plan ); ?>">
                     <input type="hidden" name="amount" value="<?php echo esc_attr( $amount ); ?>">
+                    <input type="hidden" name="redirect_to" value="<?php echo esc_url( org_ecosystem_get_page_url( 'page-dashboard.php' ) ); ?>">
                     <?php wp_nonce_field( 'org_checkout_action', 'org_checkout_nonce' ); ?>
 
                     <div class="payment-options">
@@ -184,6 +185,17 @@ if ( ! $item_name ) {
         // Trigger change on load to show initial instructions if any
         $('input[name="gateway"]:checked').trigger('change');
 
+        function addQueryParam(url, key, value) {
+            var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+            var separator = url.indexOf('?') !== -1 ? "&" : "?";
+            if (url.match(re)) {
+                return url.replace(re, '$1' + key + "=" + value + '$2');
+            }
+            else {
+                return url + separator + key + "=" + value;
+            }
+        }
+
         $('#checkout-form').on('submit', function(e) {
             const gateway = $('input[name="gateway"]:checked').val();
             const btn = $(this).find('button[type="submit"]');
@@ -205,20 +217,30 @@ if ( ! $item_name ) {
 
                 $.post(org_ajax.ajaxurl, ajaxData, (response) => {
                     if (response.success) {
+                        const dashUrlBase = $('input[name="redirect_to"]').val() || '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>';
+
                         if (gateway === 'paypal') {
                             const business = '<?php echo esc_js( get_option("org_paypal_email") ); ?>';
                             const mode = '<?php echo get_option("org_paypal_mode", "test"); ?>';
                             const paypalUrl = (mode === 'live') ? 'https://www.paypal.com/cgi-bin/webscr' : 'https://www.sandbox.paypal.com/cgi-bin/webscr';
 
+                            var returnUrl = addQueryParam(dashUrlBase, 'dash_page', 'overview');
+                            returnUrl = addQueryParam(returnUrl, 'payment', 'pending');
+                            returnUrl = addQueryParam(returnUrl, 'txn', response.data.txn_id);
+
+                            var cancelUrl = addQueryParam(dashUrlBase, 'dash_page', 'checkout');
+                            cancelUrl = addQueryParam(cancelUrl, 'checkout_type', '<?php echo $type; ?>');
+                            cancelUrl = addQueryParam(cancelUrl, 'error', 'cancelled');
+
                             const params = {
-                                cmd: '_xclick',
-                                business: business,
-                                item_name: '<?php echo esc_js($item_name); ?>',
-                                amount: '<?php echo $amount; ?>',
-                                currency_code: 'PHP',
-                                custom: response.data.txn_id,
-                                        return: '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?dash_page=overview&payment=pending&txn=' + response.data.txn_id,
-                                        cancel_return: '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?dash_page=checkout&checkout_type=<?php echo $type; ?>&error=cancelled'
+                                'cmd': '_xclick',
+                                'business': business,
+                                'item_name': '<?php echo esc_js($item_name); ?>',
+                                'amount': '<?php echo $amount; ?>',
+                                'currency_code': 'PHP',
+                                'custom': response.data.txn_id,
+                                'return': returnUrl,
+                                'cancel_return': cancelUrl
                             };
 
                             const form = $('<form>', { action: paypalUrl, method: 'post' });
@@ -228,14 +250,21 @@ if ( ! $item_name ) {
                         } else if (gateway === 'stripe') {
                             // In a real implementation, we would call Stripe Checkout here.
                             // For this ecosystem, we simulate the redirection to Stripe.
+                            var successUrl = addQueryParam(dashUrlBase, 'dash_page', 'overview');
+                            successUrl = addQueryParam(successUrl, 'payment', 'pending');
+                            successUrl = addQueryParam(successUrl, 'txn', response.data.txn_id);
+
                             setTimeout(() => {
-                                window.location.href = '<?php echo esc_url(org_ecosystem_get_page_url("page-dashboard.php")); ?>?dash_page=overview&payment=pending&txn=' + response.data.txn_id;
+                                window.location.href = successUrl;
                             }, 1000);
                         }
                     } else {
                         alert('Error: ' + response.data);
                         btn.prop('disabled', false).text('<?php _e( "Complete Payment", "org-ecosystem" ); ?>');
                     }
+                }).fail(function(xhr, status, error) {
+                    alert('System Error: ' + error);
+                    btn.prop('disabled', false).text('<?php _e( "Complete Payment", "org-ecosystem" ); ?>');
                 });
             }
         });

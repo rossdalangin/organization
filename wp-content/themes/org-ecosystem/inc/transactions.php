@@ -86,7 +86,7 @@ function org_ecosystem_process_unified_payment( $data ) {
  * Referral & Commission Logic
  */
 function org_ecosystem_handle_commission( $txn_id, $amount, $product_id ) {
-    $product_author = get_post_field( 'post_author', $product_id );
+    $product_author = $product_id ? get_post_field( 'post_author', $product_id ) : 0;
     $referral_code = isset( $_COOKIE['org_referral'] ) ? sanitize_text_field( $_COOKIE['org_referral'] ) : '';
 
     if ( $referral_code ) {
@@ -134,10 +134,11 @@ function org_ajax_process_payment() {
 
     $txn_id = org_ecosystem_process_unified_payment( $data );
 
-    if ( $txn_id ) {
+    if ( $txn_id && ! is_wp_error( $txn_id ) ) {
         wp_send_json_success( array( 'message' => 'Payment recorded and pending verification.', 'txn_id' => $txn_id ) );
     } else {
-        wp_send_json_error( 'Failed to record transaction.' );
+        $error = is_wp_error( $txn_id ) ? $txn_id->get_error_message() : 'Failed to record transaction.';
+        wp_send_json_error( $error );
     }
 }
 add_action( 'wp_ajax_org_process_payment', 'org_ajax_process_payment' );
@@ -179,7 +180,12 @@ add_action( 'admin_post_org_withdraw_request', 'org_ecosystem_handle_withdrawal'
  */
 function org_ecosystem_handle_checkout_submission() {
     if ( ! isset( $_POST['org_checkout_nonce'] ) || ! wp_verify_nonce( $_POST['org_checkout_nonce'], 'org_checkout_action' ) ) {
-        return;
+        wp_die( __( 'Security check failed. Please refresh the page and try again.', 'org-ecosystem' ) );
+    }
+
+    if ( ! is_user_logged_in() ) {
+        wp_redirect( wp_login_url() );
+        exit;
     }
 
     $user_id = get_current_user_id();
@@ -210,10 +216,14 @@ function org_ecosystem_handle_checkout_submission() {
             update_post_meta( $item_id, $meta_key, 'pending' );
         }
 
-        wp_redirect( add_query_arg( array( 'dash_page' => 'overview', 'payment' => 'pending', 'txn' => $txn_id ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+        $redirect_url = isset($_POST['redirect_to']) ? esc_url_raw($_POST['redirect_to']) : org_ecosystem_get_page_url( 'page-dashboard.php' );
+        $final_url = add_query_arg( array( 'dash_page' => 'overview', 'payment' => 'pending', 'txn' => $txn_id ), $redirect_url );
+        error_log('Org Ecosystem: Checkout redirect to: ' . $final_url);
+        wp_redirect( $final_url );
         exit;
     } else {
         wp_die( __( 'Checkout failed. Please try again.', 'org-ecosystem' ) );
     }
 }
 add_action( 'admin_post_org_process_checkout', 'org_ecosystem_handle_checkout_submission' );
+add_action( 'admin_post_nopriv_org_process_checkout', 'org_ecosystem_handle_checkout_submission' );

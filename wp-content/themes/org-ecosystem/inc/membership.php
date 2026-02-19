@@ -192,7 +192,15 @@ function org_ecosystem_save_member_meta( $post_id ) {
     // Sync status if changed via admin
     if ( isset( $_POST['member_status'] ) ) {
         $user_id = get_post_field( 'post_author', $post_id );
-        org_ecosystem_update_linked_content_status( $user_id, sanitize_text_field( $_POST['member_status'] ) );
+        $status = sanitize_text_field( $_POST['member_status'] );
+        org_ecosystem_update_linked_content_status( $user_id, $status );
+
+        if ( $status === 'active' ) {
+            $user = new WP_User( $user_id );
+            if ( ! in_array( 'administrator', $user->roles ) && ! in_array( 'member', $user->roles ) ) {
+                $user->set_role( 'member' );
+            }
+        }
     }
 }
 add_action( 'save_post', 'org_ecosystem_save_member_meta' );
@@ -793,11 +801,13 @@ function org_ecosystem_handle_renewal() {
 
 	// Mock successful payment and renewal
 	if ( org_ecosystem_process_payment( $user_id, $level, 'mock_gateway' ) ) {
-		wp_redirect( add_query_arg( array( 'dash_page' => 'billing', 'renewed' => 'true' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+        $redirect_url = isset($_GET['redirect_to']) ? esc_url_raw($_GET['redirect_to']) : org_ecosystem_get_page_url( 'page-dashboard.php' );
+		wp_redirect( add_query_arg( array( 'dash_page' => 'billing', 'renewed' => 'true' ), $redirect_url ) );
 		exit;
 	}
 }
 add_action( 'admin_post_org_renew_membership', 'org_ecosystem_handle_renewal' );
+add_action( 'admin_post_nopriv_org_renew_membership', 'org_ecosystem_handle_renewal' );
 
 /**
  * Handle Receipt Download
@@ -840,7 +850,11 @@ add_filter( 'login_redirect', 'org_ecosystem_login_redirect', 10, 3 );
  * Handle Membership Upgrade Action
  */
 function org_ecosystem_handle_membership_upgrade() {
-	if ( ! is_user_logged_in() ) return;
+    error_log('Org Ecosystem: Membership upgrade requested.');
+	if ( ! is_user_logged_in() ) {
+        error_log('Org Ecosystem: User not logged in.');
+        return;
+    }
 
     if ( isset($_POST['org_upgrade_membership_nonce']) ) {
         check_admin_referer( 'org_upgrade_membership_action', 'org_upgrade_membership_nonce' );
@@ -850,7 +864,8 @@ function org_ecosystem_handle_membership_upgrade() {
 	$new_level = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : 'professional';
 
 	// Redirect to unified checkout
-    $dashboard_url = org_ecosystem_get_page_url( 'page-dashboard.php' );
+    $dashboard_url = isset($_POST['redirect_to']) ? esc_url_raw($_POST['redirect_to']) : org_ecosystem_get_page_url( 'page-dashboard.php' );
+    error_log('Org Ecosystem: Dashboard URL found: ' . $dashboard_url);
 
     $redirect_url = add_query_arg( array(
         'dash_page'     => 'checkout',
@@ -858,10 +873,12 @@ function org_ecosystem_handle_membership_upgrade() {
         'plan_id'       => $new_level
     ), $dashboard_url );
 
+    error_log('Org Ecosystem: Redirecting to: ' . $redirect_url);
     wp_redirect( $redirect_url );
     exit;
 }
 add_action( 'admin_post_org_upgrade_membership', 'org_ecosystem_handle_membership_upgrade' );
+add_action( 'admin_post_nopriv_org_upgrade_membership', 'org_ecosystem_handle_membership_upgrade' );
 
 
 /**
@@ -870,14 +887,18 @@ add_action( 'admin_post_org_upgrade_membership', 'org_ecosystem_handle_membershi
 function org_ecosystem_restrict_admin_access() {
     global $pagenow;
 
-    // Allow admin-post.php for registration and other actions
-    if ( $pagenow === 'admin-post.php' ) {
+    // Allow admin-post.php and admin-ajax.php
+    if ( $pagenow === 'admin-post.php' || (defined('DOING_AJAX') && DOING_AJAX) ) {
         return;
     }
 
-    if ( is_admin() && ! current_user_can( 'edit_posts' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
-        wp_redirect( org_ecosystem_get_page_url( 'page-dashboard.php' ) );
-        exit;
+    if ( is_admin() && ! current_user_can( 'edit_posts' ) ) {
+        // Double check if we are already on the dashboard to avoid loops
+        $dashboard_url = org_ecosystem_get_page_url( 'page-dashboard.php' );
+        if ( strpos( $_SERVER['REQUEST_URI'], 'dashboard' ) === false ) {
+            wp_redirect( $dashboard_url );
+            exit;
+        }
     }
 }
 add_action( 'admin_init', 'org_ecosystem_restrict_admin_access' );

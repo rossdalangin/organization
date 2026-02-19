@@ -100,7 +100,7 @@ function org_ecosystem_scripts() {
 
 	wp_enqueue_script( 'org-ecosystem-navigation', ORG_ECOSYSTEM_URI . '/assets/js/navigation.js', array( 'jquery', 'bootstrap-bundle' ), ORG_ECOSYSTEM_VERSION, true );
 	wp_enqueue_script( 'org-ecosystem-main', ORG_ECOSYSTEM_URI . '/assets/js/main.js', array( 'jquery' ), ORG_ECOSYSTEM_VERSION, true );
-	wp_localize_script( 'org-ecosystem-main', 'org_ajax', array(
+	wp_localize_script( 'jquery', 'org_ajax', array(
 		'ajaxurl' => admin_url( 'admin-ajax.php' ),
 	) );
 
