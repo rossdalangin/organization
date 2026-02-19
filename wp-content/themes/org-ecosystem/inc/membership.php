@@ -656,6 +656,9 @@ function org_ecosystem_process_payment( $user_id, $level, $gateway ) {
 			org_ecosystem_approve_member( $member_id );
 		}
 
+        // Also ensure user meta is updated
+        update_user_meta( $user_id, '_membership_level', $level );
+
 		return true;
 	}
 

@@ -3,9 +3,14 @@
  * Dashboard Checkout Template Part
  */
 $user_id = get_current_user_id();
-$type = isset( $_GET['checkout_type'] ) ? sanitize_text_field( $_GET['checkout_type'] ) : '';
-$item_id = isset( $_GET['checkout_item_id'] ) ? intval( $_GET['checkout_item_id'] ) : 0;
-$plan = isset( $_GET['plan_id'] ) ? sanitize_text_field( $_GET['plan_id'] ) : '';
+$type = isset( $_GET['checkout_type'] ) ? sanitize_text_field( $_GET['checkout_type'] ) : get_query_var('checkout_type');
+$item_id = isset( $_GET['checkout_item_id'] ) ? intval( $_GET['checkout_item_id'] ) : get_query_var('checkout_item_id');
+$plan = isset( $_GET['plan_id'] ) ? sanitize_text_field( $_GET['plan_id'] ) : get_query_var('plan_id');
+
+// Fallback for Membership Upgrades if plan_id is missing but expected
+if ( $type === 'membership' && empty($plan) ) {
+    $plan = 'professional';
+}
 
 $item_name = '';
 $amount = 0;

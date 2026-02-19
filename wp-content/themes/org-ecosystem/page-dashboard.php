@@ -38,7 +38,7 @@ if ( ! $member_id ) {
 
 $membership_level = get_user_meta( $user_id, '_membership_level', true ) ?: 'community';
 $status = get_post_meta( $member_id, '_member_status', true );
-$action = isset( $_GET['dash_page'] ) ? sanitize_text_field( $_GET['dash_page'] ) : 'overview';
+$action = isset( $_GET['dash_page'] ) ? sanitize_text_field( $_GET['dash_page'] ) : (get_query_var('dash_page') ?: 'overview');
 
 function is_dash_active($slug, $action) {
     return $slug === $action ? 'active' : '';

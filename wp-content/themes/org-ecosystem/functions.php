@@ -140,6 +140,18 @@ require ORG_ECOSYSTEM_DIR . '/inc/meta-fields.php';
 require ORG_ECOSYSTEM_DIR . '/inc/group-chat.php';
 
 /**
+ * Register Custom Query Variables
+ */
+function org_ecosystem_register_query_vars( $vars ) {
+    $vars[] = 'dash_page';
+    $vars[] = 'checkout_type';
+    $vars[] = 'checkout_item_id';
+    $vars[] = 'plan_id';
+    return $vars;
+}
+add_filter( 'query_vars', 'org_ecosystem_register_query_vars' );
+
+/**
  * Handle Referral Tracking
  */
 function org_ecosystem_track_referral() {

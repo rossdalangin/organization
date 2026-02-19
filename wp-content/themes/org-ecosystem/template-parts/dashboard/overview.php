@@ -81,7 +81,15 @@ if ( ! $ref_code ) {
             <div class="d-flex justify-content-between align-items-start">
                 <div>
                     <h6 class="text-muted text-uppercase small fw-bold mb-3"><?php _e( 'Membership Status', 'org-ecosystem' ); ?></h6>
-                    <h4 class="fw-bold mb-1"><?php echo esc_html( ucfirst($membership_level) ); ?> Plan</h4>
+                    <div class="d-flex align-items-center mb-1">
+                        <h4 class="fw-bold mb-0 me-2"><?php echo esc_html( ucfirst($membership_level) ); ?></h4>
+                        <?php
+                        $status = get_post_meta( $member_id, '_member_status', true ) ?: 'pending';
+                        $status_colors = array('active'=>'success', 'pending'=>'warning', 'expired'=>'danger');
+                        $status_color = isset($status_colors[$status]) ? $status_colors[$status] : 'secondary';
+                        ?>
+                        <span class="badge bg-<?php echo $status_color; ?> px-2 py-1 small"><?php echo esc_html( ucfirst($status) ); ?></span>
+                    </div>
                     <?php
                     $renewal = get_post_meta( $member_id, '_member_renewal_date', true );
                     if($renewal && $renewal !== '0000-00-00') : ?>

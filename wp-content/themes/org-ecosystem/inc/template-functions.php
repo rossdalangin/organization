@@ -260,7 +260,23 @@ function org_ecosystem_get_page_url( $template_path ) {
         }
     }
 
-    // 3. Last resort home URL
+    // 3. Robust Search by Title if template and slug fail
+    $keyword = '';
+    if ( strpos( $template_path, 'dashboard' ) !== false ) $keyword = 'Dashboard';
+    if ( strpos( $template_path, 'join' ) !== false ) $keyword = 'Join';
+    if ( strpos( $template_path, 'directory' ) !== false ) $keyword = 'Directory';
+    if ( strpos( $template_path, 'plans' ) !== false ) $keyword = 'Plans';
+
+    if ( $keyword ) {
+        $page = get_page_by_title( $keyword );
+        if ( ! $page ) {
+            // Try searching with "Member " prefix
+            $page = get_page_by_title( 'Member ' . $keyword );
+        }
+        if ( $page ) return get_permalink( $page->ID );
+    }
+
+    // 4. Last resort home URL
     return home_url('/');
 }
 
