@@ -41,6 +41,9 @@ function org_ecosystem_member_profile_callback( $post ) {
 	$is_featured = get_post_meta( $post->ID, '_member_is_featured', true );
 	$is_verified = get_post_meta( $post->ID, '_member_is_verified', true );
 
+    $user_id = get_post_field( 'post_author', $post->ID );
+    $membership_level = get_user_meta( $user_id, '_membership_level', true ) ?: 'community';
+
 	?>
 	<table class="form-table">
 		<tr>
@@ -101,6 +104,19 @@ function org_ecosystem_member_profile_callback( $post ) {
 					<option value="pending" <?php selected( $membership_status, 'pending' ); ?>>Pending</option>
 					<option value="expired" <?php selected( $membership_status, 'expired' ); ?>>Expired</option>
 				</select>
+			</td>
+		</tr>
+        <tr>
+			<th><label for="membership_level"><?php _e( 'Membership Level (Tier)', 'org-ecosystem' ); ?></label></th>
+			<td>
+				<select id="membership_level" name="membership_level">
+					<?php
+					$levels = org_ecosystem_get_membership_levels();
+					foreach ( $levels as $key => $level ) : ?>
+						<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $membership_level, $key ); ?>><?php echo esc_html( $level['name'] ); ?></option>
+					<?php endforeach; ?>
+				</select>
+                <p class="description"><?php _e( 'Note: Changing this directly here bypasses payment logic.', 'org-ecosystem' ); ?></p>
 			</td>
 		</tr>
 		<tr>
@@ -164,8 +180,20 @@ function org_ecosystem_save_member_meta( $post_id ) {
 		}
 	}
 
+    // Save Membership Level to User Meta
+    if ( isset( $_POST['membership_level'] ) ) {
+        $user_id = get_post_field( 'post_author', $post_id );
+        update_user_meta( $user_id, '_membership_level', sanitize_text_field( $_POST['membership_level'] ) );
+    }
+
 	update_post_meta( $post_id, '_member_is_featured', isset( $_POST['member_is_featured'] ) ? '1' : '0' );
 	update_post_meta( $post_id, '_member_is_verified', isset( $_POST['member_is_verified'] ) ? '1' : '0' );
+
+    // Sync status if changed via admin
+    if ( isset( $_POST['member_status'] ) ) {
+        $user_id = get_post_field( 'post_author', $post_id );
+        org_ecosystem_update_linked_content_status( $user_id, sanitize_text_field( $_POST['member_status'] ) );
+    }
 }
 add_action( 'save_post', 'org_ecosystem_save_member_meta' );
 
@@ -259,6 +287,11 @@ function org_ecosystem_handle_registration() {
         );
 
 		wp_mail( $email, $subject, $message );
+
+        // Auto-login after registration
+        wp_set_current_user( $user_id );
+        wp_set_auth_cookie( $user_id );
+        do_action( 'wp_login', $username, get_userdata( $user_id ) );
 
 		if ( $plan !== 'free' && $plan !== 'community' ) {
             wp_redirect( add_query_arg( array(

@@ -20,6 +20,19 @@ if ( ! $ref_code ) {
 	<div class="text-muted small"><?php echo date( 'l, F j, Y' ); ?></div>
 </div>
 
+<?php if ( isset( $_GET['registered'] ) ) : ?>
+    <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm border-0 bg-white mb-4" role="alert">
+		<div class="d-flex align-items-center">
+            <i class="bi bi-person-check-fill fs-4 text-success me-3"></i>
+            <div>
+                <strong><?php _e( 'Welcome to the Organization!', 'org-ecosystem' ); ?></strong><br>
+                <small class="text-muted"><?php _e( 'Your account has been created successfully. We have sent a verification link to your email address.', 'org-ecosystem' ); ?></small>
+            </div>
+        </div>
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+<?php endif; ?>
+
 <?php if ( isset( $_GET['promoted'] ) || (isset($_GET['payment']) && $_GET['payment'] === 'pending') ) : ?>
 	<div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm border-0 bg-white mb-4" role="alert">
 		<div class="d-flex align-items-center">
