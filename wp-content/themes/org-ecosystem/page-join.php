@@ -42,6 +42,9 @@ get_header();
                                     default:
                                         printf( __( 'Registration failed: %s. Please contact support.', 'org-ecosystem' ), esc_html($_GET['error']) );
                                 }
+                                if ( isset($_GET['debug_msg']) ) {
+                                    echo '<div class="small mt-2 opacity-75">' . esc_html($_GET['debug_msg']) . '</div>';
+                                }
                                 ?>
                             </div>
 						<?php endif; ?>

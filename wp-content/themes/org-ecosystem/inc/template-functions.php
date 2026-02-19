@@ -248,9 +248,15 @@ function org_ecosystem_get_page_url( $template_path ) {
             $page = get_page_by_path( $key );
             if ( $page ) return get_permalink( $page->ID );
 
-            // Try by title
-            $page = get_page_by_title( 'Member Dashboard' );
-            if ( $page && $key === 'dashboard' ) return get_permalink( $page->ID );
+            // Try search by title for various keywords
+            $titles = array( 'Dashboard', 'Member Dashboard', 'Register', 'Join Us', 'Directory', 'Member Directory' );
+            foreach ( $titles as $title ) {
+                $page = get_page_by_title( $title );
+                if ( $page ) {
+                    // Check if title matches key
+                    if ( strpos( strtolower($title), $key ) !== false ) return get_permalink( $page->ID );
+                }
+            }
         }
     }
 

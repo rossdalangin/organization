@@ -14,7 +14,29 @@ get_header();
 
 $user_id = get_current_user_id();
 $member_id = get_user_meta( $user_id, '_member_profile_id', true );
-$membership_level = get_user_meta( $user_id, '_membership_level', true );
+
+// Safety Net: Ensure Member profile exists
+if ( ! $member_id ) {
+    $existing_posts = get_posts( array( 'post_type' => 'member', 'author' => $user_id, 'posts_per_page' => 1 ) );
+    if ( ! empty( $existing_posts ) ) {
+        $member_id = $existing_posts[0]->ID;
+    } else {
+        $user = wp_get_current_user();
+        $member_id = wp_insert_post( array(
+            'post_title' => $user->display_name ?: $user->user_login,
+            'post_type'  => 'member',
+            'post_status'=> 'pending',
+            'post_author'=> $user_id,
+        ) );
+    }
+    if ( $member_id && ! is_wp_error( $member_id ) ) {
+        update_user_meta( $user_id, '_member_profile_id', $member_id );
+        update_post_meta( $member_id, '_member_status', 'pending' );
+        update_post_meta( $member_id, '_member_join_date', date( 'Y-m-d' ) );
+    }
+}
+
+$membership_level = get_user_meta( $user_id, '_membership_level', true ) ?: 'community';
 $status = get_post_meta( $member_id, '_member_status', true );
 $action = isset( $_GET['dash_page'] ) ? sanitize_text_field( $_GET['dash_page'] ) : 'overview';
 

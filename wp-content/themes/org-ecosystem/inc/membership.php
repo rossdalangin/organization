@@ -227,6 +227,9 @@ add_action( 'init', 'org_ecosystem_register_rest_meta' );
  * Handle Member Registration
  */
 function org_ecosystem_handle_registration() {
+    if ( ! function_exists( 'wp_insert_user' ) ) {
+        require_once( ABSPATH . 'wp-includes/user.php' );
+    }
 	if ( ! isset( $_POST['org_registration_nonce'] ) || ! wp_verify_nonce( $_POST['org_registration_nonce'], 'org_user_registration' ) ) {
 		wp_die( __( 'Security check failed. Please refresh the page and try again.', 'org-ecosystem' ) );
 	}
@@ -254,33 +257,38 @@ function org_ecosystem_handle_registration() {
         org_ecosystem_register_roles();
     }
 
-	$user_id = wp_insert_user( array(
-        'user_login'   => $username,
-        'user_pass'    => $password,
-        'user_email'   => $email,
-        'first_name'   => $first_name,
-        'last_name'    => $last_name,
-        'display_name' => $first_name . ' ' . $last_name,
-        'role'         => 'member',
-    ) );
+    // Try creating user with minimum fields first to avoid validation issues
+	$user_id = wp_create_user( $username, $password, $email );
 
-	if ( ! is_wp_error( $user_id ) ) {
+	if ( ! is_wp_error( $user_id ) && $user_id > 0 ) {
+        // Update user with additional info
+        wp_update_user( array(
+            'ID'           => $user_id,
+            'first_name'   => $first_name,
+            'last_name'    => $last_name,
+            'display_name' => ($first_name || $last_name) ? trim($first_name . ' ' . $last_name) : $username,
+            'role'         => 'member',
+        ) );
+
 		// Sync Member CPT profile (if not already created by user_register hook)
 		$member_id = get_user_meta( $user_id, '_member_profile_id', true );
 
         if ( ! $member_id ) {
             $member_id = wp_insert_post( array(
-                'post_title'  => $first_name . ' ' . $last_name,
+                'post_title'  => ($first_name || $last_name) ? trim($first_name . ' ' . $last_name) : $username,
                 'post_type'   => 'member',
                 'post_status' => 'pending',
                 'post_author' => $user_id,
             ) );
-            update_user_meta( $user_id, '_member_profile_id', $member_id );
+
+            if ( ! is_wp_error( $member_id ) ) {
+                update_user_meta( $user_id, '_member_profile_id', $member_id );
+            }
         } else {
             // Update existing profile title
             wp_update_post( array(
                 'ID'         => $member_id,
-                'post_title' => $first_name . ' ' . $last_name,
+                'post_title' => ($first_name || $last_name) ? trim($first_name . ' ' . $last_name) : $username,
             ) );
         }
 
@@ -304,7 +312,7 @@ function org_ecosystem_handle_registration() {
 
         $message = str_replace(
             array( '{user_name}', '{site_name}', '{verify_url}' ),
-            array( $first_name, get_bloginfo( 'name' ), $verify_url ),
+            array( $first_name ?: $username, get_bloginfo( 'name' ), $verify_url ),
             $body_template
         );
 
@@ -328,8 +336,16 @@ function org_ecosystem_handle_registration() {
 		exit;
 	} else {
         // Handle registration error
-        $error_code = $user_id->get_error_code();
-        wp_redirect( add_query_arg( 'error', $error_code, org_ecosystem_get_page_url( 'page-join.php' ) ) );
+        $error_code = is_wp_error( $user_id ) ? $user_id->get_error_code() : 'creation_failed';
+        $error_msg = is_wp_error( $user_id ) ? $user_id->get_error_message() : 'Unknown error';
+
+        // For debugging, we can log it
+        error_log("Registration failed for $username: $error_msg");
+
+        wp_redirect( add_query_arg( array(
+            'error' => $error_code,
+            'debug_msg' => urlencode($error_msg)
+        ), org_ecosystem_get_page_url( 'page-join.php' ) ) );
         exit;
     }
 }
