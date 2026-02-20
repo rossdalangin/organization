@@ -6,7 +6,7 @@
  */
 
 if ( is_user_logged_in() ) {
-	wp_redirect( org_ecosystem_get_page_url( 'templates/dashboard.php' ) );
+	wp_redirect( org_ecosystem_get_page_url( 'page-dashboard.php' ) );
 	exit;
 }
 

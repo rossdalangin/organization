@@ -205,7 +205,7 @@ function org_ecosystem_breadcrumbs() {
  * Get Page URL by Template
  */
 function org_ecosystem_get_page_url( $template_path ) {
-    // 1. Try to find by meta _wp_page_template
+    // Standardize template path
     $basename = basename($template_path);
     $search_templates = array(
         $template_path,
@@ -215,7 +215,8 @@ function org_ecosystem_get_page_url( $template_path ) {
         '/' . $basename
     );
 
-    $pages = get_posts( array(
+    // 1. Try to find by meta _wp_page_template (Most reliable)
+    $query_args = array(
         'post_type'      => 'page',
         'meta_query'     => array(
             array(
@@ -225,11 +226,17 @@ function org_ecosystem_get_page_url( $template_path ) {
             ),
         ),
         'posts_per_page' => 1,
-        'post_status'    => array( 'publish', 'private' ),
-    ) );
+        'post_status'    => array( 'publish', 'private', 'draft', 'pending' ),
+        'suppress_filters' => true,
+        'orderby'        => 'ID',
+        'order'          => 'ASC'
+    );
+
+    $pages = get_posts( $query_args );
 
     if ( ! empty($pages) ) {
-        return get_permalink( $pages[0]->ID );
+        $url = get_permalink( $pages[0]->ID );
+        return user_trailingslashit($url);
     }
 
     // 2. Fallback to slugs based on common keywords
@@ -248,7 +255,10 @@ function org_ecosystem_get_page_url( $template_path ) {
         if ( strpos( $template_path, $key ) !== false ) {
             foreach ( (array) $slugs as $slug ) {
                 $page = get_page_by_path( $slug );
-                if ( $page ) return get_permalink( $page->ID );
+                if ( $page ) {
+                    $url = get_permalink( $page->ID );
+                    return user_trailingslashit($url);
+                }
             }
         }
     }

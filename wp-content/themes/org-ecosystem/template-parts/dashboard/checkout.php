@@ -78,11 +78,16 @@ if ( ! $item_name ) {
         <div class="d-flex align-items-center">
             <i class="bi bi-cpu fs-3 me-3"></i>
             <div>
-                <h6 class="fw-bold mb-1"><?php _e( 'Localhost Developer detected', 'org-ecosystem' ); ?></h6>
-                <p class="small mb-2"><?php _e( 'Real gateway redirections might behave differently on localhost. You can use the bypass tool below to simulate a successful payment for testing.', 'org-ecosystem' ); ?></p>
-                <button type="button" id="btn-bypass-payment" class="btn btn-dark btn-sm fw-bold">
-                    <i class="bi bi-magic me-1"></i> <?php _e( 'Bypass Payment (Simulate Success)', 'org-ecosystem' ); ?>
-                </button>
+                <h6 class="fw-bold mb-1"><?php _e( 'Developer Environment detected', 'org-ecosystem' ); ?></h6>
+                <p class="small mb-2"><?php _e( 'You are on localhost or in admin mode. Real gateway redirections might fail or be slow. Use the bypass tool to instantly activate the membership/feature.', 'org-ecosystem' ); ?></p>
+                <div class="d-flex gap-2">
+                    <button type="button" id="btn-bypass-payment" class="btn btn-dark btn-sm fw-bold">
+                        <i class="bi bi-magic me-1"></i> <?php _e( 'Bypass Payment (Simulate Success)', 'org-ecosystem' ); ?>
+                    </button>
+                    <button type="button" class="btn btn-outline-dark btn-sm" onclick="location.reload();">
+                        <i class="bi bi-arrow-clockwise"></i> <?php _e( 'Reload Page', 'org-ecosystem' ); ?>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -188,8 +193,8 @@ if ( ! $item_name ) {
             'offline': '<?php echo esc_js( get_option("org_offline_instructions") ); ?>'
         };
 
-        // Localhost awareness
-        if (org_ajax.is_localhost) {
+        // Localhost awareness - check both boolean and string variants
+        if (org_ajax.is_localhost === true || org_ajax.is_localhost === '1' || org_ajax.is_localhost === 1) {
             $('#localhost-dev-alert').removeClass('d-none');
         }
 

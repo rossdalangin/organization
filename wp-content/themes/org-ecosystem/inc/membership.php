@@ -898,7 +898,11 @@ function org_ecosystem_restrict_admin_access() {
     if ( is_admin() && ! current_user_can( 'edit_posts' ) ) {
         // Double check if we are already on the dashboard to avoid loops
         $dashboard_url = org_ecosystem_get_page_url( 'page-dashboard.php' );
-        if ( strpos( $_SERVER['REQUEST_URI'], 'dashboard' ) === false ) {
+
+        // Robust check for dashboard in URI
+        $on_dashboard = ( strpos( $_SERVER['REQUEST_URI'], 'dashboard' ) !== false || (isset($_GET['page_id']) && $_GET['page_id'] == url_to_postid($dashboard_url)) );
+
+        if ( ! $on_dashboard ) {
             wp_redirect( $dashboard_url );
             exit;
         }

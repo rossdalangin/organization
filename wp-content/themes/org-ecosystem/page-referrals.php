@@ -24,7 +24,7 @@ get_header();
                     ?>
                 </div>
                 <?php if ( is_user_logged_in() ) : ?>
-                    <a href="<?php echo add_query_arg( 'action', 'referrals', org_ecosystem_get_page_url( 'templates/dashboard.php' ) ); ?>" class="btn btn-primary btn-lg px-5 rounded-pill shadow"><?php _e( 'Get Your Code', 'org-ecosystem' ); ?></a>
+                    <a href="<?php echo add_query_arg( 'action', 'referrals', org_ecosystem_get_page_url( 'page-dashboard.php' ) ); ?>" class="btn btn-primary btn-lg px-5 rounded-pill shadow"><?php _e( 'Get Your Code', 'org-ecosystem' ); ?></a>
                 <?php else : ?>
                     <a href="<?php echo org_ecosystem_get_page_url( 'page-join.php' ); ?>" class="btn btn-primary btn-lg px-5 rounded-pill shadow"><?php _e( 'Join & Start Earning', 'org-ecosystem' ); ?></a>
                 <?php endif; ?>

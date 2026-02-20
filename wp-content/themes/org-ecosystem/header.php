@@ -44,7 +44,7 @@
 			<div class="header-actions d-flex align-items-center gap-3">
 				<div class="d-none d-md-flex gap-2">
 					<?php if ( is_user_logged_in() ) : ?>
-						<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'templates/dashboard.php' ) ); ?>" class="btn btn-primary btn-sm px-4 rounded-pill"><?php esc_html_e( 'Dashboard', 'org-ecosystem' ); ?></a>
+						<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-dashboard.php' ) ); ?>" class="btn btn-primary btn-sm px-4 rounded-pill"><?php esc_html_e( 'Dashboard', 'org-ecosystem' ); ?></a>
 						<a href="<?php echo wp_logout_url( home_url() ); ?>" class="btn btn-outline-secondary btn-sm px-4 rounded-pill"><?php esc_html_e( 'Logout', 'org-ecosystem' ); ?></a>
 					<?php else : ?>
 						<a href="<?php echo esc_url( wp_login_url() ); ?>" class="btn btn-link btn-sm text-decoration-none text-dark fw-bold"><?php esc_html_e( 'Login', 'org-ecosystem' ); ?></a>
@@ -92,7 +92,7 @@
 
 		<div class="d-grid gap-2 mb-4">
 			<?php if ( is_user_logged_in() ) : ?>
-				<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'templates/dashboard.php' ) ); ?>" class="btn btn-primary rounded-pill"><i class="bi bi-grid-fill me-2"></i> <?php esc_html_e( 'Dashboard', 'org-ecosystem' ); ?></a>
+				<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-dashboard.php' ) ); ?>" class="btn btn-primary rounded-pill"><i class="bi bi-grid-fill me-2"></i> <?php esc_html_e( 'Dashboard', 'org-ecosystem' ); ?></a>
 				<a href="<?php echo wp_logout_url( home_url() ); ?>" class="btn btn-outline-danger rounded-pill"><i class="bi bi-box-arrow-right me-2"></i> <?php esc_html_e( 'Logout', 'org-ecosystem' ); ?></a>
 			<?php else : ?>
 				<a href="<?php echo esc_url( wp_login_url() ); ?>" class="btn btn-outline-primary rounded-pill mb-2"><i class="bi bi-person-fill me-2"></i> <?php esc_html_e( 'Sign In', 'org-ecosystem' ); ?></a>

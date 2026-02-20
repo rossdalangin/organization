@@ -38,7 +38,19 @@ if ( ! $member_id ) {
 
 $membership_level = get_user_meta( $user_id, '_membership_level', true ) ?: 'community';
 $status = get_post_meta( $member_id, '_member_status', true );
-$action = isset( $_GET['dash_page'] ) ? sanitize_text_field( $_GET['dash_page'] ) : (get_query_var('dash_page') ?: 'overview');
+
+// Prioritize dash_page from GET, then query_var, then action from GET
+$action = 'overview';
+if ( isset( $_GET['dash_page'] ) && !empty($_GET['dash_page']) ) {
+    $action = sanitize_text_field( $_GET['dash_page'] );
+} elseif ( get_query_var('dash_page') ) {
+    $action = get_query_var('dash_page');
+} elseif ( isset( $_GET['checkout_type'] ) && !empty($_GET['checkout_type']) ) {
+    // Fallback if dash_page is lost but checkout params remain
+    $action = 'checkout';
+} elseif ( isset( $_GET['action'] ) && !empty($_GET['action']) && $_GET['action'] !== 'org_process_checkout' ) {
+    $action = sanitize_text_field( $_GET['action'] );
+}
 
 function is_dash_active($slug, $action) {
     return $slug === $action ? 'active' : '';
@@ -108,8 +120,12 @@ function is_dash_active($slug, $action) {
 			<!-- Dashboard Content -->
 			<div class="col-lg-9">
 				<div class="dashboard-content card shadow-sm border-0 p-4 rounded-4 min-vh-70">
-                    <?php if ( isset( $_GET['debug'] ) ) : ?>
-                        <div class="alert alert-info small">Debug: Action is [<?php echo esc_html($action); ?>]</div>
+                    <?php
+                    $is_localhost = ( $_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['REMOTE_ADDR'] === '::1' || (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) );
+                    if ( ( $is_localhost || current_user_can('manage_options') ) && isset($_GET['debug_dash']) ) : ?>
+                        <div class="alert alert-info small py-1 px-2 mb-3">
+                            <strong>Debug Info:</strong> Action: <code><?php echo esc_html($action); ?></code> | GET: <code><?php echo esc_html(serialize($_GET)); ?></code>
+                        </div>
                     <?php endif; ?>
 
 					<?php

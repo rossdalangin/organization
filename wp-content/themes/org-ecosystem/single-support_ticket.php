@@ -15,7 +15,7 @@ $post_author = get_post_field( 'post_author', get_the_ID() );
 
 // Only author or admin can view
 if ( (int) $user_id !== (int) $post_author && ! current_user_can( 'manage_options' ) && ! current_user_can( 'manage_tickets' ) ) {
-	wp_redirect( org_ecosystem_get_page_url( 'templates/dashboard.php' ) );
+	wp_redirect( org_ecosystem_get_page_url( 'page-dashboard.php' ) );
 	exit;
 }
 
@@ -24,7 +24,7 @@ get_header();
 while ( have_posts() ) :
 	the_post();
 	$status = get_post_meta( get_the_ID(), '_ticket_status', true ) ?: 'open';
-    $dash_url = org_ecosystem_get_page_url( 'templates/dashboard.php' );
+    $dash_url = org_ecosystem_get_page_url( 'page-dashboard.php' );
 	?>
 
 	<main id="primary" class="site-main py-5 bg-light">

@@ -1195,9 +1195,10 @@ function org_ecosystem_payments_page() {
                 <div class="mb-4">
                     <label class="form-label d-block fw-bold"><?php _e( 'Environment Mode', 'org-ecosystem' ); ?></label>
                     <select name="stripe_mode" class="form-select w-auto">
-                        <option value="test" <?php selected(get_option('org_stripe_mode'), 'test'); ?>>Test / Sandbox</option>
+                        <option value="test" <?php selected(get_option('org_stripe_mode', 'test'), 'test'); ?>>Test / Sandbox</option>
                         <option value="live" <?php selected(get_option('org_stripe_mode'), 'live'); ?>>Production / Live</option>
                     </select>
+                    <p class="description"><?php _e( 'Switch to Production to process real money.', 'org-ecosystem' ); ?></p>
                 </div>
 				<div class="mb-3">
 					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'Stripe Secret API Key', 'org-ecosystem' ); ?></label>
@@ -1222,9 +1223,10 @@ function org_ecosystem_payments_page() {
                 <div class="mb-4">
                     <label class="form-label d-block fw-bold"><?php _e( 'Environment Mode', 'org-ecosystem' ); ?></label>
                     <select name="paypal_mode" class="form-select w-auto">
-                        <option value="test" <?php selected(get_option('org_paypal_mode'), 'test'); ?>>Sandbox</option>
+                        <option value="test" <?php selected(get_option('org_paypal_mode', 'test'), 'test'); ?>>Sandbox</option>
                         <option value="live" <?php selected(get_option('org_paypal_mode'), 'live'); ?>>Live</option>
                     </select>
+                    <p class="description"><?php _e( 'Use Sandbox for testing with PayPal Developer accounts.', 'org-ecosystem' ); ?></p>
                 </div>
                 <div class="mb-3">
 					<label class="form-label d-block fw-bold" style="margin-bottom: 8px;"><?php _e( 'PayPal Business Email', 'org-ecosystem' ); ?></label>
