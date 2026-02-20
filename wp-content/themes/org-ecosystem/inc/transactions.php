@@ -68,6 +68,9 @@ function org_ecosystem_process_unified_payment( $data ) {
     update_post_meta( $txn_id, '_txn_user_id', $user_id );
     update_post_meta( $txn_id, '_txn_item_id', $item_id );
 
+    if ( isset($data['donor_name']) ) update_post_meta( $txn_id, '_txn_donor_name', $data['donor_name'] );
+    if ( isset($data['donor_email']) ) update_post_meta( $txn_id, '_txn_donor_email', $data['donor_email'] );
+
     // Status Logic
     // In production, Stripe/PayPal should be 'pending' until IPN/Webhook verification.
     // For this ecosystem, we default to 'pending' to ensure administrative review or API confirmation.
@@ -129,6 +132,24 @@ function org_ecosystem_complete_transaction( $txn_id ) {
     if ( $type === 'product_sale' || $type === 'product' ) {
         org_ecosystem_handle_commission( $txn_id, $amount, $item_id );
     }
+
+    if ( $type === 'donation' ) {
+        $donor_name = get_post_meta( $txn_id, '_txn_donor_name', true ) ?: 'Anonymous';
+        $donor_email = get_post_meta( $txn_id, '_txn_donor_email', true );
+
+        $donation_id = wp_insert_post( array(
+            'post_title'   => 'Donation from ' . $donor_name,
+            'post_type'    => 'donation',
+            'post_status'  => 'publish',
+            'post_content' => sprintf( 'Amount: ₱ %s | Email: %s', $amount, $donor_email ),
+        ) );
+
+        if ( $donation_id ) {
+            update_post_meta( $donation_id, '_donation_amount', $amount );
+            update_post_meta( $donation_id, '_donation_email', $donor_email );
+            update_post_meta( $donation_id, '_donation_txn_id', $txn_id );
+        }
+    }
 }
 
 /**
@@ -179,6 +200,8 @@ function org_ajax_process_payment() {
         'gateway' => sanitize_text_field( $_POST['gateway'] ),
         'type'    => $txn_type,
         'item_id' => intval( $_POST['item_id'] ),
+        'donor_name'  => isset($_POST['donor_name']) ? sanitize_text_field($_POST['donor_name']) : '',
+        'donor_email' => isset($_POST['donor_email']) ? sanitize_email($_POST['donor_email']) : '',
     );
 
     $txn_id = org_ecosystem_process_unified_payment( $data );
@@ -216,7 +239,9 @@ function org_ajax_bypass_payment() {
         'gateway' => 'bypass',
         'type'    => $txn_type,
         'item_id' => intval( $_POST['item_id'] ),
-        'status'  => 'completed' // Immediate completion
+        'status'  => 'completed', // Immediate completion
+        'donor_name'  => isset($_POST['donor_name']) ? sanitize_text_field($_POST['donor_name']) : '',
+        'donor_email' => isset($_POST['donor_email']) ? sanitize_email($_POST['donor_email']) : '',
     );
 
     $txn_id = org_ecosystem_process_unified_payment( $data );
@@ -293,6 +318,8 @@ function org_ecosystem_handle_checkout_submission() {
         'gateway' => $gateway,
         'type'    => $type,
         'item_id' => $item_id,
+        'donor_name'  => isset($_POST['donor_name']) ? sanitize_text_field($_POST['donor_name']) : '',
+        'donor_email' => isset($_POST['donor_email']) ? sanitize_email($_POST['donor_email']) : '',
     ) );
 
     if ( $txn_id ) {

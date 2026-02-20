@@ -767,22 +767,18 @@ function org_ecosystem_handle_donation() {
 
 	$name = sanitize_text_field( $_POST['donor_name'] );
 	$email = sanitize_email( $_POST['donor_email'] );
-	$amount = ! empty( $_POST['custom_amount'] ) ? intval( $_POST['custom_amount'] ) : intval( $_POST['amount'] );
+	$amount = ! empty( $_POST['custom_amount'] ) ? floatval( $_POST['custom_amount'] ) : floatval( $_POST['amount'] );
 
-	// Mock donation recording
-	$donation_id = wp_insert_post( array(
-		'post_title'   => 'Donation from ' . $name,
-		'post_type'    => 'donation',
-		'post_status'  => 'publish',
-		'post_content' => sprintf( 'Amount: ₱ %d | Email: %s', $amount, $email ),
-	) );
+	// Redirect to unified checkout for real processing
+    $checkout_url = org_ecosystem_get_page_url( 'page-checkout.php' );
+    $redirect_url = add_query_arg( array(
+        'checkout_type' => 'donation',
+        'amount'        => $amount,
+        'donor_name'    => urlencode($name),
+        'donor_email'   => urlencode($email)
+    ), $checkout_url );
 
-	if ( $donation_id ) {
-		update_post_meta( $donation_id, '_donation_amount', $amount );
-		update_post_meta( $donation_id, '_donation_email', $email );
-	}
-
-	wp_redirect( add_query_arg( 'thanks', 'true', org_ecosystem_get_page_url( 'page-donation.php' ) ) );
+	wp_redirect( $redirect_url );
 	exit;
 }
 add_action( 'admin_post_org_process_donation', 'org_ecosystem_handle_donation' );

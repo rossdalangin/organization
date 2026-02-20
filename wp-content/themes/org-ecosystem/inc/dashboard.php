@@ -70,8 +70,18 @@ function org_ecosystem_handle_send_message() {
     $content = sanitize_textarea_field( $_POST['msg_content'] );
 
     // Permission check: Community members can only message Admin
-    if ( ! org_ecosystem_can_user_do( 'send_messages' ) && $receiver_id !== 0 ) {
-        wp_redirect( add_query_arg( array( 'dash_page' => 'messages', 'error' => 'upgrade_required' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+    $receiver_is_admin = false;
+    if ($receiver_id === 0) {
+        $receiver_is_admin = true;
+    } else {
+        $receiver_user = get_userdata($receiver_id);
+        if ($receiver_user && (in_array('administrator', $receiver_user->roles) || in_array('super_admin', $receiver_user->roles) || in_array('org_admin', $receiver_user->roles))) {
+            $receiver_is_admin = true;
+        }
+    }
+
+    if ( ! org_ecosystem_can_user_do( 'send_messages' ) && ! $receiver_is_admin ) {
+        wp_redirect( add_query_arg( array( 'dash_page' => 'messages', 'error' => 'upgrade_required' ), org_ecosystem_get_dash_url('messages') ) );
         exit;
     }
 

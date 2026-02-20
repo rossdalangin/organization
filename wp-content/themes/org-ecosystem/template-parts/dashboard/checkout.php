@@ -62,6 +62,10 @@ if ( $type === 'membership' ) {
         $amount = floatval($listing_fee) + floatval($promo_fee);
         $description = __( 'Job Listing Fee + Featured Promotion', 'org-ecosystem' );
     }
+} elseif ( $type === 'donation' ) {
+    $item_name = __( 'Organization Donation', 'org-ecosystem' );
+    $amount = isset($_GET['amount']) ? floatval($_GET['amount']) : 0;
+    $description = __( 'Support Our Collective Mission', 'org-ecosystem' );
 }
 
 if ( ! $item_name ) {
@@ -112,6 +116,12 @@ if ( ! $item_name ) {
                     <input type="hidden" name="plan" value="<?php echo esc_attr( $plan ); ?>">
                     <input type="hidden" name="amount" value="<?php echo esc_attr( $amount ); ?>">
                     <input type="hidden" name="redirect_to" value="<?php echo esc_url( org_ecosystem_get_page_url( 'page-dashboard.php' ) ); ?>">
+
+                    <?php if ( $type === 'donation' ) : ?>
+                        <input type="hidden" name="donor_name" value="<?php echo esc_attr( $_GET['donor_name'] ?? '' ); ?>">
+                        <input type="hidden" name="donor_email" value="<?php echo esc_attr( $_GET['donor_email'] ?? '' ); ?>">
+                    <?php endif; ?>
+
                     <?php wp_nonce_field( 'org_checkout_action', 'org_checkout_nonce' ); ?>
 
                     <div class="payment-options">
@@ -263,6 +273,8 @@ if ( ! $item_name ) {
                 type: '<?php echo $type; ?>',
                 item_id: '<?php echo $item_id; ?>',
                 plan: '<?php echo $plan; ?>',
+                donor_name: '<?php echo esc_js($_GET['donor_name'] ?? ''); ?>',
+                donor_email: '<?php echo esc_js($_GET['donor_email'] ?? ''); ?>',
                 security: '<?php echo wp_create_nonce("org_payment_nonce"); ?>'
             };
 
@@ -295,6 +307,8 @@ if ( ! $item_name ) {
                     type: '<?php echo $type; ?>',
                     item_id: '<?php echo $item_id; ?>',
                     plan: '<?php echo $plan; ?>',
+                    donor_name: '<?php echo esc_js($_GET['donor_name'] ?? ''); ?>',
+                    donor_email: '<?php echo esc_js($_GET['donor_email'] ?? ''); ?>',
                     security: '<?php echo wp_create_nonce("org_payment_nonce"); ?>'
                 };
 
