@@ -386,19 +386,29 @@ function org_ecosystem_handle_promote_listing() {
     $item_id = isset( $_GET['checkout_item_id'] ) ? intval( $_GET['checkout_item_id'] ) : (isset($_GET['item_id']) ? intval($_GET['item_id']) : 0);
     $type = isset( $_GET['checkout_type'] ) ? sanitize_text_field( $_GET['checkout_type'] ) : 'promotion';
 
-    if ( ! $item_id || ! check_admin_referer( 'org_promote_listing_action' ) ) return;
+    if ( ! $item_id ) {
+        wp_redirect( home_url('/') );
+        exit;
+    }
+
+    check_admin_referer( 'org_promote_listing_action' );
 
     $user_id = get_current_user_id();
     if ( (int) get_post_field( 'post_author', $item_id ) === (int) $user_id ) {
         // Redirect to unified checkout
-        wp_redirect( add_query_arg( array(
+        $checkout_url = org_ecosystem_get_page_url( 'page-checkout.php' );
+
+        $redirect_url = add_query_arg( array(
             'checkout_type'    => $type,
             'checkout_item_id' => $item_id
-        ), org_ecosystem_get_page_url( 'page-checkout.php' ) ) );
+        ), $checkout_url );
+
+        error_log('Org Ecosystem: Promoting item ' . $item_id . ' to ' . $redirect_url);
+        wp_redirect( $redirect_url );
         exit;
     }
 
-    wp_redirect( add_query_arg( array( 'dash_page' => 'overview', 'error' => 'unauthorized' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+    wp_redirect( add_query_arg( array( 'dash_page' => 'overview', 'error' => 'unauthorized' ), org_ecosystem_get_dash_url() ) );
     exit;
 }
 add_action( 'admin_post_org_promote_listing', 'org_ecosystem_handle_promote_listing' );

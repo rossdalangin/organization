@@ -169,3 +169,24 @@ function org_ecosystem_track_referral() {
     }
 }
 add_action( 'init', 'org_ecosystem_track_referral' );
+
+/**
+ * Global Redirects for Checkout and Parameters
+ */
+function org_ecosystem_global_redirects() {
+    if ( is_admin() ) return;
+
+    // Handle checkout redirection if checkout parameters are present but we are not on checkout or dashboard
+    if ( isset( $_GET['checkout_type'] ) || get_query_var( 'checkout_type' ) ) {
+        $checkout_url = org_ecosystem_get_page_url( 'page-checkout.php' );
+
+        // Avoid loops: check if current page is already the checkout page or if checkout_url failed
+        if ( $checkout_url && $checkout_url !== home_url('/') && ! is_page_template( 'page-checkout.php' ) && ! is_page_template( 'page-dashboard.php' ) ) {
+             // Rebuild URL with all query params
+             $redirect_url = add_query_arg( $_GET, $checkout_url );
+             wp_redirect( $redirect_url );
+             exit;
+        }
+    }
+}
+add_action( 'template_redirect', 'org_ecosystem_global_redirects' );

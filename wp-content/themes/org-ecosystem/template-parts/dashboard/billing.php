@@ -97,7 +97,7 @@ $status_color = isset($status_colors[$status]) ? $status_colors[$status] : 'seco
 					<td>₱ <?php echo number_format( $item['amount'] ); ?></td>
 					<td><span class="badge bg-success"><?php echo esc_html( $item['status'] ); ?></span></td>
 					<td>
-						<a href="<?php echo esc_url( add_query_arg( array( 'txn_id' => $item['txn_id'], 'dash_page' => 'download_receipt' ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) ); ?>" class="btn btn-sm btn-outline-secondary">
+						<a href="<?php echo esc_url( add_query_arg( array( 'txn_id' => $item['txn_id'], 'dash_page' => 'download_receipt' ), org_ecosystem_get_dash_url() ) ); ?>" class="btn btn-sm btn-outline-secondary">
 							<i class="bi bi-download"></i>
 						</a>
 					</td>

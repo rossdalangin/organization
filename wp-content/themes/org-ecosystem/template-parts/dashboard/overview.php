@@ -96,7 +96,7 @@ if ( ! $ref_code ) {
                         <small class="text-muted"><?php _e( 'Renews on:', 'org-ecosystem' ); ?> <?php echo date('M d, Y', strtotime($renewal)); ?></small>
                     <?php endif; ?>
                 </div>
-                <a href="?dash_page=billing" class="btn btn-light btn-sm rounded-pill px-3"><?php _e( 'Manage', 'org-ecosystem' ); ?></a>
+                <a href="<?php echo org_ecosystem_get_dash_url('billing'); ?>" class="btn btn-light btn-sm rounded-pill px-3"><?php _e( 'Manage', 'org-ecosystem' ); ?></a>
             </div>
         </div>
     </div>
@@ -108,7 +108,7 @@ if ( ! $ref_code ) {
                     <h4 class="fw-bold mb-1 text-success">₱ <?php echo number_format($balance, 2); ?></h4>
                     <small class="text-muted"><?php _e( 'Available for withdrawal', 'org-ecosystem' ); ?></small>
                 </div>
-                <a href="?dash_page=payments" class="btn btn-light btn-sm rounded-pill px-3"><?php _e( 'Wallet', 'org-ecosystem' ); ?></a>
+                <a href="<?php echo org_ecosystem_get_dash_url('payments'); ?>" class="btn btn-light btn-sm rounded-pill px-3"><?php _e( 'Wallet', 'org-ecosystem' ); ?></a>
             </div>
         </div>
     </div>

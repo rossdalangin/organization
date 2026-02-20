@@ -20,9 +20,9 @@ if ( $product_to_edit && (int) $product_to_edit->post_author !== (int) $user_id 
 <div class="d-flex justify-content-between align-items-center mb-4">
 	<h2 class="h4 mb-0"><?php _e( 'My Products & Services', 'org-ecosystem' ); ?></h2>
 	<?php if ( ! $product_to_edit ) : ?>
-		<a href="?dash_page=my-products&add_new=1" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i> <?php _e( 'Add New', 'org-ecosystem' ); ?></a>
+		<a href="<?php echo add_query_arg('add_new', '1', org_ecosystem_get_dash_url('my-products')); ?>" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i> <?php _e( 'Add New', 'org-ecosystem' ); ?></a>
 	<?php else : ?>
-		<a href="?dash_page=my-products" class="btn btn-secondary btn-sm"><?php _e( 'Back to List', 'org-ecosystem' ); ?></a>
+		<a href="<?php echo org_ecosystem_get_dash_url('my-products'); ?>" class="btn btn-secondary btn-sm"><?php _e( 'Back to List', 'org-ecosystem' ); ?></a>
 	<?php endif; ?>
 </div>
 
@@ -132,7 +132,7 @@ if ( $product_to_edit && (int) $product_to_edit->post_author !== (int) $user_id 
 								<h6 class="card-title mb-1"><?php the_title(); ?></h6>
 								<p class="card-text small text-muted mb-2"><?php echo wp_trim_words( get_the_excerpt(), 10 ); ?></p>
 								<div class="d-flex gap-2">
-									<a href="?dash_page=my-products&edit_product=<?php the_ID(); ?>" class="btn btn-sm btn-outline-primary"><?php _e( 'Edit', 'org-ecosystem' ); ?></a>
+									<a href="<?php echo add_query_arg('edit_product', get_the_ID(), org_ecosystem_get_dash_url('my-products')); ?>" class="btn btn-sm btn-outline-primary"><?php _e( 'Edit', 'org-ecosystem' ); ?></a>
                                     <?php if ( ! get_post_meta( get_the_ID(), '_product_is_featured', true ) ) : ?>
                                         <a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_promote_listing', 'checkout_item_id' => get_the_ID(), 'checkout_type' => 'promotion' ), admin_url( 'admin-post.php' ) ), 'org_promote_listing_action' ); ?>" class="btn btn-sm btn-outline-warning text-dark"><?php _e( 'Promote', 'org-ecosystem' ); ?></a>
                                     <?php endif; ?>

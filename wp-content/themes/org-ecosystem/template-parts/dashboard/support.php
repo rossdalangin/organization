@@ -18,7 +18,7 @@ if ( $view_id ) :
         <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="fw-bold mb-0">#<?php echo $view_id; ?>: <?php echo get_the_title($view_id); ?></h4>
-                        <a href="?dash_page=support" class="btn btn-sm btn-outline-secondary">Back to Tickets</a>
+                        <a href="<?php echo org_ecosystem_get_dash_url('support'); ?>" class="btn btn-sm btn-outline-secondary">Back to Tickets</a>
             </div>
             <div class="mb-4 text-muted small">
                 <strong>Status:</strong> <?php echo strtoupper(get_post_meta($view_id, '_ticket_status', true)); ?><br>
@@ -98,7 +98,7 @@ endif;
                                 <span class="badge <?php echo $badge_class; ?>"><?php echo esc_html( ucfirst( $status ) ); ?></span>
                             </td>
                             <td>
-                                <a href="?dash_page=support&view_ticket=<?php the_ID(); ?>" class="btn btn-sm btn-outline-primary"><?php _e( 'View', 'org-ecosystem' ); ?></a>
+                                <a href="<?php echo add_query_arg('view_ticket', get_the_ID(), org_ecosystem_get_dash_url('support')); ?>" class="btn btn-sm btn-outline-primary"><?php _e( 'View', 'org-ecosystem' ); ?></a>
                             </td>
                         </tr>
                     <?php endwhile; wp_reset_postdata(); ?>

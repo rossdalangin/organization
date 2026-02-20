@@ -76,7 +76,7 @@ if ( ! $item_name ) {
             <?php _e( 'Secure Checkout', 'org-ecosystem' ); ?>
             <span id="test-mode-badge" class="badge bg-warning text-dark ms-2 d-none" style="font-size: 0.5em; vertical-align: middle;">TEST MODE</span>
         </h3>
-        <a href="?dash_page=overview" class="btn btn-outline-secondary btn-sm"><?php _e( 'Cancel', 'org-ecosystem' ); ?></a>
+        <a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-dashboard.php' ) ); ?>" class="btn btn-outline-secondary btn-sm"><?php _e( 'Cancel', 'org-ecosystem' ); ?></a>
     </div>
 
     <div id="localhost-dev-alert" class="alert alert-warning border-0 shadow-sm mb-4 d-none">

@@ -337,7 +337,7 @@ function org_ecosystem_handle_registration() {
                 'plan_id'       => $plan
             ), org_ecosystem_get_page_url( 'page-checkout.php' ) ) );
         } else {
-		    wp_redirect( add_query_arg( 'registered', 'true', org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+		    wp_redirect( add_query_arg( 'registered', 'true', org_ecosystem_get_dash_url() ) );
         }
 		exit;
 	} else {
@@ -798,7 +798,7 @@ function org_ecosystem_handle_renewal() {
 	$user_id = get_current_user_id();
 	$level = get_user_meta( $user_id, '_membership_level', true ) ?: 'professional';
 
-	// Redirect to checkout for actual payment instead of mocking
+	// Redirect to checkout for actual payment
     $redirect_url = add_query_arg( array(
         'checkout_type' => 'membership',
         'plan_id'       => $level

@@ -24,9 +24,9 @@ $listing_fee = get_theme_mod( 'job_listing_price', '1000' );
 <div class="d-flex justify-content-between align-items-center mb-4">
 	<h2 class="h4 mb-0"><?php _e( 'My Job Postings', 'org-ecosystem' ); ?></h2>
 	<?php if ( ! $job_to_edit ) : ?>
-		<a href="?dash_page=my-jobs&add_new=1" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i> <?php _e( 'Post a Job', 'org-ecosystem' ); ?></a>
+		<a href="<?php echo add_query_arg('add_new', '1', org_ecosystem_get_dash_url('my-jobs')); ?>" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i> <?php _e( 'Post a Job', 'org-ecosystem' ); ?></a>
 	<?php else : ?>
-		<a href="?dash_page=my-jobs" class="btn btn-secondary btn-sm"><?php _e( 'Back to List', 'org-ecosystem' ); ?></a>
+		<a href="<?php echo org_ecosystem_get_dash_url('my-jobs'); ?>" class="btn btn-secondary btn-sm"><?php _e( 'Back to List', 'org-ecosystem' ); ?></a>
 	<?php endif; ?>
 </div>
 
@@ -130,7 +130,7 @@ $listing_fee = get_theme_mod( 'job_listing_price', '1000' );
 							<?php endif; ?>
 						</td>
 						<td>
-							<a href="?dash_page=my-jobs&edit_job=<?php the_ID(); ?>" class="btn btn-sm btn-outline-primary">Edit</a>
+							<a href="<?php echo add_query_arg('edit_job', get_the_ID(), org_ecosystem_get_dash_url('my-jobs')); ?>" class="btn btn-sm btn-outline-primary">Edit</a>
                             <?php if ( ! get_post_meta( get_the_ID(), '_job_is_featured', true ) ) : ?>
                                 <a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_promote_listing', 'checkout_item_id' => get_the_ID(), 'checkout_type' => 'promotion' ), admin_url( 'admin-post.php' ) ), 'org_promote_listing_action' ); ?>" class="btn btn-sm btn-outline-warning text-dark">Promote</a>
                             <?php endif; ?>

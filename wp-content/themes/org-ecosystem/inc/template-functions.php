@@ -226,7 +226,7 @@ function org_ecosystem_get_page_url( $template_path ) {
             ),
         ),
         'posts_per_page' => 1,
-        'post_status'    => array( 'publish', 'private', 'draft', 'pending' ),
+        'post_status'    => array( 'publish', 'private', 'draft', 'pending', 'future' ),
         'suppress_filters' => true,
         'orderby'        => 'ID',
         'order'          => 'ASC'
@@ -294,11 +294,39 @@ function org_ecosystem_get_page_url( $template_path ) {
             // Try searching with "Member " prefix
             $page = get_page_by_title( 'Member ' . $keyword );
         }
+        if ( ! $page ) {
+            // Try localized versions or common titles
+            $titles = array( 'Member Dashboard', 'Join Us', 'Checkout', 'Membership Plans', 'About Us', 'Our Mission' );
+            foreach($titles as $t) {
+                if (strpos(strtolower($t), strtolower($keyword)) !== false) {
+                    $page = get_page_by_title($t);
+                    if ($page) break;
+                }
+            }
+        }
         if ( $page ) return get_permalink( $page->ID );
     }
 
-    // 4. Last resort home URL
+    // 4. Emergency: If it's a critical page and still not found, return a guessed URL
+    // This helps on localhost where pages might exist but search fails
+    $guessed_slug = str_replace('.php', '', str_replace('page-', '', $template_path));
+    if (in_array($guessed_slug, array('dashboard', 'checkout', 'join', 'plans'))) {
+        return home_url('/' . $guessed_slug . '/');
+    }
+
+    // 5. Last resort home URL
     return home_url('/');
+}
+
+/**
+ * Get Dashboard URL with specific sub-page
+ */
+function org_ecosystem_get_dash_url( $page = '' ) {
+    $url = org_ecosystem_get_page_url( 'page-dashboard.php' );
+    if ( $page ) {
+        $url = add_query_arg( 'dash_page', $page, $url );
+    }
+    return $url;
 }
 
 function org_ecosystem_comment_callback( $comment, $args, $depth ) {

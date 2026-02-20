@@ -601,6 +601,20 @@ function org_ecosystem_setup_page() {
         foreach ( $pages as $slug => $data ) {
             $exists = get_page_by_path( $slug );
             if ( ! $exists ) {
+                // Try finding by template name if slug changed
+                $query = new WP_Query(array(
+                    'post_type' => 'page',
+                    'meta_query' => array(
+                        array('key' => '_wp_page_template', 'value' => $data['template'])
+                    ),
+                    'posts_per_page' => 1
+                ));
+                if ( $query->have_posts() ) {
+                    $exists = $query->posts[0];
+                }
+            }
+
+            if ( ! $exists ) {
                 $pid = wp_insert_post( array(
                     'post_title'   => $data['title'],
                     'post_name'    => $slug,
@@ -611,9 +625,15 @@ function org_ecosystem_setup_page() {
                 if ( $pid && $data['template'] ) {
                     update_post_meta( $pid, '_wp_page_template', $data['template'] );
                 }
+            } else {
+                // Ensure existing page has the correct template assigned
+                if ( $data['template'] ) {
+                    update_post_meta( $exists->ID, '_wp_page_template', $data['template'] );
+                }
             }
         }
-        echo '<div class="updated"><p>Required pages created successfully.</p></div>';
+        flush_rewrite_rules();
+        echo '<div class="updated"><p>Required pages created and templates assigned. Permalinks flushed.</p></div>';
     }
 
     ?>

@@ -56,6 +56,6 @@ $balance = org_ecosystem_get_user_total_commissions( $user_id );
                 </div>
             </div>
         </div>
-        <a href="?dash_page=edit-profile" class="btn btn-link p-0 text-decoration-none small"><?php _e( 'Update payout details in Profile settings', 'org-ecosystem' ); ?> <i class="bi bi-arrow-right"></i></a>
+        <a href="<?php echo org_ecosystem_get_dash_url('edit-profile'); ?>" class="btn btn-link p-0 text-decoration-none small"><?php _e( 'Update payout details in Profile settings', 'org-ecosystem' ); ?> <i class="bi bi-arrow-right"></i></a>
     </div>
 </div>
