@@ -2,6 +2,11 @@
 /**
  * Dashboard Checkout Template Part
  */
+if ( ! is_user_logged_in() ) {
+    echo '<div class="alert alert-warning">' . __( 'Please log in to complete your transaction.', 'org-ecosystem' ) . ' <a href="' . wp_login_url( get_permalink() ) . '" class="btn btn-primary btn-sm ms-3">' . __( 'Login Now', 'org-ecosystem' ) . '</a></div>';
+    return;
+}
+
 $user_id = get_current_user_id();
 $type = isset( $_GET['checkout_type'] ) ? sanitize_text_field( $_GET['checkout_type'] ) : get_query_var('checkout_type');
 $item_id = isset( $_GET['checkout_item_id'] ) ? intval( $_GET['checkout_item_id'] ) : get_query_var('checkout_item_id');
@@ -90,6 +95,9 @@ if ( ! $item_name ) {
                 </div>
             </div>
         </div>
+        <div class="mt-2 small border-top pt-2">
+            <strong>System Info:</strong> Stripe: <?php echo $stripe_enabled ? 'En' : 'Dis'; ?> | PayPal: <?php echo $paypal_enabled ? 'En' : 'Dis'; ?> | GCash: <?php echo $gcash_number ? 'En' : 'Dis'; ?> | Item: <?php echo esc_html($item_name); ?>
+        </div>
     </div>
 
     <div class="row">
@@ -107,19 +115,25 @@ if ( ! $item_name ) {
                     <?php wp_nonce_field( 'org_checkout_action', 'org_checkout_nonce' ); ?>
 
                     <div class="payment-options">
-                        <?php if ( get_option( 'org_stripe_enabled' ) ) : ?>
+                        <?php
+                        $stripe_enabled = get_option( 'org_stripe_enabled' );
+                        $paypal_enabled = get_option( 'org_paypal_enabled' );
+                        $gcash_number = get_option( 'org_gcash_number' );
+                        ?>
+
+                        <?php if ( $stripe_enabled ) : ?>
                             <div class="form-check payment-option-card p-3 mb-3 border rounded-3">
                                 <input class="form-check-input ms-0 me-3" type="radio" name="gateway" id="gateway_stripe" value="stripe" checked>
                                 <label class="form-check-label d-flex align-items-center" for="gateway_stripe">
                                     <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" height="24" class="me-3" alt="Stripe">
-                                    <span class="fw-bold"><?php _e( 'Credit / Debit Card', 'org-ecosystem' ); ?></span>
+                                    <span class="fw-bold"><?php _e( 'Credit / Debit Card (Stripe)', 'org-ecosystem' ); ?></span>
                                 </label>
                             </div>
                         <?php endif; ?>
 
-                        <?php if ( get_option( 'org_paypal_enabled' ) ) : ?>
+                        <?php if ( $paypal_enabled ) : ?>
                             <div class="form-check payment-option-card p-3 mb-3 border rounded-3">
-                                <input class="form-check-input ms-0 me-3" type="radio" name="gateway" id="gateway_paypal" value="paypal" <?php echo !get_option('org_stripe_enabled') ? 'checked' : ''; ?>>
+                                <input class="form-check-input ms-0 me-3" type="radio" name="gateway" id="gateway_paypal" value="paypal" <?php echo !$stripe_enabled ? 'checked' : ''; ?>>
                                 <label class="form-check-label d-flex align-items-center" for="gateway_paypal">
                                     <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" height="24" class="me-3" alt="PayPal">
                                     <span class="fw-bold"><?php _e( 'PayPal Express', 'org-ecosystem' ); ?></span>
@@ -141,12 +155,12 @@ if ( ! $item_name ) {
                         <?php endif; ?>
 
                         <div class="form-check payment-option-card p-3 mb-3 border rounded-3">
-                            <input class="form-check-input ms-0 me-3" type="radio" name="gateway" id="gateway_offline" value="offline">
+                            <input class="form-check-input ms-0 me-3" type="radio" name="gateway" id="gateway_offline" value="offline" <?php echo (!$stripe_enabled && !$paypal_enabled && !$gcash_number) ? 'checked' : ''; ?>>
                             <label class="form-check-label d-flex align-items-center" for="gateway_offline">
                                 <i class="bi bi-bank fs-4 me-3 text-secondary"></i>
                                 <div>
                                     <span class="fw-bold d-block"><?php _e( 'Bank Transfer / Manual', 'org-ecosystem' ); ?></span>
-                                    <small class="text-muted"><?php _e( 'Pay via bank or walk-in.', 'org-ecosystem' ); ?></small>
+                                    <small class="text-muted"><?php _e( 'Direct bank deposit or physical payment.', 'org-ecosystem' ); ?></small>
                                 </div>
                             </label>
                         </div>
@@ -188,6 +202,13 @@ if ( ! $item_name ) {
 
 <script>
     jQuery(document).ready(function($) {
+        console.log('Org Ecosystem: Checkout Initialized');
+        console.log('Org Ecosystem: Gateway Settings:', {
+            stripe: '<?php echo get_option("org_stripe_enabled") ? "ON" : "OFF"; ?>',
+            paypal: '<?php echo get_option("org_paypal_enabled") ? "ON" : "OFF"; ?>',
+            gcash: '<?php echo get_option("org_gcash_number") ? "ON" : "OFF"; ?>'
+        });
+
         const instructions = {
             'gcash': '<?php echo esc_js( sprintf( __( "Please send ₱%s to GCash number: %s. Once sent, click 'Complete Payment' below. Our admin will verify your payment.", "org-ecosystem" ), number_format($amount, 2), get_option("org_gcash_number") ) ); ?>',
             'offline': '<?php echo esc_js( get_option("org_offline_instructions") ); ?>'

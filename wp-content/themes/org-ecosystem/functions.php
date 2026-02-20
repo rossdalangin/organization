@@ -105,7 +105,7 @@ function org_ecosystem_scripts() {
 		wp_enqueue_script( 'stripe-js', 'https://js.stripe.com/v3/', array(), null, true );
 	}
 
-	wp_localize_script( 'jquery', 'org_ajax', array(
+	wp_localize_script( 'org-ecosystem-main', 'org_ajax', array(
 		'ajaxurl'        => admin_url( 'admin-ajax.php' ),
 		'stripe_pub_key' => get_option( 'org_stripe_pub_key' ),
 		'stripe_mode'    => get_option( 'org_stripe_mode', 'test' ),

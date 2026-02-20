@@ -621,12 +621,15 @@ function org_ecosystem_setup_page() {
         <h1><?php _e( 'System Setup & Tools', 'org-ecosystem' ); ?></h1>
 
         <div class="card p-4 mt-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
-            <h3><?php _e( 'Page Initialization', 'org-ecosystem' ); ?></h3>
-            <p><?php _e( 'Click the button below to automatically create all the required pages for the organization ecosystem (Dashboard, Contact, Join, etc.).', 'org-ecosystem' ); ?></p>
+            <h3><?php _e( 'Page Initialization & Repair', 'org-ecosystem' ); ?></h3>
+            <p><?php _e( 'Click the button below to automatically create or repair all the required pages for the organization ecosystem (Dashboard, Checkout, Join, etc.).', 'org-ecosystem' ); ?></p>
             <form method="post" action="">
                 <?php wp_nonce_field( 'org_create_pages_action' ); ?>
-                <button type="submit" name="org_create_pages" class="button button-primary"><?php _e( 'Auto-Create Required Pages', 'org-ecosystem' ); ?></button>
+                <button type="submit" name="org_create_pages" class="button button-primary button-hero" style="background: #2563eb;"><?php _e( 'Re-Initialize Ecosystem Pages', 'org-ecosystem' ); ?></button>
             </form>
+            <div class="mt-3">
+                <p class="small text-muted"><strong><?php _e( 'Pages Managed:', 'org-ecosystem' ); ?></strong> Dashboard, Checkout, Membership Plans, Join Us, Member Directory, etc.</p>
+            </div>
         </div>
 
         <div class="card p-4 mt-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
