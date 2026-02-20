@@ -174,10 +174,9 @@ function org_ecosystem_handle_event_registration() {
 		// Redirect to Checkout for paid events
 		if ( $is_paid ) {
              wp_redirect( add_query_arg( array(
-                'dash_page'        => 'checkout',
                 'checkout_type'    => 'event',
                 'checkout_item_id' => $event_id
-            ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+            ), org_ecosystem_get_page_url( 'page-checkout.php' ) ) );
             exit;
 		}
 
@@ -351,10 +350,9 @@ function org_ecosystem_handle_job_save() {
                  update_post_meta( $job_id, '_job_is_featured', 'pending' );
              }
              wp_redirect( add_query_arg( array(
-                'dash_page'        => 'checkout',
                 'checkout_type'    => $checkout_type,
                 'checkout_item_id' => $job_id
-            ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+            ), org_ecosystem_get_page_url( 'page-checkout.php' ) ) );
             exit;
         }
 	}
@@ -394,10 +392,9 @@ function org_ecosystem_handle_promote_listing() {
     if ( (int) get_post_field( 'post_author', $item_id ) === (int) $user_id ) {
         // Redirect to unified checkout
         wp_redirect( add_query_arg( array(
-            'dash_page'        => 'checkout',
             'checkout_type'    => $type,
             'checkout_item_id' => $item_id
-        ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+        ), org_ecosystem_get_page_url( 'page-checkout.php' ) ) );
         exit;
     }
 

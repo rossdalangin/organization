@@ -582,6 +582,7 @@ function org_ecosystem_setup_page() {
             'donate'     => array( 'title' => 'Support Our Mission', 'template' => 'page-donation.php', 'content' => '[org_donation_form]' ),
             'about'      => array( 'title' => 'About Us', 'template' => 'page-about.php', 'content' => '' ),
             'mission'    => array( 'title' => 'Our Mission', 'template' => 'page-mission.php', 'content' => '' ),
+            'checkout'   => array( 'title' => 'Checkout', 'template' => 'page-checkout.php', 'content' => '' ),
             'plans'      => array( 'title' => 'Membership Plans', 'template' => 'page-plans.php', 'content' => '[org_pricing_table]' ),
             'referrals'  => array( 'title' => 'Referral Program', 'template' => 'page-referrals.php', 'content' => '' ),
             'faq'        => array( 'title' => 'Frequently Asked Questions', 'template' => 'page-faq.php', 'content' => '' ),

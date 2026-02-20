@@ -34,7 +34,7 @@ $levels = org_ecosystem_get_membership_levels();
                     <div class="d-grid">
                         <?php if ( is_user_logged_in() ) : ?>
                             <?php if ( $level['price'] > 0 ) : ?>
-                                <a href="<?php echo esc_url( add_query_arg( array( 'action' => 'checkout', 'type' => 'membership', 'plan' => $key ), org_ecosystem_get_page_url( 'templates/dashboard.php' ) ) ); ?>" class="btn btn-primary btn-lg fw-bold">
+                                <a href="<?php echo esc_url( add_query_arg( array( 'checkout_type' => 'membership', 'plan_id' => $key ), org_ecosystem_get_page_url( 'page-checkout.php' ) ) ); ?>" class="btn btn-primary btn-lg fw-bold">
                                     <?php _e( 'Upgrade Now', 'org-ecosystem' ); ?>
                                 </a>
                             <?php else : ?>

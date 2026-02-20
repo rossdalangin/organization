@@ -333,10 +333,9 @@ function org_ecosystem_handle_registration() {
 		if ( $plan !== 'free' && $plan !== 'community' ) {
             wp_redirect( add_query_arg( array(
                 'registered' => 'true',
-                'dash_page'     => 'checkout',
                 'checkout_type' => 'membership',
                 'plan_id'       => $plan
-            ), org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
+            ), org_ecosystem_get_page_url( 'page-checkout.php' ) ) );
         } else {
 		    wp_redirect( add_query_arg( 'registered', 'true', org_ecosystem_get_page_url( 'page-dashboard.php' ) ) );
         }
@@ -801,10 +800,9 @@ function org_ecosystem_handle_renewal() {
 
 	// Redirect to checkout for actual payment instead of mocking
     $redirect_url = add_query_arg( array(
-        'dash_page'     => 'checkout',
         'checkout_type' => 'membership',
         'plan_id'       => $level
-    ), org_ecosystem_get_page_url( 'page-dashboard.php' ) );
+    ), org_ecosystem_get_page_url( 'page-checkout.php' ) );
 
     wp_redirect( $redirect_url );
     exit;
@@ -867,14 +865,12 @@ function org_ecosystem_handle_membership_upgrade() {
 	$new_level = isset( $_POST['plan'] ) ? sanitize_text_field( $_POST['plan'] ) : 'professional';
 
 	// Redirect to unified checkout
-    $dashboard_url = isset($_POST['redirect_to']) ? esc_url_raw($_POST['redirect_to']) : org_ecosystem_get_page_url( 'page-dashboard.php' );
-    error_log('Org Ecosystem: Dashboard URL found: ' . $dashboard_url);
+    $checkout_url = org_ecosystem_get_page_url( 'page-checkout.php' );
 
     $redirect_url = add_query_arg( array(
-        'dash_page'     => 'checkout',
         'checkout_type' => 'membership',
         'plan_id'       => $new_level
-    ), $dashboard_url );
+    ), $checkout_url );
 
     error_log('Org Ecosystem: Redirecting to: ' . $redirect_url);
     wp_redirect( $redirect_url );

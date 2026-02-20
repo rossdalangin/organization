@@ -249,6 +249,7 @@ function org_ecosystem_get_page_url( $template_path ) {
         'directory' => array('directory', 'members', 'member-directory'),
         'about'     => array('about', 'about-us', 'our-story'),
         'mission'   => array('mission', 'our-mission', 'vision'),
+        'checkout'  => array('checkout', 'payment', 'pay'),
     );
 
     foreach ( $slug_map as $key => $slugs ) {
@@ -285,6 +286,7 @@ function org_ecosystem_get_page_url( $template_path ) {
     if ( strpos( $template_path, 'join' ) !== false ) $keyword = 'Join';
     if ( strpos( $template_path, 'directory' ) !== false ) $keyword = 'Directory';
     if ( strpos( $template_path, 'plans' ) !== false ) $keyword = 'Plans';
+    if ( strpos( $template_path, 'checkout' ) !== false ) $keyword = 'Checkout';
 
     if ( $keyword ) {
         $page = get_page_by_title( $keyword );

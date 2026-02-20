@@ -43,9 +43,9 @@ $status_color = isset($status_colors[$status]) ? $status_colors[$status] : 'seco
 			<div class="col-md-4 text-md-end mt-3 mt-md-0">
 				<?php
 				if ( $status === 'expired' ) : ?>
-					<a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_renew_membership', 'redirect_to' => get_permalink() ), admin_url( 'admin-post.php' ) ), 'org_renew_membership_action' ); ?>" class="btn btn-warning fw-bold"><i class="bi bi-arrow-repeat me-1"></i> <?php _e( 'Renew Now', 'org-ecosystem' ); ?></a>
+					<a href="<?php echo wp_nonce_url( add_query_arg( array( 'action' => 'org_renew_membership' ), admin_url( 'admin-post.php' ) ), 'org_renew_membership_action' ); ?>" class="btn btn-warning fw-bold"><i class="bi bi-arrow-repeat me-1"></i> <?php _e( 'Renew Now', 'org-ecosystem' ); ?></a>
 				<?php elseif ( $membership_level === 'community' || $membership_level === 'free' ) : ?>
-                    <a href="<?php echo esc_url( add_query_arg( array( 'dash_page' => 'checkout', 'checkout_type' => 'membership', 'plan_id' => 'professional' ), get_permalink() ) ); ?>" class="btn btn-success fw-bold shadow-sm">
+                    <a href="<?php echo esc_url( add_query_arg( array( 'checkout_type' => 'membership', 'plan_id' => 'professional' ), org_ecosystem_get_page_url( 'page-checkout.php' ) ) ); ?>" class="btn btn-success fw-bold shadow-sm">
                         <i class="bi bi-rocket-takeoff me-1"></i> <?php _e( 'Upgrade Membership', 'org-ecosystem' ); ?>
                     </a>
 				<?php else : ?>
