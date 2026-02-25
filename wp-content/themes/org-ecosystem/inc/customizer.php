@@ -312,8 +312,13 @@ function org_ecosystem_customize_register( $wp_customize ) {
 	$wp_customize->add_setting( 'partners_title', array( 'default' => 'Our Partners & Sponsors', 'sanitize_callback' => 'sanitize_text_field' ) );
 	$wp_customize->add_control( 'partners_title', array( 'label' => 'Partners Title', 'section' => 'org_partners_content' ) );
 
-	$wp_customize->add_setting( 'org_partner_list', array( 'default' => 'PARTNER 1, PARTNER 2, PARTNER 3, PARTNER 4, PARTNER 5', 'sanitize_callback' => 'sanitize_text_field' ) );
-	$wp_customize->add_control( 'org_partner_list', array( 'label' => 'Partner Names (Comma separated)', 'section' => 'org_partners_content' ) );
+	for($i=1; $i<=8; $i++) {
+		$wp_customize->add_setting( "partner_logo_{$i}", array( 'default' => '', 'sanitize_callback' => 'esc_url_raw' ) );
+		$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, "partner_logo_{$i}", array(
+			'label' => "Partner Logo {$i}",
+			'section' => 'org_partners_content',
+		) ) );
+	}
 
 	// Section: CTA Content
 	$wp_customize->add_section( 'org_cta_content', array(

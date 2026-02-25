@@ -187,6 +187,11 @@ function org_ecosystem_settings_page() {
     $open_tickets = count( get_posts( array( 'post_type' => 'support_ticket', 'meta_key' => '_ticket_status', 'meta_value' => 'open', 'posts_per_page' => -1 ) ) );
     $total_businesses = count( get_posts( array( 'post_type' => 'business', 'posts_per_page' => -1 ) ) );
     $total_products = count( get_posts( array( 'post_type' => 'product', 'posts_per_page' => -1 ) ) );
+    $total_subs = count( get_posts( array(
+        'post_type' => 'org_newsletter',
+        'posts_per_page' => -1,
+        'meta_query' => array( array( 'key' => '_org_newsletter_type', 'value' => 'subscriber' ) )
+    ) ) );
 
     // Revenue KPI
     $total_revenue = 0;
@@ -234,9 +239,9 @@ function org_ecosystem_settings_page() {
                     <div style="font-size: 13px; color: #16a34a; font-weight: 600;"><span class="dashicons dashicons-money-alt" style="font-size: 16px; width: 16px; height: 16px;"></span> <?php _e( 'Growth Velocity +12%', 'org-ecosystem' ); ?></div>
                 </div>
                 <div class="stat-card" style="padding: 25px; background: #fffbeb; border-radius: 15px; border-left: 5px solid #d97706;">
-                    <div style="color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;"><?php _e( 'Marketplace', 'org-ecosystem' ); ?></div>
-                    <div style="font-size: 32px; font-weight: 800; color: #1e293b; margin: 10px 0;"><?php echo number_format($total_products); ?></div>
-                    <div style="font-size: 13px; color: #d97706; font-weight: 600;"><span class="dashicons dashicons-cart" style="font-size: 16px; width: 16px; height: 16px;"></span> <?php _e( 'Active Solutions', 'org-ecosystem' ); ?></div>
+                    <div style="color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;"><?php _e( 'Subscribers', 'org-ecosystem' ); ?></div>
+                    <div style="font-size: 32px; font-weight: 800; color: #1e293b; margin: 10px 0;"><?php echo number_format($total_subs); ?></div>
+                    <div style="font-size: 13px; color: #d97706; font-weight: 600;"><span class="dashicons dashicons-email" style="font-size: 16px; width: 16px; height: 16px;"></span> <?php _e( 'Lead Growth +4%', 'org-ecosystem' ); ?></div>
                 </div>
                 <div class="stat-card" style="padding: 25px; background: #fef2f2; border-radius: 15px; border-left: 5px solid #dc2626;">
                     <div style="color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;"><?php _e( 'Support Load', 'org-ecosystem' ); ?></div>
@@ -704,18 +709,32 @@ function org_ecosystem_newsletters_page() {
 
         // In a real app, this would loop through subscribers and send emails.
         // For this theme, we'll just log the newsletter as a CPT.
-        wp_insert_post( array(
+        $campaign_id = wp_insert_post( array(
             'post_title'   => $subject,
             'post_content' => $content,
             'post_type'    => 'org_newsletter',
             'post_status'  => 'publish',
         ) );
+        if ( $campaign_id ) {
+            update_post_meta( $campaign_id, '_org_newsletter_type', 'campaign' );
+        }
         echo '<div class="updated"><p>Newsletter dispatched and archived.</p></div>';
     }
 
     $newsletters = new WP_Query( array(
         'post_type' => 'org_newsletter',
         'posts_per_page' => 10,
+        'meta_query' => array(
+            array( 'key' => '_org_newsletter_type', 'value' => 'campaign' )
+        )
+    ) );
+
+    $subscribers = new WP_Query( array(
+        'post_type' => 'org_newsletter',
+        'posts_per_page' => 20,
+        'meta_query' => array(
+            array( 'key' => '_org_newsletter_type', 'value' => 'subscriber' )
+        )
     ) );
     ?>
     <div class="wrap">
@@ -740,7 +759,7 @@ function org_ecosystem_newsletters_page() {
                 </div>
             </div>
             <div class="archive-area">
-                <div class="card p-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
                     <h3 style="margin-top: 0;"><?php _e( 'Recent Dispatches', 'org-ecosystem' ); ?></h3>
                     <table class="wp-list-table widefat fixed striped mt-3">
                         <thead>
@@ -761,6 +780,30 @@ function org_ecosystem_newsletters_page() {
                                 <?php endwhile; wp_reset_postdata(); ?>
                             <?php else : ?>
                                 <tr><td colspan="3">No previous newsletters.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card p-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <h3 style="margin-top: 0;"><?php _e( 'Subscribers List', 'org-ecosystem' ); ?></h3>
+                    <table class="wp-list-table widefat fixed striped mt-3">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Date Subscribed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if ( $subscribers->have_posts() ) : ?>
+                                <?php while ( $subscribers->have_posts() ) : $subscribers->the_post(); ?>
+                                    <tr>
+                                        <td><strong><?php the_title(); ?></strong></td>
+                                        <td><?php echo get_the_date(); ?></td>
+                                    </tr>
+                                <?php endwhile; wp_reset_postdata(); ?>
+                            <?php else : ?>
+                                <tr><td colspan="2">No subscribers yet.</td></tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -1396,6 +1439,11 @@ function org_ecosystem_reports_page() {
 	$total_businesses = count( get_posts( array( 'post_type' => 'business', 'posts_per_page' => -1 ) ) );
 	$total_products = count( get_posts( array( 'post_type' => 'product', 'posts_per_page' => -1 ) ) );
 	$total_events = count( get_posts( array( 'post_type' => 'event', 'posts_per_page' => -1 ) ) );
+    $total_subs_count = count( get_posts( array(
+        'post_type' => 'org_newsletter',
+        'posts_per_page' => -1,
+        'meta_query' => array( array( 'key' => '_org_newsletter_type', 'value' => 'subscriber' ) )
+    ) ) );
 
 	// Calculate Total Revenue
 	$membership_revenue = 0;
@@ -1440,9 +1488,9 @@ function org_ecosystem_reports_page() {
 				</div>
 			</div>
 			<div class="card" style="flex: 1; min-width: 300px; background: #fff; padding: 30px; border-left: 6px solid #10b981; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-				<h3 style="margin-top: 0; color: #64748b; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;"><?php _e( 'Community Marketplace', 'org-ecosystem' ); ?></h3>
-				<p style="font-size: 42px; font-weight: 800; margin: 20px 0; color: #1e293b; line-height: 1;"><?php echo esc_html( $total_businesses ); ?> <span style="font-size: 14px; font-weight: 400; color: #64748b;">Businesses</span></p>
-				<span style="font-size: 12px; color: #64748b; font-weight: 500;"><?php echo esc_html( $total_products ); ?> members' products showcased</span>
+				<h3 style="margin-top: 0; color: #64748b; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700;"><?php _e( 'Audience reach', 'org-ecosystem' ); ?></h3>
+				<p style="font-size: 42px; font-weight: 800; margin: 20px 0; color: #1e293b; line-height: 1;"><?php echo esc_html( $total_subs_count ); ?> <span style="font-size: 14px; font-weight: 400; color: #64748b;">Leads</span></p>
+				<span style="font-size: 12px; color: #64748b; font-weight: 500;"><?php echo esc_html( $total_businesses ); ?> businesses ecosystem.</span>
 			</div>
 			<div class="card" style="flex: 1; min-width: 280px; background: #fff; padding: 25px; border-left: 5px solid #f59e0b; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
 				<h3 style="margin-top: 0; color: #64748b; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;"><?php _e( 'Gross Revenue', 'org-ecosystem' ); ?></h3>
@@ -1724,6 +1772,17 @@ function org_ecosystem_handle_demo_import() {
                 update_post_meta( $id, '_ticket_status', ( $i % 4 === 0 ) ? 'closed' : 'open' );
             }
         }
+    }
+
+    // 6. Create Newsletter Subscribers (15)
+    for ( $i = 1; $i <= 15; $i++ ) {
+        $email = "subscriber$i@example.com";
+        $id = wp_insert_post( array(
+            'post_title' => $email,
+            'post_type'  => 'org_newsletter',
+            'post_status'=> 'publish'
+        ) );
+        update_post_meta( $id, '_org_newsletter_type', 'subscriber' );
     }
 
 	wp_redirect( add_query_arg( array( 'import' => 'success' ), admin_url( 'admin.php?page=org-settings' ) ) );

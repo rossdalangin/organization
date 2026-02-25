@@ -335,3 +335,33 @@ main { display: block; }
     display: block;
     margin-bottom: 10px;
 }
+
+/* Modern Partner Logos */
+.partner-logos-grid {
+    padding: 20px 0;
+}
+
+.partner-logo-item {
+    flex: 0 0 auto;
+    width: 150px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.partner-logo {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transition: var(--transition);
+}
+
+.partner-logo-item:hover .partner-logo {
+    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.1);
+}

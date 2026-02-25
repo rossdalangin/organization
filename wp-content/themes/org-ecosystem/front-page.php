@@ -95,12 +95,23 @@ get_header();
 	<section class="section-partners py-5 bg-light border-top">
 		<div class="container text-center">
 			<h5 class="text-muted text-uppercase mb-5 small fw-bold letter-spacing-1"><?php echo esc_html( get_theme_mod( 'partners_title', __( 'Our Partners & Sponsors', 'org-ecosystem' ) ) ); ?></h5>
-			<div class="d-flex flex-wrap justify-content-center gap-5 opacity-50 align-items-center">
+			<div class="partner-logos-grid d-flex flex-wrap justify-content-center gap-4 gap-md-5 align-items-center">
 				<?php
-				$partners = explode( ',', get_theme_mod( 'org_partner_list', 'PARTNER 1, PARTNER 2, PARTNER 3, PARTNER 4, PARTNER 5' ) );
-				foreach ( $partners as $partner ) : ?>
-					<span class="h3 fw-bold mb-0"><?php echo esc_html( trim( $partner ) ); ?></span>
-				<?php endforeach; ?>
+				$has_logos = false;
+				for($i=1; $i<=8; $i++) {
+					$logo = get_theme_mod("partner_logo_{$i}");
+					if($logo) {
+						$has_logos = true;
+						echo '<div class="partner-logo-item"><img src="'.esc_url($logo).'" alt="Partner '.$i.'" class="partner-logo"></div>';
+					}
+				}
+
+				if ( ! $has_logos ) :
+					$partners = array('Partner 1', 'Partner 2', 'Partner 3', 'Partner 4', 'Partner 5');
+					foreach ( $partners as $partner ) : ?>
+						<span class="h3 fw-bold mb-0 text-muted opacity-25"><?php echo esc_html( trim( $partner ) ); ?></span>
+					<?php endforeach;
+				endif; ?>
 			</div>
 		</div>
 	</section>

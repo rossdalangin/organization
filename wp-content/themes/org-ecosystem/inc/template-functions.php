@@ -76,7 +76,31 @@ add_action( 'admin_post_nopriv_org_submit_contact', 'org_ecosystem_handle_contac
 function org_ecosystem_handle_newsletter() {
 	if ( isset( $_POST['newsletter_email'] ) ) {
 		$email = sanitize_email( $_POST['newsletter_email'] );
-		// Mock signup logic
+
+		if ( ! is_email( $email ) ) {
+			wp_redirect( add_query_arg( 'error', 'invalid_email', home_url( '/' ) ) );
+			exit;
+		}
+
+		// Check if subscriber already exists
+		$existing = get_posts( array(
+			'post_type'  => 'org_newsletter',
+			'title'      => $email,
+			'post_status'=> 'publish',
+			'posts_per_page' => 1
+		) );
+
+		if ( empty( $existing ) ) {
+			$sub_id = wp_insert_post( array(
+				'post_title'  => $email,
+				'post_type'   => 'org_newsletter',
+				'post_status' => 'publish'
+			) );
+            if ( $sub_id ) {
+                update_post_meta( $sub_id, '_org_newsletter_type', 'subscriber' );
+            }
+		}
+
 		wp_redirect( add_query_arg( 'subscribed', 'true', home_url( '/' ) ) );
 		exit;
 	}
