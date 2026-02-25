@@ -1,67 +1,52 @@
-# Standard Operating Procedures (SOP) by User Level
+# Standard Operating Procedures (SOP) & Success Metrics
 
-This document defines the responsibilities and operational workflows for each user role within the Organization Ecosystem.
-
----
-
-## 1. Super Admin (Technical & Global Control)
-**Objective:** Maintain system health, handle high-level financial approvals, and global configuration.
-
-### Workflows:
-1.  **System Initialization:** Use the "System Setup" tool in the Admin Panel to ensure all required pages are active.
-2.  **Global Branding:** Configure colors and typography in the Customizer to match organization standards.
-3.  **Revenue Strategy:** Set annual membership fees and featured listing prices in the Customizer.
-4.  **Database Maintenance:** Perform monthly backups. Use "Wipe Database" only for major environment resets.
-5.  **Role Delegation:** Promote trusted staff to "Organization Admin" or "Membership Manager" roles.
+This document outlines the specific duties, workflows, and performance indicators for every role in the ecosystem.
 
 ---
 
-## 2. Organization Admin (Management & Governance)
-**Objective:** Oversee daily operations, approve members, and manage the economic ledger.
+## 1. Super Admin (Global Governance)
+**Metric:** System Uptime & Revenue Growth Velocity.
 
-### Workflows:
-1.  **Member Approval:** Daily review of "Pending Applications" in **Org Settings > Membership**.
-2.  **Financial Ledger:** Monitor **Org Settings > Transactions**. Manually mark offline bank transfers or GCash payments as "Completed".
-3.  **Payout Management:** Review and process withdrawal requests for member commissions in **Org Settings > Withdrawals**.
-4.  **Communications:** Dispatch monthly community newsletters via **Org Settings > Newsletters**.
-
----
-
-## 3. Membership Manager (Growth & Retention)
-**Objective:** Focus on member success, support, and renewal cycles.
-
-### Workflows:
-1.  **Support Tickets:** Respond to member inquiries in the Support Inbox.
-2.  **Renewal Tracking:** Monitor expired accounts and reach out to encourage upgrades.
-3.  **Member Profiles:** Ensure featured members have complete profiles (photos, bios) to maintain directory quality.
+### SOP Workflows:
+1.  **Maintenance:** Weekly check of the "Database Maintenance" tool to ensure permissions are healthy.
+2.  **Strategic Rates:** Semi-annual review of membership plan prices based on ecosystem engagement.
+3.  **Tier Access:** Configure what each tier (Professional, Vendor, Corporate) can do in the Role Management screen.
 
 ---
 
-## 4. Content Manager (Engagement)
-**Objective:** Curate the marketplace, blog, and event calendar.
+## 2. Organization Admin (Operations Manager)
+**Metric:** Average Approval Time (Goal: < 12 Hours).
 
-### Workflows:
-1.  **Event Scheduling:** Post upcoming webinars and conferences.
-2.  **News & Blog:** Curate success stories from members.
-3.  **Resource Library:** Upload whitepapers and templates for member-only access.
-
----
-
-## 5. Member (The Professional User)
-**Objective:** Network, showcase business solutions, and earn through referrals.
-
-### Workflows:
-1.  **Profile Excellence:** Keep the "mini-website" profile updated with latest business details.
-2.  **Marketplace Activity:** List at least 3 products/services to maximize visibility.
-3.  **Upgrading:** Use the Dashboard Billing tab to upgrade to Professional or Vendor tiers to unlock directory visibility.
-4.  **Referral Program:** Share your unique code to earn 10% on community sales.
+### SOP Workflows:
+1.  **Lead Verification:** Verify the business name and location of pending applicants before approving.
+2.  **Economic Oversight:** Daily review of the **Financial Ledger**. Match GCash/Bank screenshots to pending transactions.
+3.  **Conflict Resolution:** Moderate the "Community Group Chat" to ensure professional behavior.
 
 ---
 
-## 6. Vendor (The Solutions Provider)
-**Objective:** High-volume product sales and recruitment.
+## 3. Membership Manager (Retention Specialist)
+**Metric:** Membership Renewal Rate (Goal: > 85%).
 
-### Workflows:
-1.  **Product Management:** Maintain an active storefront in the Marketplace.
-2.  **Job Postings:** Post open positions to the organization's job board.
-3.  **Lead Management:** Respond to direct inquiries from the "Inquiries" section of the dashboard.
+### SOP Workflows:
+1.  **Inquiry Support:** Monitor the **Support Tickets** dashboard and provide solutions within 4 hours.
+2.  **Retention Outreach:** Extract the "Expired Members" list monthly and send a personalized re-engagement newsletter.
+
+---
+
+## 4. Member (The Ecosystem Participant)
+**Metric:** Profile Completeness & Engagement.
+
+### SOP Workflows:
+1.  **Bio Optimization:** Ensure your Bio contains keywords for the AJAX search engine (e.g., "Web Developer", "Legal Consultant").
+2.  **Resource Download:** Visit the "Downloads" tab weekly for new whitepapers provided by the organization.
+3.  **Referral Growth:** Use your referral code during industry events to grow your network and commission balance.
+
+---
+
+## 5. Vendor (The Solution Architect)
+**Metric:** Marketplace Sales & Lead Volume.
+
+### SOP Workflows:
+1.  **Catalog Management:** Update product prices and SKU statuses monthly in the "My Offerings" tab.
+2.  **Recruitment:** Use the "My Openings" tab to post jobs for the community.
+3.  **Lead Capture:** Check the "Direct Inquiries" count in the dashboard overview to track sales performance.

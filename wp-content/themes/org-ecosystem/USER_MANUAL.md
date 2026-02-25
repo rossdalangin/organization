@@ -1,51 +1,76 @@
-# Organization Ecosystem - Administrator & User Manual
+# Organization Ecosystem - Administrator & User Guide
 
-Welcome to the Organization Ecosystem. This manual will guide you through configuring and using the system to its full potential.
-
----
-
-## 1. Quick Start Guide for Administrators
-
-### Step 1: Branding and Identity
-1. Go to **Appearance > Customize**.
-2. Navigate to **Brand Identity & Colors**.
-   - *Default values have been set to professional Slate Blue and White for a clean SaaS look.*
-3. Set your typography in the **Typography & Fonts** section.
-
-### Step 2: Instant Ecosystem Deployment
-1. Go to **Org Plugin Settings > System Setup**.
-2. Click **Auto-Create Required Pages**.
-
-### Step 3: Setting Up Payments
-1. Go to **Org Plugin Settings > Payments**.
-2. Enter your **Stripe Secret Key** or **PayPal Email**.
-3. Configure **GCash Number** for mobile payments.
-4. Set your membership prices in **Appearance > Customize > Monetization**.
+A complete manual for managing your organization and navigating the professional dashboard.
 
 ---
 
-## 2. Membership & Upgrades
+## 1. For Administrators: The Command Center
 
-### For Members: How to Upgrade
-1. Log in to your account.
-2. Go to your **Member Dashboard**.
-3. Click the **Billing & Subscription** tab.
-4. Click **Upgrade Membership**.
-5. Select your plan (yearly fee) and complete the payment.
-6. **Benefit:** Once upgraded (status becomes 'Active'), your profile will automatically appear in the public **Member Directory**.
+### Dashboard Overview
+The "Org Ecosystem" menu in your WordPress sidebar is your cockpit. It displays four vital "Vitality Cards":
+1.  **Active Base:** Total paid members appearing in the directory.
+2.  **Gross Revenue:** Total income from dues and donations.
+3.  **Marketplace:** Total products listed by members.
+4.  **Support Load:** Open inquiries from your community.
 
-### For Admins: Managing Upgraded Accounts
-1. Go to the **Org Plugin Settings** (Command Center).
-2. Click the **View Upgraded Accounts** link in the "Active Base" card.
-3. This displays a filtered list of all members who have paid and are currently active in the directory.
-4. You can check the **Renewal Date** to see when their next payment is due.
-
----
-
-## 3. Standard Operating Procedures (SOPs)
-For detailed step-by-step instructions for each specific role (Admin, Manager, Member), please refer to the `SOP_USER_LEVELS.md` file included in this theme.
+### Sample Workflow: Approving a New Member
+1.  Receive a notification of a new registration.
+2.  Go to **Org Ecosystem > Membership**.
+3.  Find the applicant under **Pending Applications**.
+4.  Click **Approve & Activate**.
+5.  *Result:* The member receives an approval email, and their profile becomes visible in the public directory.
 
 ---
 
-## 4. Modern UI & Animations
-The theme uses generous 80px section padding and professional blue accents. Scroll animations are handled automatically by the Intersection Observer logic—no complex setup required.
+## 2. Customizing the Homepage Sections
+
+The homepage is modular. You can enable/disable sections and edit their content via **Appearance > Customize > 2. Homepage & Layout**.
+
+### Editable Sections:
+| Section | What You Can Edit |
+|---|---|
+| **Stats Section** | Title, Subtitle, and 4 Custom Stat Labels/Values (e.g., "500 Members"). |
+| **Our Expertise** | Title, Subtitle, and 4 Service Cards (Icon, Title, Description). |
+| **Featured Members** | Section Title, Subtitle. (Members appear here if marked as 'Featured'). |
+| **Featured Solutions** | Section Title, Subtitle. (Products appear here if marked as 'Featured'). |
+| **Upcoming Events** | Section Title, Subtitle. (Latest 3 chronological events appear automatically). |
+| **Community Voices** | Section Title, Subtitle. (Uses the **Testimonials** CPT content). |
+| **Partners & Sponsors** | Title and a comma-separated list of Partner Names. |
+| **Stay in the Loop** | Title and description text for the Newsletter signup. |
+
+---
+
+## 3. For Members: The Professional Dashboard
+
+### Navigating Your Hub
+Your dashboard is divided into specialized tabs for business growth:
+*   **Insights:** View your profile impressions and product clicks.
+*   **Profile & Bio:** Edit your "mini-website" (Bio, Cover Photo, Social Links).
+*   **My Offerings:** Add, edit, or delete your products and services.
+*   **Referral Center:** Get your code to earn 10% on community growth.
+
+### Sample: How to Promote Your Business
+1.  Go to **My Offerings**.
+2.  Click the **Promote** button next to your best product.
+3.  Complete the checkout for the **Featured Listing Fee**.
+4.  *Result:* Your product will now appear in the "Featured Solutions" carousel on the homepage.
+
+---
+
+## 3. Communication & Networking
+
+### Direct Messaging
+Members can message each other directly from profile pages.
+*   **Sample Use Case:** A Corporate member finds a Vendor in the directory and sends a "Project Inquiry" through the dashboard messaging system.
+
+### Community Group Chat
+The **Community Chat** tab in the dashboard provides a real-time (polling-based) area for all members to discuss trends, share opportunities, and ask for help.
+
+---
+
+## 4. Financial Management
+
+### Wallet & Commissions
+If you refer a member who sells a product, you earn a **10% Referral Commission**.
+*   **Tracking:** View your balance in the **Earnings & Ledger** tab.
+*   **Withdrawal:** Once you reach ₱500.00, click **Request Payout** in the Financial Center.

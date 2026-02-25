@@ -1,0 +1,43 @@
+# Organization Ecosystem - Recommended Menu Structure
+
+Follow this structure when setting up your WordPress Menus for the best user experience.
+
+---
+
+## 1. Primary Navigation (The Main Menu)
+*Target:* All visitors and logged-in users.
+
+1.  **Home**
+2.  **About Us** (Dropdown)
+    *   Our Mission
+    *   Governance & Leadership
+    *   Partner With Us
+3.  **Member Directory** (The main [org_directory] page)
+4.  **Marketplace** (The [org_product_grid] page)
+5.  **Job Board**
+6.  **Events**
+7.  **Resources**
+8.  **Support Our Mission** (The [org_donation_form] page)
+9.  **Contact Us**
+
+---
+
+## 2. Header Action Buttons
+*Logged Out:*
+*   [Login] - (wp-login.php)
+*   [Join Now] - (Link to Join page)
+
+*Logged In:*
+*   [Dashboard] - (Link to Member Dashboard)
+*   [Logout] - (wp-logout.php)
+
+---
+
+## 3. Footer Navigation
+*Target:* Secondary links and legal info.
+
+1.  **News & Updates**
+2.  **FAQs**
+3.  **Referral Program**
+4.  **Privacy Policy**
+5.  **Terms & Conditions**
