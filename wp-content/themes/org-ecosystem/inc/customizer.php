@@ -108,15 +108,24 @@ function org_ecosystem_customize_register( $wp_customize ) {
 	) );
 
 	$visibility_toggles = array(
+		'show_hero'          => __( 'Show Hero Section', 'org-ecosystem' ),
 		'show_stats'         => __( 'Show Impact Stats', 'org-ecosystem' ),
 		'show_about'         => __( 'Show About Organization', 'org-ecosystem' ),
 		'show_featured_mem'  => __( 'Show Featured Members', 'org-ecosystem' ),
 		'show_featured_prod' => __( 'Show Featured Products', 'org-ecosystem' ),
+		'show_cta'           => __( 'Show Membership CTA', 'org-ecosystem' ),
 		'show_events'        => __( 'Show Upcoming Events', 'org-ecosystem' ),
 		'show_testimonials'  => __( 'Show Testimonials', 'org-ecosystem' ),
 		'show_announcements' => __( 'Show Announcements', 'org-ecosystem' ),
 		'show_news'          => __( 'Show Latest News', 'org-ecosystem' ),
+		'show_donation_cta'  => __( 'Show Donation CTA', 'org-ecosystem' ),
 		'show_partners'      => __( 'Show Partner Logos', 'org-ecosystem' ),
+		'show_newsletter'    => __( 'Show Newsletter Section', 'org-ecosystem' ),
+        'show_about_cards'   => __( 'Show About Page Goal Cards', 'org-ecosystem' ),
+        'show_partner_tiers' => __( 'Show Partner Page Tiers', 'org-ecosystem' ),
+        'show_faq_cta'       => __( 'Show FAQ Contact CTA', 'org-ecosystem' ),
+        'show_referral_how'  => __( 'Show Referral How-It-Works', 'org-ecosystem' ),
+        'show_plans_custom_cta' => __( 'Show Plans Custom Team CTA', 'org-ecosystem' ),
 	);
 
 	foreach ( $visibility_toggles as $id => $label ) {
@@ -162,6 +171,30 @@ function org_ecosystem_customize_register( $wp_customize ) {
 
 	$wp_customize->add_setting( 'about_image', array( 'default' => '', 'sanitize_callback' => 'esc_url_raw' ) );
 	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'about_image', array( 'label' => 'About Image', 'section' => 'org_about_content' ) ) );
+
+	// Section: Donation CTA Content
+	$wp_customize->add_section( 'org_donation_cta_content', array(
+		'title' => __( 'Donation CTA Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'donation_cta_title', array( 'default' => 'Support Our Collective Growth', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'donation_cta_title', array( 'label' => 'Donation Title', 'section' => 'org_donation_cta_content' ) );
+
+	$wp_customize->add_setting( 'donation_cta_text', array( 'default' => 'Your contributions help us expand our resources and advocacy for the entire professional community.', 'sanitize_callback' => 'sanitize_textarea_field' ) );
+	$wp_customize->add_control( 'donation_cta_text', array( 'label' => 'Donation Text', 'section' => 'org_donation_cta_content', 'type' => 'textarea' ) );
+
+	// Section: Newsletter Content
+	$wp_customize->add_section( 'org_newsletter_content', array(
+		'title' => __( 'Newsletter Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'newsletter_title', array( 'default' => 'Stay in the Loop', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'newsletter_title', array( 'label' => 'Newsletter Title', 'section' => 'org_newsletter_content' ) );
+
+	$wp_customize->add_setting( 'newsletter_text', array( 'default' => 'Subscribe to our newsletter for the latest updates, event news, and member spotlights.', 'sanitize_callback' => 'sanitize_textarea_field' ) );
+	$wp_customize->add_control( 'newsletter_text', array( 'label' => 'Newsletter Text', 'section' => 'org_newsletter_content', 'type' => 'textarea' ) );
 
 	// Section: CTA Content
 	$wp_customize->add_section( 'org_cta_content', array(

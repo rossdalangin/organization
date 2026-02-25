@@ -14,8 +14,8 @@ get_header();
 			<div class="col-lg-7">
 				<div class="card shadow border-0 overflow-hidden">
 					<div class="bg-primary text-white p-5 text-center">
-						<h1 class="display-4 fw-bold mb-3"><?php _e( 'Support Our Mission', 'org-ecosystem' ); ?></h1>
-						<p class="lead mb-0"><?php _e( 'Your contribution helps us continue our impactful work in the community.', 'org-ecosystem' ); ?></p>
+						<h1 class="display-4 fw-bold mb-3"><?php echo esc_html( get_theme_mod( 'donation_cta_title', __( 'Support Our Mission', 'org-ecosystem' ) ) ); ?></h1>
+						<p class="lead mb-0"><?php echo esc_html( get_theme_mod( 'donation_cta_text', __( 'Your contribution helps us continue our impactful work in the community.', 'org-ecosystem' ) ) ); ?></p>
 					</div>
 					<div class="card-body p-5 bg-white">
 						<?php if ( isset( $_GET['thanks'] ) ) : ?>

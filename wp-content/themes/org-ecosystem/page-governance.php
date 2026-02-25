@@ -12,7 +12,16 @@ get_header();
     <header class="page-header py-5 bg-light border-bottom mb-5">
         <div class="container">
             <h1 class="display-4 fw-bold mb-3"><?php the_title(); ?></h1>
-            <p class="lead text-muted"><?php _e( 'The leaders and governance structure driving our organization forward.', 'org-ecosystem' ); ?></p>
+            <div class="lead text-muted">
+                <?php
+                $gov_intro = get_option( 'org_governance_intro' );
+                if ( $gov_intro ) {
+                    echo wp_kses_post( $gov_intro );
+                } else {
+                    _e( 'The leaders and governance structure driving our organization forward.', 'org-ecosystem' );
+                }
+                ?>
+            </div>
         </div>
     </header>
 

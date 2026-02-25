@@ -10,7 +10,9 @@ get_header();
 
 <main id="primary" class="site-main">
 
-	<?php get_template_part( 'template-parts/homepage/hero' ); ?>
+	<?php if ( get_theme_mod( 'show_hero', true ) ) : ?>
+		<?php get_template_part( 'template-parts/homepage/hero' ); ?>
+	<?php endif; ?>
 
 	<?php if ( get_theme_mod( 'show_stats', true ) ) : ?>
 		<?php get_template_part( 'template-parts/homepage/stats' ); ?>
@@ -47,6 +49,7 @@ get_header();
 		<?php get_template_part( 'template-parts/homepage/featured-products' ); ?>
 	<?php endif; ?>
 
+	<?php if ( get_theme_mod( 'show_cta', true ) ) : ?>
 	<section class="membership-cta py-5 bg-primary text-white text-center overflow-hidden">
 		<div class="container py-4 animate-on-scroll">
 			<h2 class="display-5 fw-bold mb-4"><?php echo esc_html( get_theme_mod( 'cta_title', __( 'Ready to Grow Your Business?', 'org-ecosystem' ) ) ); ?></h2>
@@ -54,6 +57,7 @@ get_header();
 			<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-join.php' ) ); ?>" class="btn btn-light btn-lg px-5 fw-bold shadow-sm"><?php echo esc_html( get_theme_mod( 'cta_btn_text', __( 'Become a Member Today', 'org-ecosystem' ) ) ); ?></a>
 		</div>
 	</section>
+	<?php endif; ?>
 
 	<?php if ( get_theme_mod( 'show_events', true ) ) : ?>
 		<?php get_template_part( 'template-parts/homepage/upcoming-events' ); ?>
@@ -71,17 +75,19 @@ get_header();
 		<?php get_template_part( 'template-parts/homepage/latest-news' ); ?>
 	<?php endif; ?>
 
+	<?php if ( get_theme_mod( 'show_donation_cta', true ) ) : ?>
 	<section class="donation-cta py-5 bg-white">
 		<div class="container py-4 text-center">
 			<div class="row justify-content-center">
 				<div class="col-md-8">
-					<h2 class="display-6 fw-bold mb-3"><?php _e( 'Support Our Collective Growth', 'org-ecosystem' ); ?></h2>
-					<p class="text-muted mb-5"><?php _e( 'Your contributions help us expand our resources and advocacy for the entire professional community.', 'org-ecosystem' ); ?></p>
+					<h2 class="display-6 fw-bold mb-3"><?php echo esc_html( get_theme_mod( 'donation_cta_title', __( 'Support Our Collective Growth', 'org-ecosystem' ) ) ); ?></h2>
+					<p class="text-muted mb-5"><?php echo esc_html( get_theme_mod( 'donation_cta_text', __( 'Your contributions help us expand our resources and advocacy for the entire professional community.', 'org-ecosystem' ) ) ); ?></p>
 					<?php echo do_shortcode('[org_donation_form]'); ?>
 				</div>
 			</div>
 		</div>
 	</section>
+	<?php endif; ?>
 
 	<?php if ( get_theme_mod( 'show_partners', true ) ) : ?>
 	<section class="section-partners py-5 bg-light border-top">
@@ -98,15 +104,16 @@ get_header();
 	</section>
 	<?php endif; ?>
 
+	<?php if ( get_theme_mod( 'show_newsletter', true ) ) : ?>
 	<section class="newsletter-cta py-5 bg-white">
 		<div class="container py-4 text-center">
 			<div class="row justify-content-center">
 				<div class="col-md-8">
-					<h2 class="fw-bold mb-3"><?php _e( 'Stay in the Loop', 'org-ecosystem' ); ?></h2>
+					<h2 class="fw-bold mb-3"><?php echo esc_html( get_theme_mod( 'newsletter_title', __( 'Stay in the Loop', 'org-ecosystem' ) ) ); ?></h2>
 					<?php if ( isset( $_GET['subscribed'] ) ) : ?>
 						<div class="alert alert-success"><?php _e( 'Thank you for subscribing!', 'org-ecosystem' ); ?></div>
 					<?php else : ?>
-						<p class="text-muted mb-4"><?php _e( 'Subscribe to our newsletter for the latest updates, event news, and member spotlights.', 'org-ecosystem' ); ?></p>
+						<p class="text-muted mb-4"><?php echo esc_html( get_theme_mod( 'newsletter_text', __( 'Subscribe to our newsletter for the latest updates, event news, and member spotlights.', 'org-ecosystem' ) ) ); ?></p>
 						<form class="row g-2 justify-content-center" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 							<input type="hidden" name="action" value="org_newsletter">
 							<div class="col-md-8">
@@ -121,6 +128,7 @@ get_header();
 			</div>
 		</div>
 	</section>
+	<?php endif; ?>
 
 </main>
 

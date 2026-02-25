@@ -26,11 +26,13 @@ get_header();
 
 		<?php get_template_part( 'template-parts/plans-table' ); ?>
 
+		<?php if ( get_theme_mod( 'show_plans_custom_cta', true ) ) : ?>
 		<div class="mt-5 text-center p-5 bg-white border rounded shadow-sm">
 			<h4 class="fw-bold mb-3"><?php _e( 'Need a custom solution for your team?', 'org-ecosystem' ); ?></h4>
 			<p class="text-muted"><?php _e( 'We offer customized corporate packages tailored to your specific organizational needs.', 'org-ecosystem' ); ?></p>
 			<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-contact.php' ) ); ?>" class="btn btn-link text-decoration-none fw-bold"><?php _e( 'Talk to our Sales Team', 'org-ecosystem' ); ?> <i class="bi bi-arrow-right"></i></a>
 		</div>
+		<?php endif; ?>
 	</div>
 </main>
 

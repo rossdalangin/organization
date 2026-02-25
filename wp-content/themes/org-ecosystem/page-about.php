@@ -36,29 +36,39 @@ get_header();
 			</div>
 		</div>
 
+		<?php if ( get_theme_mod( 'show_about_cards', true ) ) : ?>
 		<div class="row g-4 mt-5">
+			<?php if ( $who_we_are = get_option( 'org_about_who_we_are' ) ) : ?>
 			<div class="col-md-4">
-				<div class="card border-0 shadow-sm p-4 text-center">
+				<div class="card border-0 shadow-sm p-4 text-center h-100">
 					<div class="h1 text-primary mb-3"><i class="bi bi-people"></i></div>
 					<h4 class="fw-bold"><?php _e( 'Who We Are', 'org-ecosystem' ); ?></h4>
-					<p class="text-muted"><?php _e( 'A dedicated group of professionals working together to create a thriving community ecosystem.', 'org-ecosystem' ); ?></p>
+					<p class="text-muted"><?php echo wp_kses_post( $who_we_are ); ?></p>
 				</div>
 			</div>
+			<?php endif; ?>
+
+			<?php if ( $our_values = get_option( 'org_about_our_values' ) ) : ?>
 			<div class="col-md-4">
-				<div class="card border-0 shadow-sm p-4 text-center">
+				<div class="card border-0 shadow-sm p-4 text-center h-100">
 					<div class="h1 text-primary mb-3"><i class="bi bi-shield-check"></i></div>
 					<h4 class="fw-bold"><?php _e( 'Our Values', 'org-ecosystem' ); ?></h4>
-					<p class="text-muted"><?php _e( 'Integrity, collaboration, and innovation are at the heart of everything we do for our members.', 'org-ecosystem' ); ?></p>
+					<p class="text-muted"><?php echo wp_kses_post( $our_values ); ?></p>
 				</div>
 			</div>
+			<?php endif; ?>
+
+			<?php if ( $our_impact = get_option( 'org_about_our_impact' ) ) : ?>
 			<div class="col-md-4">
-				<div class="card border-0 shadow-sm p-4 text-center">
+				<div class="card border-0 shadow-sm p-4 text-center h-100">
 					<div class="h1 text-primary mb-3"><i class="bi bi-graph-up-arrow"></i></div>
 					<h4 class="fw-bold"><?php _e( 'Our Impact', 'org-ecosystem' ); ?></h4>
-					<p class="text-muted"><?php _e( 'Supporting hundreds of businesses and thousands of professionals in reaching their full potential.', 'org-ecosystem' ); ?></p>
+					<p class="text-muted"><?php echo wp_kses_post( $our_impact ); ?></p>
 				</div>
 			</div>
+			<?php endif; ?>
 		</div>
+		<?php endif; ?>
 	</div>
 </main>
 

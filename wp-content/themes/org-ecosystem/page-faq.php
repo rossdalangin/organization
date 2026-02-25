@@ -61,11 +61,13 @@ get_header();
                     <?php endif; ?>
 				</div>
 
+				<?php if ( get_theme_mod( 'show_faq_cta', true ) ) : ?>
 				<div class="mt-5 text-center p-5 bg-white border rounded shadow-sm">
 					<h3><?php _e( 'Still have questions?', 'org-ecosystem' ); ?></h3>
 					<p class="text-muted"><?php _e( 'We are here to help you. Reach out to our support team.', 'org-ecosystem' ); ?></p>
 					<a href="<?php echo org_ecosystem_get_page_url( 'page-contact.php' ); ?>" class="btn btn-primary px-4"><?php _e( 'Contact Us', 'org-ecosystem' ); ?></a>
 				</div>
+				<?php endif; ?>
 			</div>
 		</div>
 	</div>

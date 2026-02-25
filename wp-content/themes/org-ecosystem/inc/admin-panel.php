@@ -507,9 +507,11 @@ function org_ecosystem_page_content_page() {
         check_admin_referer( 'org_save_page_content_action' );
 
         $fields = array(
-            'org_about_text', 'org_mission_text', 'org_vision_text',
+            'org_about_text', 'org_about_who_we_are', 'org_about_our_values', 'org_about_our_impact',
+            'org_mission_text', 'org_vision_text',
             'org_contact_info', 'org_plans_intro', 'org_referral_intro',
-            'org_faq_intro', 'org_payments_intro'
+            'org_faq_intro', 'org_payments_intro', 'org_governance_intro',
+            'org_partners_intro', 'org_partners_tiers'
         );
 
         foreach ( $fields as $field ) {
@@ -528,7 +530,32 @@ function org_ecosystem_page_content_page() {
 
             <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
                 <h3><?php _e( 'About Us Page', 'org-ecosystem' ); ?></h3>
+                <label class="fw-bold d-block mb-2">Main Content</label>
                 <?php wp_editor( get_option( 'org_about_text' ), 'org_about_text', array( 'textarea_rows' => 5 ) ); ?>
+                <hr>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="fw-bold">Who We Are</label>
+                        <textarea name="org_about_who_we_are" class="widefat" rows="3"><?php echo esc_textarea(get_option('org_about_who_we_are')); ?></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fw-bold">Our Values</label>
+                        <textarea name="org_about_our_values" class="widefat" rows="3"><?php echo esc_textarea(get_option('org_about_our_values')); ?></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fw-bold">Our Impact</label>
+                        <textarea name="org_about_our_impact" class="widefat" rows="3"><?php echo esc_textarea(get_option('org_about_our_impact')); ?></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <h3><?php _e( 'Partners Page', 'org-ecosystem' ); ?></h3>
+                <label class="fw-bold">Intro Text</label>
+                <?php wp_editor( get_option( 'org_partners_intro' ), 'org_partners_intro', array( 'textarea_rows' => 3 ) ); ?>
+                <br>
+                <label class="fw-bold">Partnership Tiers (JSON or HTML)</label>
+                <textarea name="org_partners_tiers" class="widefat" rows="6" placeholder="Leave empty for default tiers..."><?php echo esc_textarea(get_option('org_partners_tiers')); ?></textarea>
             </div>
 
             <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
@@ -553,6 +580,11 @@ function org_ecosystem_page_content_page() {
             <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
                 <h3><?php _e( 'Referral Program Intro', 'org-ecosystem' ); ?></h3>
                 <?php wp_editor( get_option( 'org_referral_intro' ), 'org_referral_intro', array( 'textarea_rows' => 3 ) ); ?>
+            </div>
+
+            <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">
+                <h3><?php _e( 'Governance Page Intro', 'org-ecosystem' ); ?></h3>
+                <?php wp_editor( get_option( 'org_governance_intro' ), 'org_governance_intro', array( 'textarea_rows' => 3 ) ); ?>
             </div>
 
             <div class="card p-4 mb-4" style="background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;">

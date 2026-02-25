@@ -30,6 +30,7 @@ get_header();
                 <?php endif; ?>
             </div>
             <div class="col-lg-6 mt-5 mt-lg-0">
+                <?php if ( get_theme_mod( 'show_referral_how', true ) ) : ?>
                 <div class="card border-0 shadow-lg rounded-4 p-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
                     <h3 class="fw-bold mb-4 text-center"><?php _e( 'How it Works', 'org-ecosystem' ); ?></h3>
                     <div class="d-flex mb-4">
@@ -54,6 +55,7 @@ get_header();
                         </div>
                     </div>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
