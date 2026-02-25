@@ -6,8 +6,8 @@
 <section class="section-testimonials testimonials-slider py-5 bg-white">
 	<div class="container py-4">
 		<div class="section-header text-center mb-5 animate-on-scroll">
-			<h2 class="fw-bold"><?php _e( 'Community Voices', 'org-ecosystem' ); ?></h2>
-			<p class="text-muted"><?php _e( 'What our members say about their experience with us.', 'org-ecosystem' ); ?></p>
+			<h2 class="fw-bold"><?php echo esc_html( get_theme_mod( 'testimonials_title', __( 'Community Voices', 'org-ecosystem' ) ) ); ?></h2>
+			<p class="text-muted"><?php echo esc_html( get_theme_mod( 'testimonials_subtitle', __( 'What our members say about their experience with us.', 'org-ecosystem' ) ) ); ?></p>
 		</div>
 
 		<div class="row justify-content-center">

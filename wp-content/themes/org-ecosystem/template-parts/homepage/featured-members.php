@@ -6,8 +6,8 @@
 <section class="section-featured-members featured-members py-5 bg-light">
 	<div class="container">
 		<div class="section-header text-center mb-5 animate-on-scroll">
-			<h2 class="fw-bold"><?php _e( 'Featured Members', 'org-ecosystem' ); ?></h2>
-			<p class="text-muted"><?php _e( 'Meet some of our top-tier professional members.', 'org-ecosystem' ); ?></p>
+			<h2 class="fw-bold"><?php echo esc_html( get_theme_mod( 'featured_members_title', __( 'Featured Members', 'org-ecosystem' ) ) ); ?></h2>
+			<p class="text-muted"><?php echo esc_html( get_theme_mod( 'featured_members_subtitle', __( 'Meet some of our top-tier professional members.', 'org-ecosystem' ) ) ); ?></p>
 		</div>
 
 		<div class="row g-4">
@@ -48,7 +48,7 @@
 		</div>
 
 		<div class="text-center mt-5">
-			<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'templates/template-directory.php' ) ); ?>" class="btn btn-primary btn-lg"><?php _e( 'View All Members', 'org-ecosystem' ); ?></a>
+			<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'template-directory.php' ) ); ?>" class="btn btn-primary btn-lg"><?php _e( 'View All Members', 'org-ecosystem' ); ?></a>
 		</div>
 	</div>
 </section>

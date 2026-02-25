@@ -6,8 +6,8 @@
 <section class="section-featured-products featured-products py-5 bg-white">
 	<div class="container">
 		<div class="section-header text-center mb-5 animate-on-scroll">
-			<h2 class="fw-bold"><?php _e( 'Featured Solutions', 'org-ecosystem' ); ?></h2>
-			<p class="text-muted"><?php _e( 'Discover high-quality products and services offered by our members.', 'org-ecosystem' ); ?></p>
+			<h2 class="fw-bold"><?php echo esc_html( get_theme_mod( 'featured_solutions_title', __( 'Featured Solutions', 'org-ecosystem' ) ) ); ?></h2>
+			<p class="text-muted"><?php echo esc_html( get_theme_mod( 'featured_solutions_subtitle', __( 'Discover high-quality products and services offered by our members.', 'org-ecosystem' ) ) ); ?></p>
 		</div>
 
 		<div class="row g-4">

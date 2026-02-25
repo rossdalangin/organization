@@ -18,7 +18,9 @@ get_header();
 		<?php get_template_part( 'template-parts/homepage/stats' ); ?>
 	<?php endif; ?>
 
-    <?php get_template_part( 'template-parts/homepage/service-grid' ); ?>
+	<?php if ( get_theme_mod( 'show_expertise', true ) ) : ?>
+		<?php get_template_part( 'template-parts/homepage/service-grid' ); ?>
+	<?php endif; ?>
 
 	<?php if ( get_theme_mod( 'show_about', true ) ) : ?>
 	<section class="section-about py-5 bg-white overflow-hidden">
@@ -29,8 +31,8 @@ get_header();
 					<p class="lead mb-4"><?php echo esc_html( get_theme_mod( 'about_subtitle', __( 'We are dedicated to fostering growth and collaboration within our professional community.', 'org-ecosystem' ) ) ); ?></p>
 					<p><?php echo wp_kses_post( get_theme_mod( 'about_text', __( 'Our mission is to provide a platform where members can showcase their businesses, products, and services while gaining access to exclusive resources and networking opportunities.', 'org-ecosystem' ) ) ); ?></p>
 					<div class="d-flex gap-3 mt-4">
-						<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-about.php' ) ); ?>" class="btn btn-primary"><?php _e( 'Learn More About Us', 'org-ecosystem' ); ?></a>
-						<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-mission.php' ) ); ?>" class="btn btn-outline-primary"><?php _e( 'Our Mission & Vision', 'org-ecosystem' ); ?></a>
+						<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-about.php' ) ); ?>" class="btn btn-primary"><?php echo esc_html( get_theme_mod( 'about_btn_1_text', __( 'Learn More About Us', 'org-ecosystem' ) ) ); ?></a>
+						<a href="<?php echo esc_url( org_ecosystem_get_page_url( 'page-mission.php' ) ); ?>" class="btn btn-outline-primary"><?php echo esc_html( get_theme_mod( 'about_btn_2_text', __( 'Our Mission & Vision', 'org-ecosystem' ) ) ); ?></a>
 					</div>
 				</div>
 				<div class="col-lg-6 animate-on-scroll delay-2">
@@ -92,7 +94,7 @@ get_header();
 	<?php if ( get_theme_mod( 'show_partners', true ) ) : ?>
 	<section class="section-partners py-5 bg-light border-top">
 		<div class="container text-center">
-			<h5 class="text-muted text-uppercase mb-5 small fw-bold letter-spacing-1"><?php _e( 'Our Partners & Sponsors', 'org-ecosystem' ); ?></h5>
+			<h5 class="text-muted text-uppercase mb-5 small fw-bold letter-spacing-1"><?php echo esc_html( get_theme_mod( 'partners_title', __( 'Our Partners & Sponsors', 'org-ecosystem' ) ) ); ?></h5>
 			<div class="d-flex flex-wrap justify-content-center gap-5 opacity-50 align-items-center">
 				<?php
 				$partners = explode( ',', get_theme_mod( 'org_partner_list', 'PARTNER 1, PARTNER 2, PARTNER 3, PARTNER 4, PARTNER 5' ) );

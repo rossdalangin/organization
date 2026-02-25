@@ -6,8 +6,8 @@
 <section class="section-events upcoming-events py-5 bg-light">
 	<div class="container">
 		<div class="section-header text-center mb-5 animate-on-scroll">
-			<h2 class="fw-bold"><?php _e( 'Upcoming Events', 'org-ecosystem' ); ?></h2>
-			<p class="text-muted"><?php _e( 'Join us for networking, learning, and community growth.', 'org-ecosystem' ); ?></p>
+			<h2 class="fw-bold"><?php echo esc_html( get_theme_mod( 'events_title', __( 'Upcoming Events', 'org-ecosystem' ) ) ); ?></h2>
+			<p class="text-muted"><?php echo esc_html( get_theme_mod( 'events_subtitle', __( 'Join us for networking, learning, and community growth.', 'org-ecosystem' ) ) ); ?></p>
 		</div>
 
 		<div class="row g-4">

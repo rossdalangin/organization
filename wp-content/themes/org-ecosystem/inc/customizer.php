@@ -110,6 +110,7 @@ function org_ecosystem_customize_register( $wp_customize ) {
 	$visibility_toggles = array(
 		'show_hero'          => __( 'Show Hero Section', 'org-ecosystem' ),
 		'show_stats'         => __( 'Show Impact Stats', 'org-ecosystem' ),
+		'show_expertise'     => __( 'Show Expertise Grid', 'org-ecosystem' ),
 		'show_about'         => __( 'Show About Organization', 'org-ecosystem' ),
 		'show_featured_mem'  => __( 'Show Featured Members', 'org-ecosystem' ),
 		'show_featured_prod' => __( 'Show Featured Products', 'org-ecosystem' ),
@@ -172,6 +173,12 @@ function org_ecosystem_customize_register( $wp_customize ) {
 	$wp_customize->add_setting( 'about_image', array( 'default' => '', 'sanitize_callback' => 'esc_url_raw' ) );
 	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'about_image', array( 'label' => 'About Image', 'section' => 'org_about_content' ) ) );
 
+	$wp_customize->add_setting( 'about_btn_1_text', array( 'default' => 'Learn More About Us', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'about_btn_1_text', array( 'label' => 'About Button 1 Text', 'section' => 'org_about_content' ) );
+
+	$wp_customize->add_setting( 'about_btn_2_text', array( 'default' => 'Our Mission & Vision', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'about_btn_2_text', array( 'label' => 'About Button 2 Text', 'section' => 'org_about_content' ) );
+
 	// Section: Donation CTA Content
 	$wp_customize->add_section( 'org_donation_cta_content', array(
 		'title' => __( 'Donation CTA Content', 'org-ecosystem' ),
@@ -195,6 +202,118 @@ function org_ecosystem_customize_register( $wp_customize ) {
 
 	$wp_customize->add_setting( 'newsletter_text', array( 'default' => 'Subscribe to our newsletter for the latest updates, event news, and member spotlights.', 'sanitize_callback' => 'sanitize_textarea_field' ) );
 	$wp_customize->add_control( 'newsletter_text', array( 'label' => 'Newsletter Text', 'section' => 'org_newsletter_content', 'type' => 'textarea' ) );
+
+	// Section: Stats Content
+	$wp_customize->add_section( 'org_stats_content', array(
+		'title' => __( 'Stats Section Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'stats_title', array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'stats_title', array( 'label' => 'Stats Section Title (Optional)', 'section' => 'org_stats_content' ) );
+
+	$wp_customize->add_setting( 'stats_subtitle', array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'stats_subtitle', array( 'label' => 'Stats Section Subtitle (Optional)', 'section' => 'org_stats_content' ) );
+
+	for($i=1; $i<=4; $i++) {
+		$defaults = array(
+			1 => array('label' => 'Active Members', 'value' => '500'),
+			2 => array('label' => 'Businesses', 'value' => '120'),
+			3 => array('label' => 'Events Yearly', 'value' => '50'),
+			4 => array('label' => 'Years of Impact', 'value' => '15'),
+		);
+		$wp_customize->add_setting( "stat_{$i}_label", array( 'default' => $defaults[$i]['label'], 'sanitize_callback' => 'sanitize_text_field' ) );
+		$wp_customize->add_control( "stat_{$i}_label", array( 'label' => "Stat {$i} Label", 'section' => 'org_stats_content' ) );
+		$wp_customize->add_setting( "stat_{$i}_value", array( 'default' => $defaults[$i]['value'], 'sanitize_callback' => 'sanitize_text_field' ) );
+		$wp_customize->add_control( "stat_{$i}_value", array( 'label' => "Stat {$i} Value", 'section' => 'org_stats_content' ) );
+	}
+
+	// Section: Expertise Content
+	$wp_customize->add_section( 'org_expertise_content', array(
+		'title' => __( 'Expertise Section Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'expertise_title', array( 'default' => 'Service Excellence for Growth', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'expertise_title', array( 'label' => 'Expertise Title', 'section' => 'org_expertise_content' ) );
+
+	$wp_customize->add_setting( 'expertise_subtitle', array( 'default' => 'Our Expertise', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'expertise_subtitle', array( 'label' => 'Expertise Subtitle', 'section' => 'org_expertise_content' ) );
+
+	for($i=1; $i<=4; $i++) {
+		$defaults = array(
+			1 => array('title' => 'Verified Directory', 'text' => 'Every member is vetted to ensure a high-trust professional ecosystem for all participants.', 'icon' => 'shield-check'),
+			2 => array('title' => 'Fast Connections', 'text' => 'Our AJAX-powered search allows you to find partners, vendors, and clients in milliseconds.', 'icon' => 'lightning-charge'),
+			3 => array('title' => 'Growth Tools', 'text' => 'Access exclusive resources, job boards, and lead protection features designed for scale.', 'icon' => 'graph-up-arrow'),
+			4 => array('title' => 'Community First', 'text' => 'Internal messaging and group chats foster real relationships beyond simple business listings.', 'icon' => 'people'),
+		);
+		$wp_customize->add_setting( "expertise_{$i}_title", array( 'default' => $defaults[$i]['title'], 'sanitize_callback' => 'sanitize_text_field' ) );
+		$wp_customize->add_control( "expertise_{$i}_title", array( 'label' => "Expertise {$i} Title", 'section' => 'org_expertise_content' ) );
+		$wp_customize->add_setting( "expertise_{$i}_text", array( 'default' => $defaults[$i]['text'], 'sanitize_callback' => 'sanitize_textarea_field' ) );
+		$wp_customize->add_control( "expertise_{$i}_text", array( 'label' => "Expertise {$i} Text", 'section' => 'org_expertise_content', 'type' => 'textarea' ) );
+		$wp_customize->add_setting( "expertise_{$i}_icon", array( 'default' => $defaults[$i]['icon'], 'sanitize_callback' => 'sanitize_text_field' ) );
+		$wp_customize->add_control( "expertise_{$i}_icon", array( 'label' => "Expertise {$i} Bootstrap Icon Name", 'section' => 'org_expertise_content' ) );
+	}
+
+	// Section: Featured Members Content
+	$wp_customize->add_section( 'org_featured_members_content', array(
+		'title' => __( 'Featured Members Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'featured_members_title', array( 'default' => 'Featured Members', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'featured_members_title', array( 'label' => 'Featured Members Title', 'section' => 'org_featured_members_content' ) );
+
+	$wp_customize->add_setting( 'featured_members_subtitle', array( 'default' => 'Meet some of our top-tier professional members.', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'featured_members_subtitle', array( 'label' => 'Featured Members Subtitle', 'section' => 'org_featured_members_content' ) );
+
+	// Section: Featured Solutions Content
+	$wp_customize->add_section( 'org_featured_solutions_content', array(
+		'title' => __( 'Featured Solutions Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'featured_solutions_title', array( 'default' => 'Featured Solutions', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'featured_solutions_title', array( 'label' => 'Featured Solutions Title', 'section' => 'org_featured_solutions_content' ) );
+
+	$wp_customize->add_setting( 'featured_solutions_subtitle', array( 'default' => 'Discover high-quality products and services offered by our members.', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'featured_solutions_subtitle', array( 'label' => 'Featured Solutions Subtitle', 'section' => 'org_featured_solutions_content' ) );
+
+	// Section: Events Content
+	$wp_customize->add_section( 'org_events_content', array(
+		'title' => __( 'Events Section Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'events_title', array( 'default' => 'Upcoming Events', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'events_title', array( 'label' => 'Events Title', 'section' => 'org_events_content' ) );
+
+	$wp_customize->add_setting( 'events_subtitle', array( 'default' => 'Join us for networking, learning, and community growth.', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'events_subtitle', array( 'label' => 'Events Subtitle', 'section' => 'org_events_content' ) );
+
+	// Section: Testimonials Content
+	$wp_customize->add_section( 'org_testimonials_content', array(
+		'title' => __( 'Testimonials Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'testimonials_title', array( 'default' => 'Community Voices', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'testimonials_title', array( 'label' => 'Testimonials Title', 'section' => 'org_testimonials_content' ) );
+
+	$wp_customize->add_setting( 'testimonials_subtitle', array( 'default' => 'What our members say about their experience with us.', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'testimonials_subtitle', array( 'label' => 'Testimonials Subtitle', 'section' => 'org_testimonials_content' ) );
+
+	// Section: Partners Content
+	$wp_customize->add_section( 'org_partners_content', array(
+		'title' => __( 'Partners Section Content', 'org-ecosystem' ),
+		'panel' => 'org_panel_homepage',
+	) );
+
+	$wp_customize->add_setting( 'partners_title', array( 'default' => 'Our Partners & Sponsors', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'partners_title', array( 'label' => 'Partners Title', 'section' => 'org_partners_content' ) );
+
+	$wp_customize->add_setting( 'org_partner_list', array( 'default' => 'PARTNER 1, PARTNER 2, PARTNER 3, PARTNER 4, PARTNER 5', 'sanitize_callback' => 'sanitize_text_field' ) );
+	$wp_customize->add_control( 'org_partner_list', array( 'label' => 'Partner Names (Comma separated)', 'section' => 'org_partners_content' ) );
 
 	// Section: CTA Content
 	$wp_customize->add_section( 'org_cta_content', array(
