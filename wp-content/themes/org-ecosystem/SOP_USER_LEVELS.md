@@ -1,52 +1,52 @@
-# Standard Operating Procedures (SOP) & Success Metrics
+# Organization Ecosystem - Standard Operating Procedures (SOPs)
 
-This document outlines the specific duties, workflows, and performance indicators for every role in the ecosystem.
-
----
-
-## 1. Super Admin (Global Governance)
-**Metric:** System Uptime & Revenue Growth Velocity.
-
-### SOP Workflows:
-1.  **Maintenance:** Weekly check of the "Database Maintenance" tool to ensure permissions are healthy.
-2.  **Strategic Rates:** Semi-annual review of membership plan prices based on ecosystem engagement.
-3.  **Tier Access:** Configure what each tier (Professional, Vendor, Corporate) can do in the Role Management screen.
+Standard procedures for each user role to ensure the organization runs efficiently and effectively.
 
 ---
 
-## 2. Organization Admin (Operations Manager)
-**Metric:** Average Approval Time (Goal: < 12 Hours).
+## 1. SOP for Super Admins
 
-### SOP Workflows:
-1.  **Lead Verification:** Verify the business name and location of pending applicants before approving.
-2.  **Economic Oversight:** Daily review of the **Financial Ledger**. Match GCash/Bank screenshots to pending transactions.
-3.  **Conflict Resolution:** Moderate the "Community Group Chat" to ensure professional behavior.
+**Goal:** Oversee technical systems and ensure organizational stability.
 
----
-
-## 3. Membership Manager (Retention Specialist)
-**Metric:** Membership Renewal Rate (Goal: > 85%).
-
-### SOP Workflows:
-1.  **Inquiry Support:** Monitor the **Support Tickets** dashboard and provide solutions within 4 hours.
-2.  **Retention Outreach:** Extract the "Expired Members" list monthly and send a personalized re-engagement newsletter.
+### Key Procedures
+*   **System Integrity:** Perform weekly backups and check for any site errors or server alerts.
+*   **User Escalation:** Review and address any tickets or issues that were not resolved by lower-level administrators.
+*   **Technical Support:** Maintain site security, update core WordPress, themes, and plugins.
+*   **System Maintenance:** Perform monthly maintenance using the built-in system tools (e.g., checking for any broken links or meta-data inconsistencies).
 
 ---
 
-## 4. Member (The Ecosystem Participant)
-**Metric:** Profile Completeness & Engagement.
+## 2. SOP for Org Admins
 
-### SOP Workflows:
-1.  **Bio Optimization:** Ensure your Bio contains keywords for the AJAX search engine (e.g., "Web Developer", "Legal Consultant").
-2.  **Resource Download:** Visit the "Downloads" tab weekly for new whitepapers provided by the organization.
-3.  **Referral Growth:** Use your referral code during industry events to grow your network and commission balance.
+**Goal:** Manage members, revenue, and daily organizational operations.
+
+### Key Procedures
+*   **Member Approval:** Review all pending applications twice daily (AM/PM) for accuracy and verification.
+*   **Financial Review:** Monitor the Master Transaction Ledger for any "Pending" payments and verify manual/offline receipts.
+*   **Lead Gating:** Monitor and respond to organizational inquiries or support tickets within 24 hours.
+*   **System Updates:** Communicate any platform changes or news through the "Announcements" section.
 
 ---
 
-## 5. Vendor (The Solution Architect)
-**Metric:** Marketplace Sales & Lead Volume.
+## 3. SOP for Regional Admins
 
-### SOP Workflows:
-1.  **Catalog Management:** Update product prices and SKU statuses monthly in the "My Offerings" tab.
-2.  **Recruitment:** Use the "My Openings" tab to post jobs for the community.
-3.  **Lead Capture:** Check the "Direct Inquiries" count in the dashboard overview to track sales performance.
+**Goal:** Support and grow the organization within a specific geographic area.
+
+### Key Procedures
+*   **Regional Outreach:** Reach out to local businesses and professionals to join the ecosystem.
+*   **Event Coordination:** Plan and organize local networking events or workshops and list them in the "Events" section.
+*   **Member Support:** Provide personalized support to members within the assigned region.
+*   **Growth Tracking:** Report regional member growth and engagement to the Org Admin monthly.
+
+---
+
+## 4. SOP for Members
+
+**Goal:** Maximize professional growth and contribution to the community.
+
+### Key Procedures
+*   **Profile Optimization:** Ensure your profile, bio, and business info are updated and look professional.
+*   **Active Engagement:** Respond to all direct messages and inquiries within 48 hours to maintain a high response rating.
+*   **Community Contribution:** Participate in the Community Group Chat and share valuable insights or opportunities.
+*   **Marketplace Maintenance:** Regularly update product listings, prices, and descriptions to ensure accuracy.
+*   **Referral Sharing:** Utilize your unique referral link to help grow the community and earn commissions.

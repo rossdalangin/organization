@@ -1,59 +1,79 @@
-# Organization Ecosystem - Engagement Email Templates
+# Organization Ecosystem - Automated Email Templates
 
-Use these samples to configure your automated email campaigns in the Admin Panel.
+High-impact, professional email templates for the member lifecycle.
 
 ---
 
-## 1. The Welcome Email (Onboarding)
-*Set in: Org Ecosystem > Email Templates*
+## 1. Welcome & Email Verification
 
-**Subject:** Welcome to the [Org Name] Family!
+**Subject:** Welcome to the [Org Name] Family! | Your Journey Starts Here
 
 **Body:**
 Hi {user_name},
 
-Thank you for joining our professional ecosystem! We are thrilled to have you as part of our growing community of experts and innovators.
+Thank you for joining the [Organization Name]! You are now part of an elite ecosystem of professionals, vendors, and businesses dedicated to growth and collaboration.
 
-To get started, please verify your email address by clicking the link below:
+To complete your setup and access your professional dashboard, please verify your email address here:
 {verify_url}
 
-Once verified, you can log in to your Member Dashboard here: {site_url}/dashboard
+**Your next steps:**
+1.  Complete your professional bio and profile.
+2.  Add your business and products to the marketplace.
+3.  Join the conversation in the Community Group Chat.
 
-We look forward to seeing your business thrive!
+We're excited to have you with us!
 
 Best regards,
-The [Org Name] Secretariat
+The [Organization Name] Team
 
 ---
 
-## 2. The Renewal Reminder (Retention)
-*Set in: Org Ecosystem > Email Templates*
+## 2. Membership Approval Confirmation
 
-**Subject:** Action Required: Your Membership Spotlight is Expiring
+**Subject:** You're Approved! | Welcome to the [Org Name] Ecosystem
 
 **Body:**
 Hi {user_name},
 
-This is a friendly reminder that your Professional membership at {site_name} will expire in 7 days.
+Great news! Your membership application for [Organization Name] has been reviewed and approved. Your profile is now live in our professional directory.
 
-To maintain your visibility in our public Member Directory and continue receiving leads, please renew your account through the Billing tab in your dashboard.
+**Access your dashboard now:**
+[Link to Member Dashboard]
 
-**Renew Now:** {site_url}/dashboard/?dash_page=billing
-
-Thank you for your continued partnership.
+Start exploring connections, responding to inquiries, and showcasing your professional expertise today!
 
 ---
 
-## 3. The Account Expiry Notice
-*Set in: Org Ecosystem > Email Templates*
+## 3. Membership Renewal Warning (7-Day Notice)
 
-**Subject:** Your Membership has Expired
+**Subject:** Action Required: Your [Org Name] Membership Spotlight is Expiring
 
 **Body:**
 Hi {user_name},
 
-Your membership at {site_name} has officially expired.
+Your Professional membership at [Organization Name] is set to expire in **7 days**.
 
-Your profile and listings have been temporarily hidden from the public directory. To restore your visibility and benefits, simply log in and complete your renewal payment.
+Don't lose your spotlight in our directory, access to internal messaging, and your featured marketplace listings. Renew now to keep your business growth on track.
 
-We'd love to have you back!
+**Renew in 2-Clicks:**
+[Link to Dashboard/Renewal Page]
+
+If you have any questions or need assistance with your renewal, simply reply to this email.
+
+---
+
+## 4. Membership Expiration Notice
+
+**Subject:** Your [Org Name] Membership has Expired
+
+**Body:**
+Hi {user_name},
+
+Your membership at [Organization Name] has expired. Your profile has been moved to our inactive database and is no longer visible to potential clients and partners in the directory.
+
+We value your contribution to our community and would love to have you back!
+
+**Re-activate your membership here:**
+[Link to Membership Plans Page]
+
+We look forward to seeing you back in the ecosystem soon.

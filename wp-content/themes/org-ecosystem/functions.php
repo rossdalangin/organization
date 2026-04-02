@@ -101,6 +101,10 @@ function org_ecosystem_scripts() {
 	wp_enqueue_script( 'org-ecosystem-navigation', ORG_ECOSYSTEM_URI . '/assets/js/navigation.js', array( 'jquery', 'bootstrap-bundle' ), ORG_ECOSYSTEM_VERSION, true );
 	wp_enqueue_script( 'org-ecosystem-main', ORG_ECOSYSTEM_URI . '/assets/js/main.js', array( 'jquery' ), ORG_ECOSYSTEM_VERSION, true );
 
+	if ( is_page_template( 'page-sales-letter.php' ) ) {
+		wp_enqueue_style( 'org-ecosystem-sales-letter', ORG_ECOSYSTEM_URI . '/assets/css/sales-letter.css', array( 'org-ecosystem-style' ), ORG_ECOSYSTEM_VERSION );
+	}
+
 	if ( get_option( 'org_stripe_enabled' ) ) {
 		wp_enqueue_script( 'stripe-js', 'https://js.stripe.com/v3/', array(), null, true );
 	}
